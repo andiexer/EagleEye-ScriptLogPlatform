@@ -25,6 +25,7 @@ These instructions will get you a copy of the project up and running on your loc
 ## Built With
 
 * [.Net Core](https://www.microsoft.com/net/download/core) - .Net Core 1.1
+* [Docker](https://www.docker.com/) - Docker
 * [Openshift](https://openshift.org/) - Openshift
 
 ## Authors
