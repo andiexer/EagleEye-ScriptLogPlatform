@@ -29,8 +29,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Authors
 
-* **Andi Exer** - *Initial work* - [PurpleBooth](https://github.com/AndiExer)
-* **Manuel Habert** - *Initial work* - [PurpleBooth](https://github.com/braiinzz)
+* **Andi Exer** - *Initial work* - [AndiExer](https://github.com/AndiExer)
+* **Manuel Habert** - *Initial work* - [Braiinzz](https://github.com/braiinzz)
 
 See also the list of [contributors](https://github.com/andiexer/eagleeye-scriptlogplatform/contributors) who participated in this project.
 
