@@ -2,6 +2,24 @@
 
 EagleEye ScriptLogPlatform, formerly known as PoshLogMonitor is Platform to handle Script Logfiles. The main purpose is to log scripts into EESLP and analyze the logs.
 
+## Folder structure
+```
+├── src
+|   ├── backend
+|   |   ├── backend.gateway.api
+|   |   ├── backend.powershellmodule
+|   ├── common
+|   ├── frontend
+|   |   ├── frontend.gateway.api
+|   |   ├── frontend.ui
+|   ├── services
+|   |   ├── alerting.api
+|   |   ├── logging.api
+|   |   ├── maintenance.api
+|   |   ├── script.api
+|   |   ├── user.api
+```
+
 ## Architecture
 
 The whole platform is build on docker microservices developed mostly with .net core/python. As a platform we have chosen [openshift](https://www.openshift.org/) (Basically Service Discovery has to be changed for other platforms). In the furture we will fork the project to support also other platforms natively.
