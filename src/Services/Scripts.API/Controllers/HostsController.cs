@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EESLP.Services.Scripts.API.Entities;
+using EESLP.Services.Scripts.API.Infrastructure.Exceptions;
+using EESLP.Services.Scripts.API.Infrastructure.Filters;
 using EESLP.Services.Scripts.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
@@ -39,7 +41,7 @@ namespace EESLP.Services.Scripts.API.Controllers
             {
                 return NotFound();
             }
-            return Ok(host);
+            return Ok(host);       
         }
 
         [HttpPost]
@@ -58,16 +60,22 @@ namespace EESLP.Services.Scripts.API.Controllers
            
         }
 
-        [HttpPut]
-        public IActionResult Update([FromBody]Host host)
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, [FromBody]Host host)
         {
             try
             {
+                var existingHost = EnsureRequestHostAvailable(id);
+                host.Id = existingHost.Id;
                 if (_hostService.Update(host))
                 {
                     return Ok();
                 }
                 return BadRequest("Error while updating host");
+            }
+            catch (EntityNotFoundException e)
+            {
+                return NotFound();
             }
             catch (MySqlException e)
             {
@@ -79,18 +87,18 @@ namespace EESLP.Services.Scripts.API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var host = _hostService.GetHostById(id);
-            if (host == null)
-            {
-                return NotFound();
-            }
             try
             {
+                var host = EnsureRequestHostAvailable(id);
                 if (_hostService.Delete(host))
                 {
                     return NoContent();
                 }
                 return BadRequest("Error while deleting host");
+            }
+            catch (EntityNotFoundException e)
+            {
+                return NotFound();
             }
             catch (MySqlException e)
             {
@@ -98,6 +106,21 @@ namespace EESLP.Services.Scripts.API.Controllers
                 return BadRequest("Error while deleting host");
             }
         }
+
+        #region private helpers
+
+        private Host EnsureRequestHostAvailable(int id)
+        {
+            var host = _hostService.GetHostById(id);
+            if (host == null)
+            {
+                _logger.LogWarning($"no host found with id  {id}");
+                throw new EntityNotFoundException();
+            }
+            return host;
+        }
+
+        #endregion
 
     }
 }
