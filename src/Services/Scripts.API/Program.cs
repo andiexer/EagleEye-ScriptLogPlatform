@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Scripts.API
+namespace EESLP.Services.Scripts.API
 {
     public class Program
     {
