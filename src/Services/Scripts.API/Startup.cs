@@ -31,6 +31,7 @@ namespace EESLP.Services.Scripts.API
         {
             // Depencency Injection
             services.AddTransient<IHostService, HostService>();
+            services.AddTransient<IScriptService, ScriptService>();
 
             // Configure Options
             services.Configure<DatabaseOptions>(Configuration.GetSection("Database"));

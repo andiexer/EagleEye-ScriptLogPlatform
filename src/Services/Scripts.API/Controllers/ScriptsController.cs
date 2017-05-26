@@ -13,64 +13,64 @@ using MySql.Data.MySqlClient;
 namespace EESLP.Services.Scripts.API.Controllers
 {
     [Route("api/[controller]")]
-    public class HostsController : Controller
+    public class ScriptsController : Controller
     {
 
-        private readonly IHostService _hostService;
-        private readonly ILogger<HostsController> _logger;
+        private readonly IScriptService _scriptService;
+        private readonly ILogger<ScriptsController> _logger;
 
-        public HostsController(ILogger<HostsController> logger, IHostService hostService)
+        public ScriptsController(ILogger<ScriptsController> logger, IScriptService scriptService)
         {
             _logger = logger;
-            _hostService = hostService;
+            _scriptService = scriptService;
         }
 
         [HttpGet]
         public IActionResult Get()
         {
-            return  Ok(_hostService.GetAllHosts());
+            return Ok(_scriptService.GetAllScripts());
         }
 
         [HttpGet]
-        [Route("{id}", Name = "GetSingleHost")]
+        [Route("{id}", Name = "GetSingleScript")]
         public IActionResult GetSingle(int id)
         {
-            var host = _hostService.GetHostById(id);
-            if (host == null)
+            var script = _scriptService.GetScriptById(id);
+            if (script == null)
             {
                 return NotFound();
             }
-            return Ok(host);       
+            return Ok(script);
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody]Host host)
+        public IActionResult Create([FromBody]Script script)
         {
             try
             {
-                var result = _hostService.Add(host);
-                return CreatedAtRoute(routeName: "GetSingleHost", routeValues: new {id = result}, value: null);
+                var result = _scriptService.Add(script);
+                return CreatedAtRoute(routeName: "GetSingleScript", routeValues: new { id = result }, value: null);
             }
             catch (MySqlException e)
             {
                 _logger.LogError($"Error while adding host to database: {e.Message}");
                 return BadRequest("Error while adding host to database");
             }
-           
+
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody]Host host)
+        public IActionResult Update(int id, [FromBody]Script script)
         {
             try
             {
-                var existingHost = EnsureRequestHostAvailable(id);
-                host.Id = existingHost.Id;
-                if (_hostService.Update(host))
+                var existingScript = EnsureRequestScriptAvailable(id);
+                script.Id = existingScript.Id;
+                if (_scriptService.Update(script))
                 {
                     return Ok();
                 }
-                return BadRequest("Error while updating host");
+                return BadRequest("Error while updating script");
             }
             catch (EntityNotFoundException e)
             {
@@ -78,8 +78,8 @@ namespace EESLP.Services.Scripts.API.Controllers
             }
             catch (MySqlException e)
             {
-                _logger.LogError($"Error while updating host: {e.Message}");
-                return BadRequest("Error while updating host");
+                _logger.LogError($"Error while updating script: {e.Message}");
+                return BadRequest("Error while updating script");
             }
         }
 
@@ -88,12 +88,12 @@ namespace EESLP.Services.Scripts.API.Controllers
         {
             try
             {
-                var host = EnsureRequestHostAvailable(id);
-                if (_hostService.Delete(host))
+                var script = EnsureRequestScriptAvailable(id);
+                if (_scriptService.Delete(script))
                 {
                     return NoContent();
                 }
-                return BadRequest("Error while deleting host");
+                return BadRequest("Error while deleting script");
             }
             catch (EntityNotFoundException e)
             {
@@ -101,22 +101,22 @@ namespace EESLP.Services.Scripts.API.Controllers
             }
             catch (MySqlException e)
             {
-                _logger.LogError($"Error while deleting host: {e.Message}");
-                return BadRequest("Error while deleting host");
+                _logger.LogError($"Error while deleting script: {e.Message}");
+                return BadRequest("Error while deleting script");
             }
         }
 
         #region private helpers
 
-        private Host EnsureRequestHostAvailable(int id)
+        private Script EnsureRequestScriptAvailable(int id)
         {
-            var host = _hostService.GetHostById(id);
-            if (host == null)
+            var script = _scriptService.GetScriptById(id);
+            if (script == null)
             {
-                _logger.LogWarning($"no host found with id  {id}");
+                _logger.LogWarning($"no script found with id  {id}");
                 throw new EntityNotFoundException();
             }
-            return host;
+            return script;
         }
 
         #endregion
