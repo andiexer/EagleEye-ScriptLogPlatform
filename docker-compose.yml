@@ -2,7 +2,7 @@ version: '2'
 
 services:
   scripts.api:
-    image: scripts.api
+    image: eeslp/scripts.api
     build:
       context: ./src/Services/Scripts.API
       dockerfile: Dockerfile

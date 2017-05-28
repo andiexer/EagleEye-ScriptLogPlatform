@@ -1,6 +1,7 @@
 ﻿Param(
     [string]$rootPath,
-    [string]$SolutionFile = 'EESLP-DockerBITSOnly.sln'
+    [string]$SolutionFile = 'EESLP-DockerBITSOnly.sln',
+	[switch]$RemoveDockerImages
 )
 
 $scriptPath = Split-Path $script:MyInvocation.MyCommand.Path
@@ -18,3 +19,7 @@ dotnet restore $SolutionFilePath
 
 # publish files to specific docker obj output
 dotnet publish $SolutionFilePath -c Release -o .\obj\Docker\publish
+
+if($RemoveDockerImages) {
+	./remove-dockerimages.ps1
+}
