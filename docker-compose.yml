@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  scripts.api:
+    image: scripts.api
+    build:
+      context: ./src/Services/Scripts.API
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql.data
+    ports:
+     - "5001:80"
+    environment:
+     - "Database:ConnectionString=Server=mysql.data;Port=3306;Database=EESLP;Uid=root;Pwd=supersecret"
+  mysql.data:
+    image: mysql
+    environment: 
+      MYSQL_DATABASE : EESLP
+      MYSQL_ROOT_PASSWORD: supersecret
+    ports:
+     - "3306:3306"
+      
