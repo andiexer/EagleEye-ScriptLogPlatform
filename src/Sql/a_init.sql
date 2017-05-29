@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `EESLP`.`ScriptInstance` (
   `InstanceStatus` VARCHAR(45) NOT NULL,
   `CreatedDateTime` DATETIME NOT NULL,
   `LastModDateTime` DATETIME NOT NULL,
-  `EndDateTime` DATETIME NULL
+  `EndDateTime` DATETIME NULL,
   PRIMARY KEY (`Id`),
   UNIQUE INDEX `Id_UNIQUE` (`Id` ASC),
   INDEX `Status_INDEX` (`InstanceStatus` ASC))

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using EESLP.BuilidingBlocks.EventBus.Events;
 using EESLP.BuilidingBlocks.EventBus.Options;
-using EESLP.Services.Scripts.API.Handlers;
 using EESLP.Services.Scripts.API.Infrastructure.Options;
 using EESLP.Services.Scripts.API.Services;
 using Microsoft.AspNetCore.Builder;
