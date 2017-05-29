@@ -12,6 +12,17 @@ services:
      - "5001:80"
     environment:
      - "Database:ConnectionString=Server=mysql.data;Port=3306;Database=EESLP;Uid=root;Pwd=supersecret"
+  logging.api:
+    image: eeslp/logging.api
+    build:
+      context: ./src/Services/Logging.API
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql.data
+    ports:
+     - "5002:80"
+    environment:
+     - "Database:ConnectionString=Server=mysql.data;Port=3306;Database=EESLP;Uid=root;Pwd=supersecret"
   mysql.data:
     image: eeslp/mysql.data
     environment: 
