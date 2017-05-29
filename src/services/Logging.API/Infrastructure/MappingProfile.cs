@@ -13,6 +13,7 @@ namespace EESLP.Services.Logging.API.Infrastructure
         public MappingProfile()
         {
             CreateMap<ScriptInstanceAddModel, ScriptInstance>();
+            CreateMap<LogAddModel, Log>();
         }
     }
 }

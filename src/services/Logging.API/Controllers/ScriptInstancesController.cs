@@ -5,6 +5,7 @@ using EESLP.Services.Logging.API.Infrastructure.Exceptions;
 using EESLP.Services.Logging.API.Services;
 using EESLP.Services.Logging.API.Utils;
 using EESLP.Services.Logging.API.ViewModel;
+using EESLP.Services.Logging.API.ViewModel.Errors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
@@ -19,14 +20,16 @@ namespace EESLP.Services.Logging.API.Controllers
     public class ScriptInstancesController : Controller
     {
         private readonly IScriptInstanceService _scriptInstanceService;
+        private readonly ILogService _logService;
         private readonly ILogger<ScriptInstancesController> _logger;
         private readonly IMapper _mapper;
 
-        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService, IMapper mapper)
+        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService, IMapper mapper, ILogService logService)
         {
             _logger = logger;
             _scriptInstanceService = scriptInstanceService;
             _mapper = mapper;
+            _logService = logService;
         }
 
         /// <summary>
@@ -43,35 +46,7 @@ namespace EESLP.Services.Logging.API.Controllers
         [ProducesResponseType(typeof(object), 400)]
         public IActionResult Get()
         {
-            var instances = _scriptInstanceService.GetAllScriptInstances();
-            if (instances == null)
-            {
-                return NotFound();
-            }
-            return Ok(instances);
-        }
-
-        /// <summary>
-        /// get single scriptinstance by id
-        /// </summary>
-        /// <param name="id">id of the scriptinstance</param>
-        /// <returns>single scriptinstance</returns>
-        /// <response code="200">returns scriptinstance if found</response>
-        /// <response code="404">if scriptinstance was not found</response>
-        /// <response code="400">if something went really wrong</response>
-        [HttpGet]
-        [Route("{id}", Name = "GetSingleScriptInstance")]
-        [ProducesResponseType(typeof(ScriptInstance), 200)]
-        [ProducesResponseType(typeof(object), 404)]
-        [ProducesResponseType(typeof(object), 400)]
-        public IActionResult GetSingle(int id)
-        {
-            var scriptInstance = _scriptInstanceService.GetScriptInstanceById(id);
-            if (scriptInstance == null)
-            {
-                return NotFound();
-            }
-            return Ok(scriptInstance);
+            return Ok(_scriptInstanceService.GetAllScriptInstances());
         }
 
         /// <summary>
@@ -101,6 +76,33 @@ namespace EESLP.Services.Logging.API.Controllers
         }
 
         /// <summary>
+        /// get single scriptinstance by id
+        /// </summary>
+        /// <param name="id">id of the scriptinstance</param>
+        /// <returns>single scriptinstance</returns>
+        /// <response code="200">returns scriptinstance if found</response>
+        /// <response code="404">if scriptinstance was not found</response>
+        /// <response code="400">if something went really wrong</response>
+        [HttpGet]
+        [Route("{id}", Name = "GetSingleScriptInstance")]
+        [ProducesResponseType(typeof(ScriptInstance), 200)]
+        [ProducesResponseType(typeof(object), 404)]
+        [ProducesResponseType(typeof(object), 400)]
+        public IActionResult GetSingle(int id)
+        {
+            try
+            {
+                var scriptInstance = EnsureRequestScriptInstanceAvailable(id);
+                return Ok(scriptInstance);
+            }
+            catch (EntityNotFoundException e)
+            {
+                _logger.LogError(e.Message);
+                return NotFound(this.CreateErrorMessage(e, "ENTITY_NOT_FOUND"));
+            }
+        }
+
+        /// <summary>
         /// delete a specific scriptinstance and all related data (included log entries)
         /// </summary>
         /// <param name="id">id of the scriptinstance</param>
@@ -108,7 +110,8 @@ namespace EESLP.Services.Logging.API.Controllers
         /// <response code="204">scriptinstance successfully deleted</response>
         /// <response code="400">if something went really wrong</response>
         /// <response code="404">scriptinstance not found</response>
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Route("{id}")]
         public IActionResult Delete(int id)
         {
             try
@@ -122,59 +125,149 @@ namespace EESLP.Services.Logging.API.Controllers
             }
             catch (EntityNotFoundException e)
             {
-                return NotFound();
+                _logger.LogError(e.Message);
+                return NotFound(this.CreateErrorMessage(e, "ENTITY_NOT_FOUND"));
             }
             catch (MySqlException e)
             {
                 _logger.LogError($"Error while deleting scriptInstance: {e.Message}");
-                return BadRequest("Error while deleting scriptInstance");
+                return BadRequest(CreateErrorMessage(e, "DATABASE_ERROR"));
+            }
+        }
+
+        /// <summary>
+        /// get all logs from specific scriptinstance
+        /// </summary>
+        /// <param name="id">id of the scriptinstance</param>
+        /// <returns>list of logs from this scriptinstance</returns>
+        /// <response code="200">returns list of logs from specific scriptinstance</response>
+        /// <response code="404">if scriptinstance was not found</response>
+        /// <response code="400">if something went really wrong</response>
+        [HttpGet]
+        [Route("{id}/logs", Name = "GetLogs")]
+        [ProducesResponseType(typeof(IEnumerable<Log>), 200)]
+        [ProducesResponseType(typeof(object), 400)]
+        [ProducesResponseType(typeof(object), 404)]
+        public IActionResult GetLogs(int id)
+        {
+            try
+            {
+                EnsureRequestScriptInstanceAvailable(id);
+                return Ok(_logService.GetLogsPerScriptInstance(id));
+            }
+            catch (EntityNotFoundException e)
+            {
+                _logger.LogError(e.Message);
+                return NotFound(this.CreateErrorMessage(e, "ENTITY_NOT_FOUND"));
+            }
+        }
+
+        /// <summary>
+        /// add a new log to scriptinstance
+        /// </summary>
+        /// <param name="id">id of the scriptinstance</param>
+        /// <param name="logData">logdata</param>
+        /// <returns></returns>
+        /// <response code="201">if log successfully created</response>
+        /// <response code="404">if scriptinstance was not found</response>
+        /// <response code="400">if something went really wrong</response>
+        [HttpPost]
+        [Route("{id}/logs", Name = "AddLog")]
+        public IActionResult AddLog(int id, [FromBody]LogAddModel logData)
+        {
+            try
+            {
+                ScriptInstance scriptInstance = EnsureRequestScriptInstanceAvailable(id);
+                if (scriptInstance.InstanceStatus != ScriptInstanceStatus.Running)
+                {
+                    _logger.LogError($"Scriptinstance is not started or already completed.Current status: {scriptInstance.InstanceStatus.ToString()}");
+                    return BadRequest($"Scriptinstance is not started or already completed. Current status: {scriptInstance.InstanceStatus.ToString()}");
+                }
+                _logger.LogInformation($"Add new log entry in scriptinstance {id}");
+                Log newLog = _mapper.Map<LogAddModel, Log>(logData);
+                newLog.ScriptInstanceId = id;
+                var result = _logService.Add(newLog);
+                return CreatedAtRoute(routeName: "GetLogs", routeValues: new { id = id }, value: null);
+            }
+            catch (MySqlException e)
+            {
+                _logger.LogError($"Error while adding log to database: {e.Message}");
+                return BadRequest("Error while adding log to database");
+            }
+            catch (EntityNotFoundException e)
+            {
+                _logger.LogError(e.Message);
+                return NotFound(this.CreateErrorMessage(e, "ENTITY_NOT_FOUND"));
             }
         }
 
         /// <summary>
         /// changes the status of a scriptinstance 
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="model"></param>
+        /// <param name="id">id of the scriptinstance</param>
+        /// <param name="scriptInstanceStatus">new status of the scriptinstance</param>
         /// <returns></returns>
+        /// <response code="200">successfully updated scriptinstance status</response>
+        /// <response code="400">if something went really wrong</response>
         [HttpPut]
         [Route("{id}/status")]
-        public IActionResult UpdateStatus(int id, [FromBody]UpdateInstanceStatusViewModel model)
+        public IActionResult UpdateStatus(int id, [FromBody]UpdateInstanceStatusViewModel scriptInstanceStatus)
         {
-            var scriptinstance = _scriptInstanceService.GetScriptInstanceById(id);
-            _logger.LogInformation($"Update status of scriptinstance with id {id}");
-            if (scriptinstance == null)
+            try
             {
-                return NotFound();
+                _logger.LogInformation($"Update status of scriptinstance with id {id}");
+                var scriptinstance = EnsureRequestScriptInstanceAvailable(id);
+                if (scriptInstanceStatus.Status == ScriptInstanceStatus.Completed || scriptInstanceStatus.Status == ScriptInstanceStatus.CompletedWithError || scriptInstanceStatus.Status == ScriptInstanceStatus.CompletedWithWarning)
+                {
+                    scriptinstance.EndDateTime = DateTime.UtcNow;
+                    if (_logService.GetLogsPerScriptInstance(id, Enums.LogLevel.Error) != null 
+                        && _logService.GetLogsPerScriptInstance(id, Enums.LogLevel.Fatal) != null)
+                    {
+                        scriptinstance.InstanceStatus = ScriptInstanceStatus.CompletedWithError;
+                    }
+                    else if (_logService.GetLogsPerScriptInstance(id, Enums.LogLevel.Warning) != null)
+                    {
+                        scriptinstance.InstanceStatus = ScriptInstanceStatus.CompletedWithWarning;
+                    }
+                }
+                else
+                {
+                    scriptinstance.EndDateTime = null;
+                }
+                scriptinstance.InstanceStatus = scriptInstanceStatus.Status;
+                if (_scriptInstanceService.Update(scriptinstance))
+                {
+                    return Ok();
+                }
+                return BadRequest($"There was an error on updating status");
             }
-            if (model.Status == ScriptInstanceStatus.Completed || model.Status == ScriptInstanceStatus.CompletedWithError || model.Status == ScriptInstanceStatus.CompletedWithWarning)
+            catch (EntityNotFoundException e)
             {
-                scriptinstance.EndDateTime = DateTime.UtcNow;
-                // TODO: Implement completed with error or warnings
+                _logger.LogError(e.Message);
+                return NotFound(this.CreateErrorMessage(e, "ENTITY_NOT_FOUND"));
             }
-            else
-            {
-                scriptinstance.EndDateTime = null;
-            }
-            scriptinstance.InstanceStatus = model.Status;
-            if (_scriptInstanceService.Update(scriptinstance))
-            {
-                return Ok();
-            }
-            return BadRequest($"There was an error on updating status");
         }
 
         #region private helpers
 
         private ScriptInstance EnsureRequestScriptInstanceAvailable(int id)
         {
-            var host = _scriptInstanceService.GetScriptInstanceById(id);
-            if (host == null)
+            var scriptInstance = _scriptInstanceService.GetScriptInstanceById(id);
+            if (scriptInstance == null)
             {
-                _logger.LogWarning($"no scriptinstance found with id  {id}");
+                _logger.LogWarning($"No scriptinstance found with id  {id}");
                 throw new EntityNotFoundException();
             }
-            return host;
+            return scriptInstance;
+        }
+
+        protected ErrorMessage CreateErrorMessage(Exception ex, string errorId)
+        {
+            return new ErrorMessage()
+            {
+                ErrorId = errorId,
+                Message = ex.Message
+            };
         }
 
         #endregion

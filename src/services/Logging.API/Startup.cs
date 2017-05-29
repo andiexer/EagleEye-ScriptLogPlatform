@@ -33,6 +33,7 @@ namespace Logging.API
         {
             // Depencency Injection
             services.AddTransient<IScriptInstanceService, ScriptInstanceService>();
+            services.AddTransient<ILogService, LogService>();
             services.AddAutoMapper();
 
             // Configure Options
