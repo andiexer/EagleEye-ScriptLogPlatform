@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using EESLP.Services.Logging.API.Services;
 using EESLP.Services.Logging.API.Infrastructure.Options;
 using Swashbuckle.AspNetCore.Swagger;
+using AutoMapper;
 
 namespace Logging.API
 {
@@ -32,6 +33,7 @@ namespace Logging.API
         {
             // Depencency Injection
             services.AddTransient<IScriptInstanceService, ScriptInstanceService>();
+            services.AddAutoMapper();
 
             // Configure Options
             services.Configure<DatabaseOptions>(Configuration.GetSection("Database"));

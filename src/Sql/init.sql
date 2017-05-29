@@ -22,6 +22,7 @@ ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `EESLP`.`ScriptInstance` (
   `Id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `TransactionId` VARCHAR(150) NOT NULL,
   `HostId` INT NOT NULL,
   `ScriptId` INT NOT NULL,
   `InstanceStatus` VARCHAR(45) NOT NULL,

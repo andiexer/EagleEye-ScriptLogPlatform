@@ -1,7 +1,9 @@
-﻿using EESLP.Services.Logging.API.Entities;
+﻿using AutoMapper;
+using EESLP.Services.Logging.API.Entities;
 using EESLP.Services.Logging.API.Enums;
 using EESLP.Services.Logging.API.Infrastructure.Exceptions;
 using EESLP.Services.Logging.API.Services;
+using EESLP.Services.Logging.API.Utils;
 using EESLP.Services.Logging.API.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -18,11 +20,13 @@ namespace EESLP.Services.Logging.API.Controllers
     {
         private readonly IScriptInstanceService _scriptInstanceService;
         private readonly ILogger<ScriptInstancesController> _logger;
+        private readonly IMapper _mapper;
 
-        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService)
+        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService, IMapper mapper)
         {
             _logger = logger;
             _scriptInstanceService = scriptInstanceService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -79,50 +83,20 @@ namespace EESLP.Services.Logging.API.Controllers
         /// <response code="400">if something went really wrong</response>
         [HttpPost]
         [Route("")]
-        public IActionResult Create([FromBody]ScriptInstance scriptInstance)
+        public IActionResult Create([FromBody]ScriptInstanceAddModel scriptInstance)
         {
             try
             {
-                var result = _scriptInstanceService.Add(scriptInstance);
+                scriptInstance.TransactionId = scriptInstance.TransactionId ?? TransactionUtil.CreateTransactionId();
+                scriptInstance.InstanceStatus = scriptInstance.InstanceStatus ?? ScriptInstanceStatus.Created;
+                ScriptInstance newScriptInstance = _mapper.Map<ScriptInstanceAddModel, ScriptInstance>(scriptInstance);
+                var result = _scriptInstanceService.Add(newScriptInstance);
                 return CreatedAtRoute(routeName: "GetSingleScriptInstance", routeValues: new { id = result }, value: null);
             }
             catch (MySqlException e)
             {
                 _logger.LogError($"Error while adding host to database: {e.Message}");
                 return BadRequest("Error while adding host to database");
-            }
-        }
-
-        /// <summary>
-        /// updates a specific scriptinstance
-        /// </summary>
-        /// <param name="id">id of the scriptinstance</param>
-        /// <param name="scriptInstance">data of the scriptinstance</param>
-        /// <returns></returns>
-        /// <response code="200">scriptinstance successfully updated</response>
-        /// <response code="400">if something went really wrong</response>
-        /// <response code="404">if scriptinstance not found</response>
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody]ScriptInstance scriptInstance)
-        {
-            try
-            {
-                var existingScriptInstance = EnsureRequestScriptInstanceAvailable(id);
-                scriptInstance.Id = existingScriptInstance.Id;
-                if (_scriptInstanceService.Update(scriptInstance))
-                {
-                    return Ok();
-                }
-                return BadRequest("Error while updating scriptInstance");
-            }
-            catch (EntityNotFoundException e)
-            {
-                return NotFound();
-            }
-            catch (MySqlException e)
-            {
-                _logger.LogError($"Error while updating scriptInstance: {e.Message}");
-                return BadRequest("Error while updating scriptInstance");
             }
         }
 

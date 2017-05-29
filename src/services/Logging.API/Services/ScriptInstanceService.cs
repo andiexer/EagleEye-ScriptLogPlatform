@@ -6,6 +6,7 @@ using EESLP.Services.Logging.API.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 using Dapper.Contrib.Extensions;
 using EESLP.Services.Logging.API.Entities;
+using EESLP.Services.Logging.API.ViewModel;
 
 namespace EESLP.Services.Logging.API.Services
 {
