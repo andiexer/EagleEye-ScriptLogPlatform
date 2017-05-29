@@ -1,6 +1,8 @@
 ﻿using EESLP.Services.Logging.API.Entities;
+using EESLP.Services.Logging.API.Enums;
 using EESLP.Services.Logging.API.Infrastructure.Exceptions;
 using EESLP.Services.Logging.API.Services;
+using EESLP.Services.Logging.API.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
@@ -153,6 +155,39 @@ namespace EESLP.Services.Logging.API.Controllers
                 _logger.LogError($"Error while deleting scriptInstance: {e.Message}");
                 return BadRequest("Error while deleting scriptInstance");
             }
+        }
+
+        /// <summary>
+        /// changes the status of a scriptinstance 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{id}/status")]
+        public IActionResult UpdateStatus(int id, [FromBody]UpdateInstanceStatusViewModel model)
+        {
+            var scriptinstance = _scriptInstanceService.GetScriptInstanceById(id);
+            _logger.LogInformation($"Update status of scriptinstance with id {id}");
+            if (scriptinstance == null)
+            {
+                return NotFound();
+            }
+            if (model.Status == ScriptInstanceStatus.Completed || model.Status == ScriptInstanceStatus.CompletedWithError || model.Status == ScriptInstanceStatus.CompletedWithWarning)
+            {
+                scriptinstance.EndDateTime = DateTime.UtcNow;
+                // TODO: Implement completed with error or warnings
+            }
+            else
+            {
+                scriptinstance.EndDateTime = null;
+            }
+            scriptinstance.InstanceStatus = model.Status;
+            if (_scriptInstanceService.Update(scriptinstance))
+            {
+                return Ok();
+            }
+            return BadRequest($"There was an error on updating status");
         }
 
         #region private helpers
