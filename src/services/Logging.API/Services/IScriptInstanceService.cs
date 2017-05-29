@@ -9,6 +9,7 @@ namespace EESLP.Services.Logging.API.Services
     public interface IScriptInstanceService
     {
         IEnumerable<ScriptInstance> GetAllScriptInstances();
+        IEnumerable<ScriptInstance> GetLatestScriptInstances(int amount);
         ScriptInstance GetScriptInstanceById(int id);
         bool Update(ScriptInstance scriptInstance);
         bool Delete(ScriptInstance scriptInstance);

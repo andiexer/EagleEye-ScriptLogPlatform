@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +16,7 @@ using EESLP.BuilidingBlocks.EventBus.Options;
 using EESLP.Services.Logging.API.Handlers;
 using RawRabbit;
 using RawRabbit.vNext;
+using EESLP.Services.Logging.API.Infrastructure;
 
 namespace Logging.API
 {
@@ -38,7 +39,7 @@ namespace Logging.API
         {
             // Depencency Injection
             services.AddTransient<IScriptInstanceService, ScriptInstanceService>();
-            services.AddAutoMapper();
+            services.AddTransient<ILogService, LogService>();
 
             // Configure Options
             services.Configure<DatabaseOptions>(Configuration.GetSection("Database"));
@@ -54,6 +55,7 @@ namespace Logging.API
 
             // Add framework services.
             services.AddMvc();
+            services.AddAutoMapper();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

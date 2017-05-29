@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EESLP.Services.Logging.API.Entities;
+using EESLP.Services.Logging.API.Enums;
 using EESLP.Services.Logging.API.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,11 @@ namespace EESLP.Services.Logging.API.Infrastructure
         public MappingProfile()
         {
             CreateMap<ScriptInstanceAddModel, ScriptInstance>();
+            CreateMap<ScriptInstance, ScriptInstanceViewModel>();
+            CreateMap<LogAddModel, Log>();
+            CreateMap<Log, LogViewModel>();
+            CreateMap<LogLevel, string>().ConvertUsing((loglevel) => loglevel.ToString());
+            CreateMap<ScriptInstanceStatus, string>().ConvertUsing((scriptInstanceStatus) => scriptInstanceStatus.ToString());
         }
     }
 }
