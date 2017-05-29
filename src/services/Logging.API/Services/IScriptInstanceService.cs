@@ -13,5 +13,6 @@ namespace EESLP.Services.Logging.API.Services
         bool Update(ScriptInstance scriptInstance);
         bool Delete(ScriptInstance scriptInstance);
         int Add(ScriptInstance scriptInstance);
+        void DeleteByScriptId(int hostId);
     }
 }

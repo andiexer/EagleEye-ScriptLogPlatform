@@ -2,13 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EESLP.BuilidingBlocks.EventBus.Events;
+using EESLP.BuilidingBlocks.EventBus.Options;
+using EESLP.Services.Scripts.API.Handlers;
 using EESLP.Services.Scripts.API.Infrastructure.Options;
 using EESLP.Services.Scripts.API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RawRabbit;
+using RawRabbit.Configuration;
+using RawRabbit.vNext;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace EESLP.Services.Scripts.API
@@ -43,9 +50,13 @@ namespace EESLP.Services.Scripts.API
                 c.SwaggerDoc("v1", new Info { Title = "Scripts.API", Version = "v1" });
             });
 
+            // Add RawRabbit
+            ConfigureRabbitMQServices(services);
+
             // Add framework services.
             services.AddMvc();
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -62,8 +73,29 @@ namespace EESLP.Services.Scripts.API
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Scripts.API v1");
             });
 
+            // Configure RabbitMQ Subscriptions
+            ConfigureRabbitMqSubscriptions(app);
+
             // Add MVC 
             app.UseMvc();
+        }
+
+        private void ConfigureRabbitMQServices(IServiceCollection services)
+        {
+            var rabbitMqOptions = new RabbitMqOptions();
+            var rabbitMqOptionsSection = Configuration.GetSection("rabbitmq");
+            rabbitMqOptionsSection.Bind(rabbitMqOptions);
+
+            // create clieit
+            var rabbitMqClient = BusClientFactory.CreateDefault(rabbitMqOptions);
+            services.Configure<RabbitMqOptions>(rabbitMqOptionsSection);
+            services.AddSingleton<IBusClient>(_ => rabbitMqClient);
+        }
+
+        private void ConfigureRabbitMqSubscriptions(IApplicationBuilder app)
+        {
+            var rabbitMqClient = app.ApplicationServices.GetService<IBusClient>();
+
         }
     }
 }

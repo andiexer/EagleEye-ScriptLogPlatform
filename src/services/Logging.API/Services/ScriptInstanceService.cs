@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using EESLP.Services.Logging.API.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 using Dapper.Contrib.Extensions;
@@ -60,6 +61,18 @@ namespace EESLP.Services.Logging.API.Services
                 db.Open();
                 UpdateAuditableFields(scriptInstance, true);
                 return (int)db.Insert<ScriptInstance>(scriptInstance);
+            }
+        }
+
+        public void DeleteByScriptId(int hostId)
+        {
+            using (var db = Connection)
+            {
+                db.Open();
+                db.Execute("DELETE FROM EESLP.ScriptInstance WHERE ScriptId = @Id ", new
+                {
+                    Id = hostId
+                });
             }
         }
     }

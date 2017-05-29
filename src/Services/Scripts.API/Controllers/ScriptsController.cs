@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EESLP.BuilidingBlocks.EventBus.Events;
 using EESLP.Services.Scripts.API.Entities;
 using EESLP.Services.Scripts.API.Infrastructure.Exceptions;
 using EESLP.Services.Scripts.API.Services;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
+using RawRabbit;
 
 namespace EESLP.Services.Scripts.API.Controllers
 {
@@ -18,11 +20,13 @@ namespace EESLP.Services.Scripts.API.Controllers
 
         private readonly IScriptService _scriptService;
         private readonly ILogger<ScriptsController> _logger;
+        private readonly IBusClient _busClient;
 
-        public ScriptsController(ILogger<ScriptsController> logger, IScriptService scriptService)
+        public ScriptsController(ILogger<ScriptsController> logger, IScriptService scriptService, IBusClient busClient)
         {
             _logger = logger;
             _scriptService = scriptService;
+            _busClient = busClient;
         }
 
         [HttpGet]
@@ -91,6 +95,8 @@ namespace EESLP.Services.Scripts.API.Controllers
                 var script = EnsureRequestScriptAvailable(id);
                 if (_scriptService.Delete(script))
                 {
+                    // send event async 
+                    _busClient.PublishAsync(new ScriptDeleted(id));
                     return NoContent();
                 }
                 return BadRequest("Error while deleting script");
