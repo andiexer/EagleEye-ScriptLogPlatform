@@ -41,12 +41,13 @@ namespace EESLP.Services.Logging.API.Controllers
         /// <response code="400">if something went really wrong</response>
         [HttpGet]
         [Route("")]
-        [ProducesResponseType(typeof(IEnumerable<ScriptInstance>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<ScriptInstanceViewModel>), 200)]
         [ProducesResponseType(typeof(object), 404)]
         [ProducesResponseType(typeof(object), 400)]
         public IActionResult Get()
         {
-            return Ok(_scriptInstanceService.GetAllScriptInstances());
+            IEnumerable<ScriptInstanceViewModel> scriptInstances = _mapper.Map<IEnumerable<ScriptInstanceViewModel>>(_scriptInstanceService.GetAllScriptInstances());
+            return Ok(scriptInstances);
         }
 
         /// <summary>
@@ -85,14 +86,14 @@ namespace EESLP.Services.Logging.API.Controllers
         /// <response code="400">if something went really wrong</response>
         [HttpGet]
         [Route("{id}", Name = "GetSingleScriptInstance")]
-        [ProducesResponseType(typeof(ScriptInstance), 200)]
+        [ProducesResponseType(typeof(ScriptInstanceViewModel), 200)]
         [ProducesResponseType(typeof(object), 404)]
         [ProducesResponseType(typeof(object), 400)]
         public IActionResult GetSingle(int id)
         {
             try
             {
-                var scriptInstance = EnsureRequestScriptInstanceAvailable(id);
+                var scriptInstance = _mapper.Map<ScriptInstanceViewModel>(EnsureRequestScriptInstanceAvailable(id));
                 return Ok(scriptInstance);
             }
             catch (EntityNotFoundException e)
@@ -145,7 +146,7 @@ namespace EESLP.Services.Logging.API.Controllers
         /// <response code="400">if something went really wrong</response>
         [HttpGet]
         [Route("{id}/logs", Name = "GetLogs")]
-        [ProducesResponseType(typeof(IEnumerable<Log>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<LogViewModel>), 200)]
         [ProducesResponseType(typeof(object), 400)]
         [ProducesResponseType(typeof(object), 404)]
         public IActionResult GetLogs(int id)
@@ -153,7 +154,8 @@ namespace EESLP.Services.Logging.API.Controllers
             try
             {
                 EnsureRequestScriptInstanceAvailable(id);
-                return Ok(_logService.GetLogsPerScriptInstance(id));
+                IEnumerable<LogViewModel> logs = _mapper.Map<IEnumerable<LogViewModel>>(_logService.GetLogsPerScriptInstance(id));
+                return Ok(logs);
             }
             catch (EntityNotFoundException e)
             {
@@ -229,12 +231,16 @@ namespace EESLP.Services.Logging.API.Controllers
                     {
                         scriptinstance.InstanceStatus = ScriptInstanceStatus.CompletedWithWarning;
                     }
+                    else
+                    {
+                        scriptinstance.InstanceStatus = ScriptInstanceStatus.Completed;
+                    }
                 }
                 else
                 {
                     scriptinstance.EndDateTime = null;
+                    scriptinstance.InstanceStatus = scriptInstanceStatus.Status;
                 }
-                scriptinstance.InstanceStatus = scriptInstanceStatus.Status;
                 if (_scriptInstanceService.Update(scriptinstance))
                 {
                     return Ok();

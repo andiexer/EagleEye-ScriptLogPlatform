@@ -11,6 +11,7 @@ using EESLP.Services.Logging.API.Services;
 using EESLP.Services.Logging.API.Infrastructure.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using AutoMapper;
+using EESLP.Services.Logging.API.Infrastructure;
 
 namespace Logging.API
 {
@@ -34,7 +35,6 @@ namespace Logging.API
             // Depencency Injection
             services.AddTransient<IScriptInstanceService, ScriptInstanceService>();
             services.AddTransient<ILogService, LogService>();
-            services.AddAutoMapper();
 
             // Configure Options
             services.Configure<DatabaseOptions>(Configuration.GetSection("Database"));
@@ -47,6 +47,7 @@ namespace Logging.API
 
             // Add framework services.
             services.AddMvc();
+            services.AddAutoMapper();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
