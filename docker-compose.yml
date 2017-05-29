@@ -13,10 +13,13 @@ services:
     environment:
      - "Database:ConnectionString=Server=mysql.data;Port=3306;Database=EESLP;Uid=root;Pwd=supersecret"
   mysql.data:
-    image: mysql
+    image: eeslp/mysql.data
     environment: 
       MYSQL_DATABASE : EESLP
       MYSQL_ROOT_PASSWORD: supersecret
+    build:
+      context: ./src/Sql
+      dockerfile: Dockerfile
     ports:
      - "3306:3306"
       
