@@ -254,6 +254,23 @@ namespace EESLP.Services.Logging.API.Controllers
             }
         }
 
+        /// <summary>
+        /// gets a list of the latest scriptinstance entries
+        /// </summary>
+        /// <param name="amount">amount of scriptinstance entries</param>
+        /// <returns>list of latest scriptinstance entries</returns>
+        /// <response code="200">returns a list of the latest scriptinstance entries</response>
+        /// <response code="400">if something went really wrong</response>
+        [HttpGet]
+        [Route("latest/{amount}")]
+        [ProducesResponseType(typeof(ScriptInstanceViewModel), 200)]
+        [ProducesResponseType(typeof(object), 400)]
+        public IActionResult GetLatestScriptInstances(int amount)
+        {
+            IEnumerable<ScriptInstanceViewModel> logs = _mapper.Map<IEnumerable<ScriptInstanceViewModel>>(_scriptInstanceService.GetLatestScriptInstances(amount));
+            return Ok(logs);
+        }
+
         #region private helpers
 
         private ScriptInstance EnsureRequestScriptInstanceAvailable(int id)

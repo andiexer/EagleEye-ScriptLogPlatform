@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Dapper.Contrib.Extensions;
 using EESLP.Services.Logging.API.Entities;
 using EESLP.Services.Logging.API.ViewModel;
+using Dapper;
 
 namespace EESLP.Services.Logging.API.Services
 {
@@ -22,6 +23,15 @@ namespace EESLP.Services.Logging.API.Services
             {
                 db.Open();
                 return db.GetAll<ScriptInstance>().ToList();
+            }
+        }
+
+        public IEnumerable<ScriptInstance> GetLatestScriptInstances(int amount)
+        {
+            using (var db = Connection)
+            {
+                db.Open();
+                return db.Query<ScriptInstance>($"SELECT * FROM ScriptInstance ORDER BY Id DESC LIMIT {amount}");
             }
         }
 
