@@ -5,6 +5,7 @@
     <RootNamespace>EESLP.Services.Scripts.API</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="Handlers\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
