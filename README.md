@@ -39,6 +39,46 @@ These instructions will get you a copy of the project up and running on your loc
 
 - .Net Core 1.1
 - Openshift (you can use minishift as a development platform on you computer)
+- Docker (incl. Docker Toolbox)
+
+### Build .net projects
+
+run the script build-bits.ps1
+
+available parameters:
+- SolutionFile (default is EESLP-DockerBITSONly.sln)
+- RemoveDockerImages (removes all running containers starting with eeslp* and all eeslp* iamges)
+
+example:
+```powershell
+build-bits.ps1 -RemoveDockerImages
+```
+
+if you wanna remove all docker containers and images only use this powershell script:
+```powershell
+remove-dockerimages.ps1
+```
+
+### build docker containers and run with docker compose
+
+go to the parent folder where the docker-compose.yml file is. build all containers with the command:
+
+```
+docker-compose build
+```
+
+and run it with following command (-d for)
+
+```
+docker-compose up -d 
+```
+
+and stop it
+
+```
+docker-compose down
+```
+
 
 ## Built With
 
