@@ -21,12 +21,14 @@ CREATE TABLE IF NOT EXISTS `EESLP`.`Script` (
 ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `EESLP`.`ScriptInstance` (
-  `Id` INT UNSIGNED NOT NULL,
+  `Id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `TransactionId` VARCHAR(150) NOT NULL,
   `HostId` INT NOT NULL,
   `ScriptId` INT NOT NULL,
   `InstanceStatus` VARCHAR(45) NOT NULL,
   `CreatedDateTime` DATETIME NOT NULL,
-  `EndDateTime` DATETIME NULL,
+  `LastModDateTime` DATETIME NOT NULL,
+  `EndDateTime` DATETIME NULL
   PRIMARY KEY (`Id`),
   UNIQUE INDEX `Id_UNIQUE` (`Id` ASC),
   INDEX `Status_INDEX` (`InstanceStatus` ASC))
