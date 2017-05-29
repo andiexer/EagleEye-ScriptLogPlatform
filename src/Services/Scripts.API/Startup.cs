@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace EESLP.Services.Scripts.API
 {
@@ -36,6 +37,12 @@ namespace EESLP.Services.Scripts.API
             // Configure Options
             services.Configure<DatabaseOptions>(Configuration.GetSection("Database"));
 
+            // Register Swagger
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Scripts.API", Version = "v1" });
+            });
+
             // Add framework services.
             services.AddMvc();
         }
@@ -46,6 +53,16 @@ namespace EESLP.Services.Scripts.API
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            // Enable Swagger Middleware
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS etc.), specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Scripts.API v1");
+            });
+
+            // Add MVC 
             app.UseMvc();
         }
     }
