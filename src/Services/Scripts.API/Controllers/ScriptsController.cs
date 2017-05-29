@@ -53,8 +53,6 @@ namespace EESLP.Services.Scripts.API.Controllers
             try
             {
                 var result = _scriptService.Add(script);
-                // TODO: remove it, test purposes only
-                _busClient.PublishAsync(new ScriptInstanceCreated(result, "fancy this is working hard!"));
                 return CreatedAtRoute(routeName: "GetSingleScript", routeValues: new { id = result }, value: null);
             }
             catch (MySqlException e)
@@ -97,6 +95,8 @@ namespace EESLP.Services.Scripts.API.Controllers
                 var script = EnsureRequestScriptAvailable(id);
                 if (_scriptService.Delete(script))
                 {
+                    // send event async 
+                    _busClient.PublishAsync(new ScriptDeleted(id));
                     return NoContent();
                 }
                 return BadRequest("Error while deleting script");

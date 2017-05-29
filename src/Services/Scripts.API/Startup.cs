@@ -50,7 +50,6 @@ namespace EESLP.Services.Scripts.API
                 c.SwaggerDoc("v1", new Info { Title = "Scripts.API", Version = "v1" });
             });
 
-
             // Add RawRabbit
             ConfigureRabbitMQServices(services);
 
@@ -91,20 +90,12 @@ namespace EESLP.Services.Scripts.API
             var rabbitMqClient = BusClientFactory.CreateDefault(rabbitMqOptions);
             services.Configure<RabbitMqOptions>(rabbitMqOptionsSection);
             services.AddSingleton<IBusClient>(_ => rabbitMqClient);
-            services.AddScoped<IEventHandler<ScriptInstanceCreated>, ScriptInstanceCreatedHandler>();
         }
 
         private void ConfigureRabbitMqSubscriptions(IApplicationBuilder app)
         {
             var rabbitMqClient = app.ApplicationServices.GetService<IBusClient>();
 
-            // scriptinstancecreated
-            var scriptInstanceCreatedHandler =
-                app.ApplicationServices.GetService<IEventHandler<ScriptInstanceCreated>>();
-            rabbitMqClient.SubscribeAsync<ScriptInstanceCreated>(async (msg, context) =>
-            {
-                await scriptInstanceCreatedHandler.HandleAsync(msg);
-            });
         }
     }
 }
