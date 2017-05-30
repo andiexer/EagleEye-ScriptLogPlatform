@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using EESLP.BuilidingBlocks.EventBus.Events;
 using EESLP.BuilidingBlocks.EventBus.Options;
 using EESLP.Services.Scripts.API.Infrastructure.Options;
@@ -12,6 +14,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
 using RawRabbit;
 using RawRabbit.Configuration;
 using RawRabbit.vNext;
@@ -47,6 +50,9 @@ namespace EESLP.Services.Scripts.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Scripts.API", Version = "v1" });
+                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+                var xmlPath = Path.Combine(basePath, "EESLP.Services.Scripts.API.xml");
+                c.IncludeXmlComments(xmlPath);
             });
 
             // Add RawRabbit
@@ -54,6 +60,9 @@ namespace EESLP.Services.Scripts.API
 
             // Add framework services.
             services.AddMvc();
+
+            // Add AutoMapper
+            services.AddAutoMapper(typeof(Startup));
         }
 
 

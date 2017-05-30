@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using EESLP.Services.Scripts.API.Entities;
 using EESLP.Services.Scripts.API.Infrastructure.Exceptions;
 using EESLP.Services.Scripts.API.Services;
+using EESLP.Services.Scripts.API.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
+using RawRabbit;
 
 namespace EESLP.Services.Scripts.API.Controllers
 {
@@ -18,21 +21,44 @@ namespace EESLP.Services.Scripts.API.Controllers
 
         private readonly IHostService _hostService;
         private readonly ILogger<HostsController> _logger;
+        private readonly IBusClient _busClient;
+        private readonly IMapper _mapper;
 
-        public HostsController(ILogger<HostsController> logger, IHostService hostService)
+        public HostsController(ILogger<HostsController> logger, IHostService hostService, IBusClient busClient, IMapper mapper)
         {
             _logger = logger;
             _hostService = hostService;
+            _busClient = busClient;
+            _mapper = mapper;
         }
 
+        /// <summary>
+        /// get a list of all hosts
+        /// </summary>
+        /// <returns>list of hosts</returns>
+        /// <response code="200">if hosts are found</response>
+        /// <response code="400">if something went really wrong</response>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Host>),200)]
+        [ProducesResponseType(typeof(object), 400)]
         public IActionResult Get()
         {
-            return  Ok(_hostService.GetAllHosts());
+            return Ok(_mapper.Map<IEnumerable<Host>, IEnumerable<HostViewModel>>(_hostService.GetAllHosts()));
         }
 
+        /// <summary>
+        /// returns a single host
+        /// </summary>
+        /// <param name="id">id of the host</param>
+        /// <returns>single host</returns>
+        /// <response code="200">if host was found</response>
+        /// <response code="404">if host was not found</response>
+        /// <response code="400">if something went really wrong</response>
         [HttpGet]
         [Route("{id}", Name = "GetSingleHost")]
+        [ProducesResponseType(typeof(HostViewModel),200)]
+        [ProducesResponseType(typeof(object), 404)]
+        [ProducesResponseType(typeof(object), 400)]
         public IActionResult GetSingle(int id)
         {
             var host = _hostService.GetHostById(id);
@@ -40,15 +66,24 @@ namespace EESLP.Services.Scripts.API.Controllers
             {
                 return NotFound();
             }
-            return Ok(host);       
+            return Ok(_mapper.Map<Host, HostViewModel>(host));       
         }
 
+        /// <summary>
+        /// create a host
+        /// </summary>
+        /// <param name="model">host informations</param>
+        /// <returns>201 created with location</returns>
+        /// <response code="201">response header location with its newly location</response>
+        /// <response code="400">if something went really wrong</response>
         [HttpPost]
-        public IActionResult Create([FromBody]Host host)
+        [ProducesResponseType(typeof(object), 201)]
+        [ProducesResponseType(typeof(object), 400)]
+        public IActionResult Create([FromBody]HostAddModel model)
         {
             try
             {
-                var result = _hostService.Add(host);
+                var result = _hostService.Add(_mapper.Map<HostAddModel, Host>(model));
                 return CreatedAtRoute(routeName: "GetSingleHost", routeValues: new {id = result}, value: null);
             }
             catch (MySqlException e)
@@ -59,6 +94,12 @@ namespace EESLP.Services.Scripts.API.Controllers
            
         }
 
+        /// <summary>
+        /// updates a host
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="host"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public IActionResult Update(int id, [FromBody]Host host)
         {
@@ -83,6 +124,11 @@ namespace EESLP.Services.Scripts.API.Controllers
             }
         }
 
+        /// <summary>
+        /// deletes a host
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
