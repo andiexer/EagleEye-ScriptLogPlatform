@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EESLP.BuilidingBlocks.EventBus.Events;
 using EESLP.Services.Logging.API.Entities;
 using EESLP.Services.Logging.API.Enums;
 using EESLP.Services.Logging.API.Infrastructure.Exceptions;
@@ -9,6 +10,7 @@ using EESLP.Services.Logging.API.ViewModel.Errors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
+using RawRabbit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,13 +25,15 @@ namespace EESLP.Services.Logging.API.Controllers
         private readonly ILogService _logService;
         private readonly ILogger<ScriptInstancesController> _logger;
         private readonly IMapper _mapper;
+        private readonly IBusClient _busClient;
 
-        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService, IMapper mapper, ILogService logService)
+        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService, IMapper mapper, ILogService logService, IBusClient busClient)
         {
             _logger = logger;
             _scriptInstanceService = scriptInstanceService;
             _mapper = mapper;
             _logService = logService;
+            _busClient = busClient;
         }
 
         /// <summary>
@@ -67,6 +71,7 @@ namespace EESLP.Services.Logging.API.Controllers
                 scriptInstance.InstanceStatus = scriptInstance.InstanceStatus ?? ScriptInstanceStatus.Created;
                 ScriptInstance newScriptInstance = _mapper.Map<ScriptInstance>(scriptInstance);
                 var result = _scriptInstanceService.Add(newScriptInstance);
+                _busClient.PublishAsync(new ScriptInstanceCreated(result));
                 return CreatedAtRoute(routeName: "GetSingleScriptInstance", routeValues: new { id = result }, value: null);
             }
             catch (MySqlException e)
@@ -225,14 +230,17 @@ namespace EESLP.Services.Logging.API.Controllers
                     if (_logService.GetLogsPerScriptInstance(id, Enums.LogLevel.Error) != null 
                         && _logService.GetLogsPerScriptInstance(id, Enums.LogLevel.Fatal) != null)
                     {
+                        _busClient.PublishAsync(new ScriptInstanceCompleted(id, ScriptInstanceStatus.CompletedWithError.ToString()));
                         scriptinstance.InstanceStatus = ScriptInstanceStatus.CompletedWithError;
                     }
                     else if (_logService.GetLogsPerScriptInstance(id, Enums.LogLevel.Warning) != null)
                     {
+                        _busClient.PublishAsync(new ScriptInstanceCompleted(id, ScriptInstanceStatus.CompletedWithWarning.ToString()));
                         scriptinstance.InstanceStatus = ScriptInstanceStatus.CompletedWithWarning;
                     }
                     else
                     {
+                        _busClient.PublishAsync(new ScriptInstanceCompleted(id, ScriptInstanceStatus.Completed.ToString()));
                         scriptinstance.InstanceStatus = ScriptInstanceStatus.Completed;
                     }
                 }
