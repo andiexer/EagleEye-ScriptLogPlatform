@@ -67,6 +67,7 @@ namespace EESLP.Services.Logging.API.Controllers
         {
             try
             {
+                // TODO: Add script and host verification
                 scriptInstance.TransactionId = scriptInstance.TransactionId ?? TransactionUtil.CreateTransactionId();
                 scriptInstance.InstanceStatus = scriptInstance.InstanceStatus ?? ScriptInstanceStatus.Created;
                 ScriptInstance newScriptInstance = _mapper.Map<ScriptInstance>(scriptInstance);
@@ -230,17 +231,14 @@ namespace EESLP.Services.Logging.API.Controllers
                     if (_logService.GetLogsPerScriptInstance(id, Enums.LogLevel.Error) != null 
                         && _logService.GetLogsPerScriptInstance(id, Enums.LogLevel.Fatal) != null)
                     {
-                        _busClient.PublishAsync(new ScriptInstanceCompleted(id, ScriptInstanceStatus.CompletedWithError.ToString()));
                         scriptinstance.InstanceStatus = ScriptInstanceStatus.CompletedWithError;
                     }
                     else if (_logService.GetLogsPerScriptInstance(id, Enums.LogLevel.Warning) != null)
                     {
-                        _busClient.PublishAsync(new ScriptInstanceCompleted(id, ScriptInstanceStatus.CompletedWithWarning.ToString()));
                         scriptinstance.InstanceStatus = ScriptInstanceStatus.CompletedWithWarning;
                     }
                     else
                     {
-                        _busClient.PublishAsync(new ScriptInstanceCompleted(id, ScriptInstanceStatus.Completed.ToString()));
                         scriptinstance.InstanceStatus = ScriptInstanceStatus.Completed;
                     }
                 }
@@ -251,6 +249,10 @@ namespace EESLP.Services.Logging.API.Controllers
                 }
                 if (_scriptInstanceService.Update(scriptinstance))
                 {
+                    if (scriptinstance.EndDateTime != null)
+                    {
+                        _busClient.PublishAsync(new ScriptInstanceCompleted(id, scriptinstance.InstanceStatus.ToString()));
+                    }
                     return Ok();
                 }
                 return BadRequest($"There was an error on updating status");

@@ -96,7 +96,7 @@ namespace Logging.API
         {
             var rabbitMqClient = app.ApplicationServices.GetService<IBusClient>();
 
-            // scriptinstancecreated
+            // scriptdeleted
             var scriptDeletedHandler =
                 app.ApplicationServices.GetService<IEventHandler<ScriptDeleted>>();
             rabbitMqClient.SubscribeAsync<ScriptDeleted>(async (msg, context) =>
