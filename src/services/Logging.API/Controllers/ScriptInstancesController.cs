@@ -65,7 +65,7 @@ namespace EESLP.Services.Logging.API.Controllers
             {
                 scriptInstance.TransactionId = scriptInstance.TransactionId ?? TransactionUtil.CreateTransactionId();
                 scriptInstance.InstanceStatus = scriptInstance.InstanceStatus ?? ScriptInstanceStatus.Created;
-                ScriptInstance newScriptInstance = _mapper.Map<ScriptInstanceAddModel, ScriptInstance>(scriptInstance);
+                ScriptInstance newScriptInstance = _mapper.Map<ScriptInstance>(scriptInstance);
                 var result = _scriptInstanceService.Add(newScriptInstance);
                 return CreatedAtRoute(routeName: "GetSingleScriptInstance", routeValues: new { id = result }, value: null);
             }
