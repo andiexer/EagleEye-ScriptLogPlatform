@@ -45,7 +45,16 @@ namespace EESLP.Services.Scripts.API.Controllers
         [ProducesResponseType(typeof(object), 400)]
         public IActionResult Get()
         {
-            return Ok(_mapper.Map<IEnumerable<Script>, IEnumerable<ScriptViewModel>>(_scriptService.GetAllScripts()));
+            try
+            {
+                return Ok(
+                    _mapper.Map<IEnumerable<Script>, IEnumerable<ScriptViewModel>>(_scriptService.GetAllScripts()));
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+            
         }
 
         /// <summary>
@@ -61,12 +70,20 @@ namespace EESLP.Services.Scripts.API.Controllers
         [ProducesResponseType(typeof(object), 404)]
         public IActionResult GetSingle(int id)
         {
-            var script = _scriptService.GetScriptById(id);
-            if (script == null)
+            try
             {
-                return NotFound();
+                var script = _scriptService.GetScriptById(id);
+                if (script == null)
+                {
+                    return NotFound();
+                }
+                return Ok(_mapper.Map<Script, ScriptViewModel>(script));
             }
-            return Ok(_mapper.Map<Script, ScriptViewModel>(script));
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+            
         }
 
         /// <summary>

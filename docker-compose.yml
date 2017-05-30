@@ -12,6 +12,7 @@ services:
      - "5001:80"
     environment:
      - "Database:ConnectionString=Server=mysql.data;Port=3306;Database=EESLP;Uid=root;Pwd=supersecret"
+     - "RabbitMq:Hostname=rabbit.eventbus"
   logging.api:
     image: eeslp/logging.api
     build:
@@ -23,6 +24,7 @@ services:
      - "5002:80"
     environment:
      - "Database:ConnectionString=Server=mysql.data;Port=3306;Database=EESLP;Uid=root;Pwd=supersecret"
+     - "RabbitMq:Hostname=rabbit.eventbus"
   mysql.data:
     image: eeslp/mysql.data
     environment: 
@@ -33,4 +35,14 @@ services:
       dockerfile: Dockerfile
     ports:
      - "3306:3306"
-      
+  rabbit.eventbus:
+    image: "rabbitmq:3-management"
+    hostname: "rabbitmq"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "ASDSGSKEDJLHXCAKGHJSC"
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"

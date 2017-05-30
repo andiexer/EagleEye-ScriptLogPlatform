@@ -6,6 +6,7 @@ using AutoMapper;
 using EESLP.BuilidingBlocks.EventBus.Events;
 using EESLP.Services.Scripts.API.Entities;
 using EESLP.Services.Scripts.API.Infrastructure.Exceptions;
+using EESLP.Services.Scripts.API.Infrastructure.Filters;
 using EESLP.Services.Scripts.API.Services;
 using EESLP.Services.Scripts.API.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -44,7 +45,15 @@ namespace EESLP.Services.Scripts.API.Controllers
         [ProducesResponseType(typeof(object), 400)]
         public IActionResult Get()
         {
-            return Ok(_mapper.Map<IEnumerable<Host>, IEnumerable<HostViewModel>>(_hostService.GetAllHosts()));
+            try
+            {
+                return Ok(_mapper.Map<IEnumerable<Host>, IEnumerable<HostViewModel>>(_hostService.GetAllHosts()));
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+            
         }
 
         /// <summary>
@@ -62,12 +71,20 @@ namespace EESLP.Services.Scripts.API.Controllers
         [ProducesResponseType(typeof(object), 400)]
         public IActionResult GetSingle(int id)
         {
-            var host = _hostService.GetHostById(id);
-            if (host == null)
+            try
             {
-                return NotFound();
+                var host = _hostService.GetHostById(id);
+                if (host == null)
+                {
+                    return NotFound();
+                }
+                return Ok(_mapper.Map<Host, HostViewModel>(host));
             }
-            return Ok(_mapper.Map<Host, HostViewModel>(host));       
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+              
         }
 
         /// <summary>
@@ -80,6 +97,7 @@ namespace EESLP.Services.Scripts.API.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(object), 201)]
         [ProducesResponseType(typeof(object), 400)]
+        [ValidateModelFilter]
         public IActionResult Create([FromBody]HostAddModel model)
         {
             try
