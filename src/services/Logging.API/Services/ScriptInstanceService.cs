@@ -32,7 +32,7 @@ namespace EESLP.Services.Logging.API.Services
             using (var db = Connection)
             {
                 db.Open();
-                return db.Query<ScriptInstance>($"SELECT * FROM ScriptInstance ORDER BY Id DESC LIMIT {amount}");
+                return db.Query<ScriptInstance>($"SELECT * FROM EESLP.ScriptInstance ORDER BY Id DESC LIMIT {amount}");
             }
         }
 
@@ -74,14 +74,26 @@ namespace EESLP.Services.Logging.API.Services
             }
         }
 
-        public void DeleteByScriptId(int hostId)
+        public void DeleteByScriptId(int scriptid)
         {
             using (var db = Connection)
             {
                 db.Open();
                 db.Execute("DELETE FROM EESLP.ScriptInstance WHERE ScriptId = @Id ", new
                 {
-                    Id = hostId
+                    Id = scriptid
+                });
+            }
+        }
+
+        public void DeleteByHostId(int hostid)
+        {
+            using (var db = Connection)
+            {
+                db.Open();
+                db.Execute("DELETE FROM EESLP.ScriptInstance WHERE HostId = @Id", new
+                {
+                    Id = hostid
                 });
             }
         }
