@@ -14,10 +14,10 @@ namespace EESLP.Services.Scripts.API.Infrastructure
         {
             CreateMap<ScriptAddModel, Script>();
             CreateMap<Script, ScriptViewModel>();
-            CreateMap<ScriptUpdateModel, Script>()
-                .ForMember(s => s.Description, map => map.MapFrom(vm => vm.Description));
+            CreateMap<ScriptUpdateModel, Script>();
             CreateMap<Host, HostViewModel>();
             CreateMap<HostAddModel, Host>();
+            CreateMap<HostUpdateModel, Host>();
         }
     }
 }

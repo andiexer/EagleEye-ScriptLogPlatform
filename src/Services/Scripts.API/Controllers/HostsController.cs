@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using EESLP.BuilidingBlocks.EventBus.Events;
 using EESLP.Services.Scripts.API.Entities;
 using EESLP.Services.Scripts.API.Infrastructure.Exceptions;
 using EESLP.Services.Scripts.API.Services;
@@ -97,17 +98,23 @@ namespace EESLP.Services.Scripts.API.Controllers
         /// <summary>
         /// updates a host
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="host"></param>
-        /// <returns></returns>
+        /// <param name="id">id of the host</param>
+        /// <param name="host">host informations</param>
+        /// <returns>returns 200 ok</returns>
+        /// <response code="200">if update was successfull</response>
+        /// <response code="404">if host was not found</response>
+        /// <response code="400">if something went really wrong</response>
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody]Host host)
+        [ProducesResponseType(typeof(object), 200)]
+        [ProducesResponseType(typeof(object), 404)]
+        [ProducesResponseType(typeof(object), 400)]
+        public IActionResult Update(int id, [FromBody]HostUpdateModel model)
         {
             try
             {
                 var existingHost = EnsureRequestHostAvailable(id);
-                host.Id = existingHost.Id;
-                if (_hostService.Update(host))
+                existingHost = _mapper.Map<HostUpdateModel, Host>(model, existingHost);
+                if (_hostService.Update(existingHost))
                 {
                     return Ok();
                 }
@@ -127,9 +134,15 @@ namespace EESLP.Services.Scripts.API.Controllers
         /// <summary>
         /// deletes a host
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">id of the host</param>
+        /// <returns>returns 204 no content if successfull</returns>
+        /// <response code="204">if delete was successfull</response>
+        /// <response code="404">if host was not found</response>
+        /// <response code="400">if something went really wrong</response>
         [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(object), 204)]
+        [ProducesResponseType(typeof(object), 404)]
+        [ProducesResponseType(typeof(object), 400)]
         public IActionResult Delete(int id)
         {
             try
@@ -137,6 +150,7 @@ namespace EESLP.Services.Scripts.API.Controllers
                 var host = EnsureRequestHostAvailable(id);
                 if (_hostService.Delete(host))
                 {
+                    _busClient.PublishAsync(new HostDeleted(id));
                     return NoContent();
                 }
                 return BadRequest("Error while deleting host");
