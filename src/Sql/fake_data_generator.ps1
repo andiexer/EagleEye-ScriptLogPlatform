@@ -10,8 +10,8 @@ $minLogsPerInstance = 10
 $maxLogsPerInstance = 200
 $nameList = @(Get-Content .\namelist.txt)
 $sqlExport = @()
-$instanceStatus = @("Running","CompletedWithErrors","Completed","CompletedWithWarnings","TimedOut")
-$logLevel = @("Debug","Error","Warning","Info","Fatal")
+$instanceStatus = @("0","1","2","3","4")
+$logLevel = @("0","1","2","3","4")
 $usedServerNames = @()
 
 function get-RandomName {

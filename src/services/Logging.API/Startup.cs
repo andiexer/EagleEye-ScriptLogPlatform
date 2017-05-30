@@ -85,7 +85,7 @@ namespace Logging.API
             var rabbitMqOptionsSection = Configuration.GetSection("rabbitmq");
             rabbitMqOptionsSection.Bind(rabbitMqOptions);
 
-            // create clieit
+            // create client
             var rabbitMqClient = BusClientFactory.CreateDefault(rabbitMqOptions);
             services.Configure<RabbitMqOptions>(rabbitMqOptionsSection);
             services.AddSingleton<IBusClient>(_ => rabbitMqClient);
