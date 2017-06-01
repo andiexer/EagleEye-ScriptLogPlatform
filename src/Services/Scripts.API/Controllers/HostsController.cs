@@ -9,6 +9,7 @@ using EESLP.Services.Scripts.API.Infrastructure.Exceptions;
 using EESLP.Services.Scripts.API.Infrastructure.Extensions;
 using EESLP.Services.Scripts.API.Infrastructure.Filters;
 using EESLP.Services.Scripts.API.Services;
+using EESLP.Services.Scripts.API.Utils;
 using EESLP.Services.Scripts.API.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
@@ -108,7 +109,7 @@ namespace EESLP.Services.Scripts.API.Controllers
             try
             {
 
-                var host = _cache.TryGetOrAdd($"host-apikey-{apiKey}", () => _hostService.GetHostByApiKey(apiKey));
+                var host = _cache.TryGetOrAdd(CacheUtil.BuildCacheKey(new [] { "host", "apikey", apiKey }),() => _hostService.GetHostByApiKey(apiKey));
                 if (host == null)
                 {
                     return NotFound();
@@ -203,6 +204,7 @@ namespace EESLP.Services.Scripts.API.Controllers
                 var host = EnsureRequestHostAvailable(id);
                 if (_hostService.Delete(host))
                 {
+                    _cache.Remove(CacheUtil.BuildCacheKey(new[] {"host","apikey",host.ApiKey}));
                     _busClient.PublishAsync(new HostDeleted(id));
                     return NoContent();
                 }
