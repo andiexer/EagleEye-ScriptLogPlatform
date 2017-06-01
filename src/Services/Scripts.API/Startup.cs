@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using EESLP.BuilidingBlocks.EventBus.Events;
 using EESLP.BuilidingBlocks.EventBus.Options;
+using EESLP.Services.Scripts.API.Infrastructure.Extensions;
 using EESLP.Services.Scripts.API.Infrastructure.Options;
 using EESLP.Services.Scripts.API.Services;
 using Microsoft.AspNetCore.Builder;
@@ -15,6 +16,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
+using Polly;
+using RabbitMQ.Client.Exceptions;
 using RawRabbit;
 using RawRabbit.Configuration;
 using RawRabbit.vNext;
@@ -63,6 +66,13 @@ namespace EESLP.Services.Scripts.API
 
             // Add AutoMapper
             services.AddAutoMapper(typeof(Startup));
+
+            // Add distributed cache
+            services.AddDistributedRedisCache(options =>
+            {
+                options.Configuration = Configuration["Services:redis.cache"];
+                options.ResolveDns();
+            });
         }
 
 
@@ -96,10 +106,18 @@ namespace EESLP.Services.Scripts.API
             rabbitMqOptions.Hostnames.Clear();
             rabbitMqOptions.Hostnames.Add(rabbitMqOptions.Hostname);
 
+            var retryPolicy = Policy
+                .Handle<ConnectFailureException>()
+                .WaitAndRetry(10, i => TimeSpan.FromSeconds(1));
+
             // create clieit
-            var rabbitMqClient = BusClientFactory.CreateDefault(rabbitMqOptions);
-            services.Configure<RabbitMqOptions>(rabbitMqOptionsSection);
-            services.AddSingleton<IBusClient>(_ => rabbitMqClient);
+            retryPolicy.Execute(() =>
+            {
+                var rabbitMqClient = BusClientFactory.CreateDefault(rabbitMqOptions);
+                services.Configure<RabbitMqOptions>(rabbitMqOptionsSection);
+                services.AddSingleton<IBusClient>(_ => rabbitMqClient);
+            });
+
         }
 
         private void ConfigureRabbitMqSubscriptions(IApplicationBuilder app)

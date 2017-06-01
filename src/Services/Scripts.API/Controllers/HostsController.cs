@@ -6,11 +6,13 @@ using AutoMapper;
 using EESLP.BuilidingBlocks.EventBus.Events;
 using EESLP.Services.Scripts.API.Entities;
 using EESLP.Services.Scripts.API.Infrastructure.Exceptions;
+using EESLP.Services.Scripts.API.Infrastructure.Extensions;
 using EESLP.Services.Scripts.API.Infrastructure.Filters;
 using EESLP.Services.Scripts.API.Services;
 using EESLP.Services.Scripts.API.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using RawRabbit;
@@ -25,13 +27,15 @@ namespace EESLP.Services.Scripts.API.Controllers
         private readonly ILogger<HostsController> _logger;
         private readonly IBusClient _busClient;
         private readonly IMapper _mapper;
+        private readonly IDistributedCache _cache;
 
-        public HostsController(ILogger<HostsController> logger, IHostService hostService, IBusClient busClient, IMapper mapper)
+        public HostsController(ILogger<HostsController> logger, IHostService hostService, IBusClient busClient, IMapper mapper, IDistributedCache cache)
         {
             _logger = logger;
             _hostService = hostService;
             _busClient = busClient;
             _mapper = mapper;
+            _cache = cache;
         }
 
         /// <summary>
@@ -65,7 +69,7 @@ namespace EESLP.Services.Scripts.API.Controllers
         /// <response code="404">if host was not found</response>
         /// <response code="400">if something went really wrong</response>
         [HttpGet]
-        [Route("{id}", Name = "GetSingleHost")]
+        [Route("{id:int}", Name = "GetSingleHost")]
         [ProducesResponseType(typeof(HostViewModel),200)]
         [ProducesResponseType(typeof(object), 404)]
         [ProducesResponseType(typeof(object), 400)]
@@ -85,6 +89,37 @@ namespace EESLP.Services.Scripts.API.Controllers
                 return BadRequest();
             }
               
+        }
+
+        /// <summary>
+        /// get a host by its api key
+        /// </summary>
+        /// <param name="apiKey">api key</param>
+        /// <returns>hostviewmodel</returns>
+        /// <response code="200">returns hostviewmodel</response>
+        /// <response code="404">if host was not found</response>
+        /// <response code="400">if something went really wrong</response>
+        [HttpGet("apikey/{apiKey}")]
+        [ProducesResponseType(typeof(HostViewModel), 200)]
+        [ProducesResponseType(typeof(object), 404)]
+        [ProducesResponseType(typeof(object), 400)]
+        public IActionResult GetHostByApiKey(string apiKey)
+        {
+            try
+            {
+
+                var host = _cache.TryGetOrAdd($"host-apikey-{apiKey}", () => _hostService.GetHostByApiKey(apiKey));
+                if (host == null)
+                {
+                    return NotFound();
+                }
+                return Ok(_mapper.Map<Host, HostViewModel>(host));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"EEOR while fetching data from cache: {e.Message}");
+                return BadRequest();
+            }
         }
 
         /// <summary>
