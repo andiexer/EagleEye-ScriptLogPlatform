@@ -15,6 +15,7 @@ services:
      - "Database:ConnectionString=Server=mysql.data;Port=3306;Database=EESLP;Uid=root;Pwd=supersecret"
      - "RabbitMq:Hostname=rabbit.eventbus"
      - "Services:redis.cache=redis.cache"
+    entrypoint: dockerize -wait tcp://rabbit.eventbus:5672 -wait http://rabbit.eventbus:15672 -wait tcp://redis.cache:6379 -timeout 20s dotnet EESLP.Services.Scripts.API.dll
   logging.api:
     image: eeslp/logging.api
     build:

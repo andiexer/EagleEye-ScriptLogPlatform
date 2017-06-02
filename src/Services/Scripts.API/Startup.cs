@@ -106,17 +106,21 @@ namespace EESLP.Services.Scripts.API
             rabbitMqOptions.Hostnames.Clear();
             rabbitMqOptions.Hostnames.Add(rabbitMqOptions.Hostname);
 
-            var retryPolicy = Policy
-                .Handle<ConnectFailureException>()
-                .WaitAndRetry(10, i => TimeSpan.FromSeconds(1));
+            var rabbitMqClient = BusClientFactory.CreateDefault(rabbitMqOptions);
+            services.Configure<RabbitMqOptions>(rabbitMqOptionsSection);
+            services.AddSingleton<IBusClient>(_ => rabbitMqClient);
 
-            // create clieit
-            retryPolicy.Execute(() =>
-            {
-                var rabbitMqClient = BusClientFactory.CreateDefault(rabbitMqOptions);
-                services.Configure<RabbitMqOptions>(rabbitMqOptionsSection);
-                services.AddSingleton<IBusClient>(_ => rabbitMqClient);
-            });
+            //var retryPolicy = Policy
+            //    .Handle<ConnectFailureException>()
+            //    .WaitAndRetry(10, i => TimeSpan.FromSeconds(1));
+
+            //// create clieit
+            //retryPolicy.Execute(() =>
+            //{
+            //    var rabbitMqClient = BusClientFactory.CreateDefault(rabbitMqOptions);
+            //    services.Configure<RabbitMqOptions>(rabbitMqOptionsSection);
+            //    services.AddSingleton<IBusClient>(_ => rabbitMqClient);
+            //});
 
         }
 
