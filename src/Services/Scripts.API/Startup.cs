@@ -109,19 +109,6 @@ namespace EESLP.Services.Scripts.API
             var rabbitMqClient = BusClientFactory.CreateDefault(rabbitMqOptions);
             services.Configure<RabbitMqOptions>(rabbitMqOptionsSection);
             services.AddSingleton<IBusClient>(_ => rabbitMqClient);
-
-            //var retryPolicy = Policy
-            //    .Handle<ConnectFailureException>()
-            //    .WaitAndRetry(10, i => TimeSpan.FromSeconds(1));
-
-            //// create clieit
-            //retryPolicy.Execute(() =>
-            //{
-            //    var rabbitMqClient = BusClientFactory.CreateDefault(rabbitMqOptions);
-            //    services.Configure<RabbitMqOptions>(rabbitMqOptionsSection);
-            //    services.AddSingleton<IBusClient>(_ => rabbitMqClient);
-            //});
-
         }
 
         private void ConfigureRabbitMqSubscriptions(IApplicationBuilder app)
