@@ -82,8 +82,10 @@ namespace Logging.API
         private void ConfigureRabbitMQServices(IServiceCollection services)
         {
             var rabbitMqOptions = new RabbitMqOptions();
-            var rabbitMqOptionsSection = Configuration.GetSection("rabbitmq");
+            var rabbitMqOptionsSection = Configuration.GetSection("RabbitMq");
             rabbitMqOptionsSection.Bind(rabbitMqOptions);
+            rabbitMqOptions.Hostnames.Clear();
+            rabbitMqOptions.Hostnames.Add(rabbitMqOptions.Hostname);
 
             // create client
             var rabbitMqClient = BusClientFactory.CreateDefault(rabbitMqOptions);

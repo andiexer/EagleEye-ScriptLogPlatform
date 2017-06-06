@@ -9,6 +9,9 @@ wwwroot/
 #git add -f EESLP-DockerBITSOnly.sln
 *.sln
 
+# ignore appsettings.development.json 
+appsettings.development.json
+
 Project_Readme.html
 
 ## Ignore Visual Studio temporary files, build results, and
