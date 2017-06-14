@@ -17,6 +17,7 @@ using EESLP.Services.Logging.API.Handlers;
 using RawRabbit;
 using RawRabbit.vNext;
 using EESLP.Services.Logging.API.Infrastructure;
+using EESLP.BuildingBlocks.Resilence.Http;
 
 namespace Logging.API
 {
@@ -40,9 +41,13 @@ namespace Logging.API
             // Depencency Injection
             services.AddTransient<IScriptInstanceService, ScriptInstanceService>();
             services.AddTransient<ILogService, LogService>();
+            services.AddSingleton<IHttpApiClient, StandardHttpClient>();
 
             // Configure Options
             services.Configure<DatabaseOptions>(Configuration.GetSection("Database"));
+            services.Configure<ApiOptions>(options => {
+                options.ScriptsApiUrl = Configuration.GetSection("Services:scripts.api").Value;
+            });
 
             // Register Swagger
             services.AddSwaggerGen(c =>

@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Resilence.Http\Resilence.Http.csproj" />
   </ItemGroup>
 
 </Project>

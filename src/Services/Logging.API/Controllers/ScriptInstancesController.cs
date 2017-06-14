@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EESLP.BuildingBlocks.Resilence.Http;
 
 namespace EESLP.Services.Logging.API.Controllers
 {
@@ -26,14 +27,16 @@ namespace EESLP.Services.Logging.API.Controllers
         private readonly ILogger<ScriptInstancesController> _logger;
         private readonly IMapper _mapper;
         private readonly IBusClient _busClient;
+        private readonly IHttpApiClient _http;
 
-        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService, IMapper mapper, ILogService logService, IBusClient busClient)
+        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService, IMapper mapper, ILogService logService, IBusClient busClient, IHttpApiClient http)
         {
             _logger = logger;
             _scriptInstanceService = scriptInstanceService;
             _mapper = mapper;
             _logService = logService;
             _busClient = busClient;
+            _http = http;
         }
 
         /// <summary>
@@ -79,6 +82,11 @@ namespace EESLP.Services.Logging.API.Controllers
             {
                 _logger.LogError($"Error while adding host to database: {e.Message}");
                 return BadRequest("Error while adding host to database");
+            }
+            catch (EntityNotFoundException e)
+            {
+                _logger.LogError($"Script or Host entity not found: {e.Message}");
+                return BadRequest($"Script or Host entity not found");
             }
         }
 
