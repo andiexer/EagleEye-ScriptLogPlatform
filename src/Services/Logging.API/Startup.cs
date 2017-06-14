@@ -18,6 +18,8 @@ using RawRabbit;
 using RawRabbit.vNext;
 using EESLP.Services.Logging.API.Infrastructure;
 using EESLP.BuildingBlocks.Resilence.Http;
+using Microsoft.Extensions.PlatformAbstractions;
+using System.IO;
 
 namespace Logging.API
 {
@@ -53,6 +55,9 @@ namespace Logging.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Logging.API", Version = "v1" });
+                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+                var xmlPath = Path.Combine(basePath, "EESLP.Services.Logging.API.xml");
+                c.IncludeXmlComments(xmlPath);
             });
 
             // Add RawRabbit
