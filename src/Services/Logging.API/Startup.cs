@@ -17,6 +17,9 @@ using EESLP.Services.Logging.API.Handlers;
 using RawRabbit;
 using RawRabbit.vNext;
 using EESLP.Services.Logging.API.Infrastructure;
+using EESLP.BuildingBlocks.Resilence.Http;
+using Microsoft.Extensions.PlatformAbstractions;
+using System.IO;
 
 namespace Logging.API
 {
@@ -40,14 +43,21 @@ namespace Logging.API
             // Depencency Injection
             services.AddTransient<IScriptInstanceService, ScriptInstanceService>();
             services.AddTransient<ILogService, LogService>();
+            services.AddSingleton<IHttpApiClient, StandardHttpClient>();
 
             // Configure Options
             services.Configure<DatabaseOptions>(Configuration.GetSection("Database"));
+            services.Configure<ApiOptions>(options => {
+                options.ScriptsApiUrl = Configuration.GetSection("Services:scripts.api").Value;
+            });
 
             // Register Swagger
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Logging.API", Version = "v1" });
+                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+                var xmlPath = Path.Combine(basePath, "EESLP.Services.Logging.API.xml");
+                c.IncludeXmlComments(xmlPath);
             });
 
             // Add RawRabbit
@@ -98,7 +108,7 @@ namespace Logging.API
         {
             var rabbitMqClient = app.ApplicationServices.GetService<IBusClient>();
 
-            // scriptinstancecreated
+            // scriptdeleted
             var scriptDeletedHandler =
                 app.ApplicationServices.GetService<IEventHandler<ScriptDeleted>>();
             rabbitMqClient.SubscribeAsync<ScriptDeleted>(async (msg, context) =>

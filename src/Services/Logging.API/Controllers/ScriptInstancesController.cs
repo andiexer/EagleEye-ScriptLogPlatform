@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EESLP.BuilidingBlocks.EventBus.Events;
 using EESLP.Services.Logging.API.Entities;
 using EESLP.Services.Logging.API.Enums;
 using EESLP.Services.Logging.API.Infrastructure.Exceptions;
@@ -9,10 +10,12 @@ using EESLP.Services.Logging.API.ViewModel.Errors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
+using RawRabbit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EESLP.BuildingBlocks.Resilence.Http;
 
 namespace EESLP.Services.Logging.API.Controllers
 {
@@ -23,13 +26,17 @@ namespace EESLP.Services.Logging.API.Controllers
         private readonly ILogService _logService;
         private readonly ILogger<ScriptInstancesController> _logger;
         private readonly IMapper _mapper;
+        private readonly IBusClient _busClient;
+        private readonly IHttpApiClient _http;
 
-        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService, IMapper mapper, ILogService logService)
+        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService, IMapper mapper, ILogService logService, IBusClient busClient, IHttpApiClient http)
         {
             _logger = logger;
             _scriptInstanceService = scriptInstanceService;
             _mapper = mapper;
             _logService = logService;
+            _busClient = busClient;
+            _http = http;
         }
 
         /// <summary>
@@ -63,16 +70,23 @@ namespace EESLP.Services.Logging.API.Controllers
         {
             try
             {
+                // TODO: Add script and host verification
                 scriptInstance.TransactionId = scriptInstance.TransactionId ?? TransactionUtil.CreateTransactionId();
                 scriptInstance.InstanceStatus = scriptInstance.InstanceStatus ?? ScriptInstanceStatus.Created;
                 ScriptInstance newScriptInstance = _mapper.Map<ScriptInstance>(scriptInstance);
                 var result = _scriptInstanceService.Add(newScriptInstance);
+                _busClient.PublishAsync(new ScriptInstanceCreated(result));
                 return CreatedAtRoute(routeName: "GetSingleScriptInstance", routeValues: new { id = result }, value: null);
             }
             catch (MySqlException e)
             {
                 _logger.LogError($"Error while adding host to database: {e.Message}");
                 return BadRequest("Error while adding host to database");
+            }
+            catch (EntityNotFoundException e)
+            {
+                _logger.LogError($"Script or Host entity not found: {e.Message}");
+                return BadRequest($"Script or Host entity not found");
             }
         }
 
@@ -243,6 +257,10 @@ namespace EESLP.Services.Logging.API.Controllers
                 }
                 if (_scriptInstanceService.Update(scriptinstance))
                 {
+                    if (scriptinstance.EndDateTime != null)
+                    {
+                        _busClient.PublishAsync(new ScriptInstanceCompleted(id, scriptinstance.InstanceStatus.ToString()));
+                    }
                     return Ok();
                 }
                 return BadRequest($"There was an error on updating status");
