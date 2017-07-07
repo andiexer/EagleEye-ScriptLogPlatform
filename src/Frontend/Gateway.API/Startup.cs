@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +9,7 @@ using EESLP.BuildingBlocks.Resilence.Http;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
 using EESLP.Frontend.Gateway.API.Infrastructure.Options;
+using EESLP.Frontend.Gateway.API.Infrastructure.Extensions;
 
 namespace EESLP.Frontend.Gateway.API
 {
@@ -55,6 +52,13 @@ namespace EESLP.Frontend.Gateway.API
             // Add framework services.
             services.AddMvc();
             services.AddAutoMapper();
+
+            // Add distributed cache
+            services.AddDistributedRedisCache(options =>
+            {
+                options.Configuration = Configuration["Services:redis.cache"];
+                options.ResolveDns();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
