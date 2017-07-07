@@ -107,8 +107,8 @@ namespace EESLP.Services.Scripts.API.Controllers
             }
             catch (MySqlException e)
             {
-                _logger.LogError($"Error while adding host to database: {e.Message}");
-                return BadRequest("Error while adding host to database");
+                _logger.LogError($"Error while adding script to database: {e.Message}");
+                return BadRequest("Error while adding script to database");
             }
 
         }
@@ -151,7 +151,7 @@ namespace EESLP.Services.Scripts.API.Controllers
         }
 
         /// <summary>
-        /// delete a script instance
+        /// delete a script
         /// this will also raise a integration event for other microservices
         /// default wil delete all script instances associated with it
         /// </summary>
