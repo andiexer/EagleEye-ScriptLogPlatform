@@ -50,7 +50,6 @@ namespace EESLP.Frontend.Gateway.API.Controllers
             {
                 return BadRequest(e.Message);
             }
-
         }
 
         /// <summary>
