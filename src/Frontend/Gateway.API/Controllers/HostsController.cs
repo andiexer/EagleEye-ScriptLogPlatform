@@ -47,7 +47,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                var result = _http.GetAsync(_apiOptions.ScriptsApiUrl + "/api/Hosts", Request.Headers["Pagination"], null, null).Result;
+                var result = _http.GetAsync(_apiOptions.ScriptsApiUrl + "/api/Hosts" + Request.QueryString.Value, Request.Headers["Pagination"], null, null).Result;
                 IEnumerable<string> headerValues;
                 if (result.Headers.TryGetValues("Pagination", out headerValues))
                 {

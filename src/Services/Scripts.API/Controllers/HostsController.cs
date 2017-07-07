@@ -63,18 +63,17 @@ namespace EESLP.Services.Scripts.API.Controllers
                 }
                 int currentPage = page;
                 int currentPageSize = pageSize;
-                var totalHosts = _hostService.GetNumberOfAllHosts();
+                var totalHosts = _hostService.GetNumberOfAllHosts(Request.Query["hostname"]);
                 var totalPages = (int)Math.Ceiling((double)totalHosts / pageSize);
                 
                 Response.AddPagination(page, pageSize, totalHosts, totalPages);
 
-                return Ok(_mapper.Map<IEnumerable<Host>, IEnumerable<HostViewModel>>(_hostService.GetAllHosts((currentPage - 1) * currentPageSize, currentPageSize)));
+                return Ok(_mapper.Map<IEnumerable<Host>, IEnumerable<HostViewModel>>(_hostService.GetAllHosts(Request.Query["hostname"], (currentPage - 1) * currentPageSize, currentPageSize)));
             }
             catch (Exception e)
             {
                 return BadRequest();
             }
-            
         }
 
         /// <summary>

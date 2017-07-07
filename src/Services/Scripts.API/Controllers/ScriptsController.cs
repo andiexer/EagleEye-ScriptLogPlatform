@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using RawRabbit;
 using EESLP.Services.Scripts.API.Infrastructure.Extensions;
+using Microsoft.Extensions.Primitives;
 
 namespace EESLP.Services.Scripts.API.Controllers
 {
@@ -59,13 +60,13 @@ namespace EESLP.Services.Scripts.API.Controllers
                 }
                 int currentPage = page;
                 int currentPageSize = pageSize;
-                var totalScripts = _scriptService.GetNumberOfAllScripts();
+                var totalScripts = _scriptService.GetNumberOfAllScripts(Request.Query["scriptname"]);
                 var totalPages = (int)Math.Ceiling((double)totalScripts / pageSize);
 
                 Response.AddPagination(page, pageSize, totalScripts, totalPages);
 
                 return Ok(
-                    _mapper.Map<IEnumerable<Script>, IEnumerable<ScriptViewModel>>(_scriptService.GetAllScripts((currentPage - 1) * currentPageSize, currentPageSize)));
+                    _mapper.Map<IEnumerable<Script>, IEnumerable<ScriptViewModel>>(_scriptService.GetAllScripts(Request.Query["scriptname"], (currentPage - 1) * currentPageSize, currentPageSize)));
             }
             catch (Exception e)
             {

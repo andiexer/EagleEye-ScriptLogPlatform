@@ -44,12 +44,22 @@ namespace EESLP.Services.Logging.API.Services
             }
         }
 
-        public IEnumerable<Log> GetLogsPerScriptInstance(int id, int skipNumber, int takeNumber)
+        public IEnumerable<Log> GetLogsPerScriptInstance(int id, LogLevel? logLevel, string text, int skipNumber, int takeNumber)
         {
+            text = text == null ? "" : text;
+            string query;
+            if (logLevel == null)
+            {
+                query = $"SELECT LogLevel, LogText, ScriptInstanceId, LogDateTime FROM Log WHERE ScriptInstanceId = {id} AND LogText LIKE CONCAT(\"%\",@text,\"%\")ORDER BY Id DESC LIMIT {skipNumber},{takeNumber}";
+            }
+            else
+            {
+                query = $"SELECT LogLevel, LogText, ScriptInstanceId, LogDateTime FROM Log WHERE ScriptInstanceId = {id} AND LogLevel = {(int)logLevel} AND LogText LIKE CONCAT(\"%\",@text,\"%\") ORDER BY Id DESC LIMIT {skipNumber},{takeNumber}";
+            }
             using (var db = Connection)
             {
                 db.Open();
-                return db.Query<Log>($"SELECT LogLevel, LogText, ScriptInstanceId, LogDateTime FROM Log WHERE ScriptInstanceId = {id} ORDER BY Id DESC LIMIT {skipNumber},{takeNumber}");
+                return db.Query<Log>(query, new { text = text });
             }
         }
         

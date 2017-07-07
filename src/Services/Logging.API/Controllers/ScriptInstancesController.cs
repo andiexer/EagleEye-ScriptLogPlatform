@@ -196,10 +196,17 @@ namespace EESLP.Services.Logging.API.Controllers
                 int currentPageSize = pageSize;
                 var totalLogs = _logService.GetNumberOfLogsPerScriptInstance(id);
                 var totalPages = (int)Math.Ceiling((double)totalLogs / pageSize);
-
-
+                
                 EnsureRequestScriptInstanceAvailable(id);
-                IEnumerable<LogViewModel> logs = _mapper.Map<IEnumerable<LogViewModel>>(_logService.GetLogsPerScriptInstance(id, (currentPage - 1) * currentPageSize, currentPageSize));
+                
+                Enums.LogLevel? queryLogLevel = null;
+                Enums.LogLevel parseLogLevel;
+                if (Enum.TryParse<Enums.LogLevel>(Request.Query["logLevel"], out parseLogLevel))
+                {
+                    queryLogLevel = parseLogLevel;
+                }
+                IEnumerable<LogViewModel> logs = _mapper.Map<IEnumerable<LogViewModel>>(_logService.GetLogsPerScriptInstance(id, queryLogLevel, Request.Query["text"], (currentPage - 1) * currentPageSize, currentPageSize));
+                
                 Response.AddPagination(page, pageSize, totalLogs, totalPages);
                 return Ok(logs);
             }

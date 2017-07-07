@@ -8,8 +8,8 @@ namespace EESLP.Services.Scripts.API.Services
 {
     public interface IScriptService
     {
-        IEnumerable<Script> GetAllScripts(int skipNumber, int takeNumber);
-        int GetNumberOfAllScripts();
+        IEnumerable<Script> GetAllScripts(string scriptname, int skipNumber, int takeNumber);
+        int GetNumberOfAllScripts(string scriptname);
         Script GetScriptById(int id);
         bool Update(Script script);
         bool Delete(Script script);

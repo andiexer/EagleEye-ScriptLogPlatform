@@ -8,8 +8,8 @@ namespace EESLP.Services.Scripts.API.Services
 {
     public interface IHostService
     {
-        IEnumerable<Host> GetAllHosts(int skipNumber, int takeNumber);
-        int GetNumberOfAllHosts();
+        IEnumerable<Host> GetAllHosts(string hostname, int skipNumber, int takeNumber);
+        int GetNumberOfAllHosts(string hostname);
         Host GetHostById(int id);
         Host GetHostByApiKey(string apiKey);
         bool Update(Host host);

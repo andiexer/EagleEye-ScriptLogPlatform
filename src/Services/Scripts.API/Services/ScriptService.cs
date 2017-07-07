@@ -16,20 +16,23 @@ namespace EESLP.Services.Scripts.API.Services
         {
         }
 
-        public IEnumerable<Script> GetAllScripts(int skipNumber, int takeNumber)
+        public IEnumerable<Script> GetAllScripts(string scriptname, int skipNumber, int takeNumber)
         {
+            scriptname = scriptname == null ? "" : scriptname;
             using (var db = Connection)
             {
                 db.Open();
-                return db.Query<Script>($"SELECT * FROM Script LIMIT {skipNumber},{takeNumber}");
+                var result = db.Query<Script>($"SELECT * FROM Script WHERE Scriptname LIKE CONCAT(\"%\",@scriptname,\"%\") LIMIT {skipNumber},{takeNumber}", new { scriptname = scriptname });
+                return result;
             }
         }
-        public int GetNumberOfAllScripts()
+        public int GetNumberOfAllScripts(string scriptname)
         {
+            scriptname = scriptname == null ? "" : scriptname;
             using (var db = Connection)
             {
                 db.Open();
-                return db.Query<int>($"SELECT COUNT(*) FROM Script").ToArray()[0];
+                return db.Query<int>($"SELECT COUNT(*) FROM Script WHERE Scriptname LIKE CONCAT(\"%\",@scriptname,\"%\")", new { scriptname = scriptname }).ToArray()[0];
             }
         }
 
