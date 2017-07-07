@@ -7,6 +7,7 @@ using EESLP.Frontend.Gateway.API.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,14 +16,14 @@ using System.Threading.Tasks;
 namespace EESLP.Frontend.Gateway.API.Controllers
 {
     [Route("api/[controller]")]
-    public class HostsController : Controller
+    public class ScriptsController : Controller
     {
-        private readonly ILogger<HostsController> _logger;
+        private readonly ILogger<ScriptsController> _logger;
         private readonly IMapper _mapper;
         private readonly IHttpApiClient _http;
         private readonly ApiOptions _apiOptions;
 
-        public HostsController(ILogger<HostsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions)
+        public ScriptsController(ILogger<ScriptsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions)
         {
             _logger = logger;
             _mapper = mapper;
@@ -31,20 +32,20 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         }
 
         /// <summary>
-        /// get a list of all hosts
+        /// gets a list of all scripts
         /// </summary>
-        /// <returns>list of hosts</returns>
-        /// <response code="200">if hosts are found</response>
+        /// <returns>list of all scripts</returns>
+        /// <response code="200">returns a list of all scripts</response>
         /// <response code="400">if something went really wrong</response>
         [HttpGet]
         [Route("")]
-        [ProducesResponseType(typeof(IEnumerable<Host>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<Script>), 200)]
         [ProducesResponseType(typeof(object), 400)]
         public IActionResult Get()
         {
             try
             {
-                return Ok(_http.GetAsync<IEnumerable<Host>>(_apiOptions.ScriptsApiUrl + "/api/Hosts").Result);
+                return Ok(_http.GetAsync<IEnumerable<Script>>(_apiOptions.ScriptsApiUrl + "/api/Scripts").Result);
             }
             catch (Exception e)
             {
@@ -54,23 +55,22 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         }
 
         /// <summary>
-        /// returns a single host
+        /// get a single script
         /// </summary>
-        /// <param name="id">id of the host</param>
-        /// <returns>single host</returns>
-        /// <response code="200">if host was found</response>
-        /// <response code="404">if host was not found</response>
-        /// <response code="400">if something went really wrong</response>
+        /// <param name="id">id of the script</param>
+        /// <returns>single script</returns>
+        /// <response code="200">returns a single script</response>
+        /// <response code="404">if script was not found</response>
         [HttpGet]
-        [Route("{id:int}", Name = "GetSingleHost")]
-        [ProducesResponseType(typeof(Host), 200)]
+        [Route("{id:int}", Name = "GetSingleScript")]
+        [ProducesResponseType(typeof(Script), 200)]
         [ProducesResponseType(typeof(object), 404)]
         [ProducesResponseType(typeof(object), 400)]
         public IActionResult GetSingle(int id)
         {
             try
             {
-                var host = _http.GetAsync<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + id).Result;
+                var host = _http.GetAsync<Script>(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + id).Result;
                 if (host == null)
                 {
                     return NotFound();
@@ -81,25 +81,24 @@ namespace EESLP.Frontend.Gateway.API.Controllers
             {
                 return BadRequest(e.Message);
             }
-
         }
 
         /// <summary>
-        /// create a host
+        /// create a script
         /// </summary>
-        /// <param name="model">host informations</param>
-        /// <returns>201 created with location</returns>
-        /// <response code="201">response header location with its newly location</response>
+        /// <param name="model">model with script informations</param>
+        /// <returns>201 created if successfull</returns>
+        /// <response code="201">returns location header with actual location</response>
         /// <response code="400">if something went really wrong</response>
         [HttpPost]
         [ProducesResponseType(typeof(object), 201)]
         [ProducesResponseType(typeof(object), 400)]
         [ValidateModelFilter]
-        public IActionResult Create([FromBody]HostAddModel model)
+        public IActionResult Create([FromBody]ScriptAddModel model)
         {
             try
             {
-                var result = _http.PostAsync(_apiOptions.ScriptsApiUrl + "/api/Hosts", model).Result;
+                var result = _http.PostAsync(_apiOptions.ScriptsApiUrl + "/api/Scripts", model).Result;
                 if (result.StatusCode == System.Net.HttpStatusCode.Created)
                 {
                     return Created(result.Headers.Location, null);
@@ -117,27 +116,26 @@ namespace EESLP.Frontend.Gateway.API.Controllers
             {
                 return BadRequest(e.Message);
             }
-
         }
 
         /// <summary>
-        /// updates a host
+        /// updates a script
         /// </summary>
-        /// <param name="id">id of the host</param>
-        /// <param name="host">host informations</param>
+        /// <param name="id">id of the script</param>
+        /// <param name="model">script data</param>
         /// <returns>returns 200 ok</returns>
         /// <response code="200">if update was successfull</response>
-        /// <response code="404">if host was not found</response>
+        /// <response code="404">if script was not found</response>
         /// <response code="400">if something went really wrong</response>
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(object), 200)]
         [ProducesResponseType(typeof(object), 404)]
         [ProducesResponseType(typeof(object), 400)]
-        public IActionResult Update(int id, [FromBody]HostUpdateModel model)
+        public IActionResult Update(int id, [FromBody]ScriptUpdateModel model)
         {
             try
             {
-                var result = _http.PutAsync<HostUpdateModel>(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + id, model).Result;
+                var result = _http.PutAsync(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + id, model).Result;
                 if (result.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     return Ok();
@@ -162,12 +160,14 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         }
 
         /// <summary>
-        /// deletes a host
+        /// delete a script
+        /// this will also raise a integration event for other microservices
+        /// default wil delete all script instances associated with it
         /// </summary>
-        /// <param name="id">id of the host</param>
-        /// <returns>returns 204 no content if successfull</returns>
-        /// <response code="204">if delete was successfull</response>
-        /// <response code="404">if host was not found</response>
+        /// <param name="id">id of the script</param>
+        /// <returns>returns 200 ok</returns>
+        /// <response code="204">if script was successfully deleted</response>
+        /// <response code="404">if script was not found</response>
         /// <response code="400">if something went really wrong</response>
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(object), 204)]
@@ -177,7 +177,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                var result = _http.DeleteAsync(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + id).Result;
+                var result = _http.DeleteAsync(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + id).Result;
                 if (result.StatusCode == System.Net.HttpStatusCode.NoContent)
                 {
                     return NoContent();
