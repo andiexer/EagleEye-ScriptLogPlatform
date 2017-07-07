@@ -9,7 +9,8 @@ namespace EESLP.Services.Logging.API.Services
 {
     public interface ILogService
     {
-        IEnumerable<Log> GetLogsPerScriptInstance(int id);
+        IEnumerable<Log> GetLogsPerScriptInstance(int id, int skipNumber, int takeNumber);
+        int GetNumberOfLogsPerScriptInstance(int id);
         IEnumerable<Log> GetLogsPerScriptInstance(int id, LogLevel logLevel);
         IEnumerable<Log> GetLatestLogs(int amount);
         int Add(Log log);

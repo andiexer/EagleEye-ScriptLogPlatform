@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using RawRabbit;
+using EESLP.Services.Scripts.API.Infrastructure.Extensions;
 
 namespace EESLP.Services.Scripts.API.Controllers
 {
@@ -25,6 +26,8 @@ namespace EESLP.Services.Scripts.API.Controllers
         private readonly ILogger<ScriptsController> _logger;
         private readonly IBusClient _busClient;
         private readonly IMapper _mapper;
+        int page = 1;
+        int pageSize = 10;
 
         public ScriptsController(ILogger<ScriptsController> logger, IScriptService scriptService, IBusClient busClient, IMapper mapper)
         {
@@ -47,8 +50,22 @@ namespace EESLP.Services.Scripts.API.Controllers
         {
             try
             {
+                var pagination = Request.Headers["Pagination"];
+                if (!string.IsNullOrEmpty(pagination))
+                {
+                    string[] vals = pagination.ToString().Split(',');
+                    int.TryParse(vals[0], out page);
+                    int.TryParse(vals[1], out pageSize);
+                }
+                int currentPage = page;
+                int currentPageSize = pageSize;
+                var totalScripts = _scriptService.GetNumberOfAllScripts();
+                var totalPages = (int)Math.Ceiling((double)totalScripts / pageSize);
+
+                Response.AddPagination(page, pageSize, totalScripts, totalPages);
+
                 return Ok(
-                    _mapper.Map<IEnumerable<Script>, IEnumerable<ScriptViewModel>>(_scriptService.GetAllScripts()));
+                    _mapper.Map<IEnumerable<Script>, IEnumerable<ScriptViewModel>>(_scriptService.GetAllScripts((currentPage - 1) * currentPageSize, currentPageSize)));
             }
             catch (Exception e)
             {

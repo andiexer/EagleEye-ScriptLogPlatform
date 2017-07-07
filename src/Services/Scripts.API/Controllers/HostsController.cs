@@ -29,6 +29,8 @@ namespace EESLP.Services.Scripts.API.Controllers
         private readonly IBusClient _busClient;
         private readonly IMapper _mapper;
         private readonly IDistributedCache _cache;
+        int page = 1;
+        int pageSize = 10;
 
         public HostsController(ILogger<HostsController> logger, IHostService hostService, IBusClient busClient, IMapper mapper, IDistributedCache cache)
         {
@@ -52,7 +54,21 @@ namespace EESLP.Services.Scripts.API.Controllers
         {
             try
             {
-                return Ok(_mapper.Map<IEnumerable<Host>, IEnumerable<HostViewModel>>(_hostService.GetAllHosts()));
+                var pagination = Request.Headers["Pagination"];
+                if (!string.IsNullOrEmpty(pagination))
+                {
+                    string[] vals = pagination.ToString().Split(',');
+                    int.TryParse(vals[0], out page);
+                    int.TryParse(vals[1], out pageSize);
+                }
+                int currentPage = page;
+                int currentPageSize = pageSize;
+                var totalHosts = _hostService.GetNumberOfAllHosts();
+                var totalPages = (int)Math.Ceiling((double)totalHosts / pageSize);
+                
+                Response.AddPagination(page, pageSize, totalHosts, totalPages);
+
+                return Ok(_mapper.Map<IEnumerable<Host>, IEnumerable<HostViewModel>>(_hostService.GetAllHosts((currentPage - 1) * currentPageSize, currentPageSize)));
             }
             catch (Exception e)
             {

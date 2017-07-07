@@ -45,7 +45,14 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                return Ok(_http.GetAsync<IEnumerable<Script>>(_apiOptions.ScriptsApiUrl + "/api/Scripts").Result);
+                var result = _http.GetAsync(_apiOptions.ScriptsApiUrl + "/api/Scripts", Request.Headers["Pagination"], null, null).Result;
+                IEnumerable<string> headerValues;
+                if (result.Headers.TryGetValues("Pagination", out headerValues))
+                {
+                    Response.Headers.Add("Pagination", headerValues.First());
+                }
+
+                return Ok(result.StatusCode != System.Net.HttpStatusCode.OK ? default(IEnumerable<Script>) : JsonConvert.DeserializeObject<IEnumerable<Script>>(result.Content.ReadAsStringAsync().Result));
             }
             catch (Exception e)
             {

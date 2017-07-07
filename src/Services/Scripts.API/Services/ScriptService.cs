@@ -6,6 +6,7 @@ using Dapper.Contrib.Extensions;
 using EESLP.Services.Scripts.API.Entities;
 using EESLP.Services.Scripts.API.Infrastructure.Options;
 using Microsoft.Extensions.Options;
+using Dapper;
 
 namespace EESLP.Services.Scripts.API.Services
 {
@@ -15,12 +16,20 @@ namespace EESLP.Services.Scripts.API.Services
         {
         }
 
-        public IEnumerable<Script> GetAllScripts()
+        public IEnumerable<Script> GetAllScripts(int skipNumber, int takeNumber)
         {
             using (var db = Connection)
             {
                 db.Open();
-                return db.GetAll<Script>().ToList();
+                return db.Query<Script>($"SELECT * FROM Script LIMIT {skipNumber},{takeNumber}");
+            }
+        }
+        public int GetNumberOfAllScripts()
+        {
+            using (var db = Connection)
+            {
+                db.Open();
+                return db.Query<int>($"SELECT COUNT(*) FROM Script").ToArray()[0];
             }
         }
 

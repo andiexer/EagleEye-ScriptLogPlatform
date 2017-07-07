@@ -7,9 +7,12 @@ using EESLP.Frontend.Gateway.API.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace EESLP.Frontend.Gateway.API.Controllers
@@ -44,7 +47,14 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                return Ok(_http.GetAsync<IEnumerable<Host>>(_apiOptions.ScriptsApiUrl + "/api/Hosts").Result);
+                var result = _http.GetAsync(_apiOptions.ScriptsApiUrl + "/api/Hosts", Request.Headers["Pagination"], null, null).Result;
+                IEnumerable<string> headerValues;
+                if (result.Headers.TryGetValues("Pagination", out headerValues))
+                {
+                    Response.Headers.Add("Pagination", headerValues.First());
+                }
+                
+                return Ok(result.StatusCode != HttpStatusCode.OK ? default(IEnumerable<Host>) : JsonConvert.DeserializeObject<IEnumerable<Host>>(result.Content.ReadAsStringAsync().Result));
             }
             catch (Exception e)
             {

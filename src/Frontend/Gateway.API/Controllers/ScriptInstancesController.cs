@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,7 +52,15 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                var scriptinstances = _http.GetAsync<IEnumerable<ScriptInstance>>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances").Result;
+                var scriptinstancesResponse = _http.GetAsync(_apiOptions.LoggingApiUrl + "/api/ScriptInstances", Request.Headers["Pagination"], null, null).Result;
+                IEnumerable<string> headerValues;
+                if (scriptinstancesResponse.Headers.TryGetValues("Pagination", out headerValues))
+                {
+                    Response.Headers.Add("Pagination", headerValues.First());
+                }
+
+                var scriptinstances = scriptinstancesResponse.StatusCode != System.Net.HttpStatusCode.OK ? default(IEnumerable<ScriptInstance>) : JsonConvert.DeserializeObject<IEnumerable<ScriptInstance>>(scriptinstancesResponse.Content.ReadAsStringAsync().Result);
+
                 var result = new List<ScriptInstanceViewModel>(scriptinstances.Count());
                 foreach (var scriptinstance in scriptinstances)
                 {
@@ -130,8 +139,14 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                var logs = _http.GetAsync<IEnumerable<Log>>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id + "/logs").Result;
-                return Ok(logs);
+                var result = _http.GetAsync(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id + "/logs", Request.Headers["Pagination"], null, null).Result;
+                IEnumerable<string> headerValues;
+                if (result.Headers.TryGetValues("Pagination", out headerValues))
+                {
+                    Response.Headers.Add("Pagination", headerValues.First());
+                }
+
+                return Ok(result.StatusCode != System.Net.HttpStatusCode.OK ? default(IEnumerable<Log>) : JsonConvert.DeserializeObject<IEnumerable<Log>>(result.Content.ReadAsStringAsync().Result));
             }
             catch (Exception e)
             {

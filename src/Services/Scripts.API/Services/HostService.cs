@@ -21,12 +21,21 @@ namespace EESLP.Services.Scripts.API.Services
         {
         }
 
-        public IEnumerable<Host> GetAllHosts()
+        public IEnumerable<Host> GetAllHosts(int skipNumber, int takeNumber)
         {
             using (var db = Connection)
             {
                 db.Open();
-                return db.GetAll<Host>().ToList();
+                return db.Query<Host>($"SELECT * FROM Host LIMIT {skipNumber},{takeNumber}");
+            }
+        }
+
+        public int GetNumberOfAllHosts()
+        {
+            using (var db = Connection)
+            {
+                db.Open();
+                return db.Query<int>($"SELECT COUNT(*) FROM Host").ToArray()[0];
             }
         }
 

@@ -35,15 +35,24 @@ namespace EESLP.Services.Logging.API.Services
             }
         }
 
-        public IEnumerable<Log> GetLogsPerScriptInstance(int id)
+        public int GetNumberOfLogsPerScriptInstance(int id)
         {
             using (var db = Connection)
             {
                 db.Open();
-                return db.Query<Log>($"SELECT LogLevel, LogText, ScriptInstanceId, LogDateTime FROM Log WHERE ScriptInstanceId = {id} ORDER BY Id DESC");
+                return db.Query<int>($"SELECT COUNT(*) FROM Log WHERE ScriptInstanceId = {id}").ToArray()[0];
             }
         }
 
+        public IEnumerable<Log> GetLogsPerScriptInstance(int id, int skipNumber, int takeNumber)
+        {
+            using (var db = Connection)
+            {
+                db.Open();
+                return db.Query<Log>($"SELECT LogLevel, LogText, ScriptInstanceId, LogDateTime FROM Log WHERE ScriptInstanceId = {id} ORDER BY Id DESC LIMIT {skipNumber},{takeNumber}");
+            }
+        }
+        
         public IEnumerable<Log> GetLogsPerScriptInstance(int id, LogLevel logLevel)
         {
             using (var db = Connection)
@@ -52,5 +61,6 @@ namespace EESLP.Services.Logging.API.Services
                 return db.Query<Log>($"SELECT LogLevel, LogText, ScriptInstanceId, LogDateTime FROM Log WHERE ScriptInstanceId = {id} AND LogLevel = {(int)logLevel} ORDER BY Id DESC");
             }
         }
+
     }
 }

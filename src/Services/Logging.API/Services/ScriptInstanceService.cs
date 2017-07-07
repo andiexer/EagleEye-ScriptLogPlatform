@@ -24,12 +24,21 @@ namespace EESLP.Services.Logging.API.Services
             _apiOptions = apiOptions.Value;
         }
 
-        public IEnumerable<ScriptInstance> GetAllScriptInstances()
+        public IEnumerable<ScriptInstance> GetAllScriptInstances(int skipNumber, int takeNumber)
         {
             using (var db = Connection)
             {
                 db.Open();
-                return db.GetAll<ScriptInstance>().ToList();
+                return db.Query<ScriptInstance>($"SELECT * FROM EESLP.ScriptInstance LIMIT {skipNumber},{takeNumber}");
+            }
+        }
+
+        public int GetNumberOfScriptInstances()
+        {
+            using (var db = Connection)
+            {
+                db.Open();
+                return db.Query<int>($"SELECT COUNT(*) FROM EESLP.ScriptInstance").ToArray()[0];
             }
         }
 
@@ -130,5 +139,6 @@ namespace EESLP.Services.Logging.API.Services
             var script = _http.GetStringAsync(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + hostid).Result;
             return script != null && script != "";
         }
+
     }
 }

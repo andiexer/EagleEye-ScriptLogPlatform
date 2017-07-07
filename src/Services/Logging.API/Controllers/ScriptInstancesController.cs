@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EESLP.BuildingBlocks.Resilence.Http;
+using EESLP.Services.Logging.API.Infrastructure.Extensions;
 
 namespace EESLP.Services.Logging.API.Controllers
 {
@@ -28,6 +29,8 @@ namespace EESLP.Services.Logging.API.Controllers
         private readonly IMapper _mapper;
         private readonly IBusClient _busClient;
         private readonly IHttpApiClient _http;
+        int page = 1;
+        int pageSize = 10;
 
         public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService, IMapper mapper, ILogService logService, IBusClient busClient, IHttpApiClient http)
         {
@@ -53,7 +56,22 @@ namespace EESLP.Services.Logging.API.Controllers
         [ProducesResponseType(typeof(object), 400)]
         public IActionResult Get()
         {
-            IEnumerable<ScriptInstanceViewModel> scriptInstances = _mapper.Map<IEnumerable<ScriptInstanceViewModel>>(_scriptInstanceService.GetAllScriptInstances());
+            var pagination = Request.Headers["Pagination"];
+            if (!string.IsNullOrEmpty(pagination))
+            {
+                string[] vals = pagination.ToString().Split(',');
+                int.TryParse(vals[0], out page);
+                int.TryParse(vals[1], out pageSize);
+            }
+            int currentPage = page;
+            int currentPageSize = pageSize;
+            var totalScriptInstances = _scriptInstanceService.GetNumberOfScriptInstances();
+            var totalPages = (int)Math.Ceiling((double)totalScriptInstances / pageSize);
+
+            IEnumerable<ScriptInstanceViewModel> scriptInstances = _mapper.Map<IEnumerable<ScriptInstanceViewModel>>(_scriptInstanceService.GetAllScriptInstances((currentPage - 1) * currentPageSize, currentPageSize));
+
+            Response.AddPagination(page, pageSize, totalScriptInstances, totalPages);
+
             return Ok(scriptInstances);
         }
 
@@ -167,8 +185,22 @@ namespace EESLP.Services.Logging.API.Controllers
         {
             try
             {
+                var pagination = Request.Headers["Pagination"];
+                if (!string.IsNullOrEmpty(pagination))
+                {
+                    string[] vals = pagination.ToString().Split(',');
+                    int.TryParse(vals[0], out page);
+                    int.TryParse(vals[1], out pageSize);
+                }
+                int currentPage = page;
+                int currentPageSize = pageSize;
+                var totalLogs = _logService.GetNumberOfLogsPerScriptInstance(id);
+                var totalPages = (int)Math.Ceiling((double)totalLogs / pageSize);
+
+
                 EnsureRequestScriptInstanceAvailable(id);
-                IEnumerable<LogViewModel> logs = _mapper.Map<IEnumerable<LogViewModel>>(_logService.GetLogsPerScriptInstance(id));
+                IEnumerable<LogViewModel> logs = _mapper.Map<IEnumerable<LogViewModel>>(_logService.GetLogsPerScriptInstance(id, (currentPage - 1) * currentPageSize, currentPageSize));
+                Response.AddPagination(page, pageSize, totalLogs, totalPages);
                 return Ok(logs);
             }
             catch (EntityNotFoundException e)
