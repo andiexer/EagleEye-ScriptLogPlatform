@@ -10,6 +10,7 @@ namespace EESLP.Services.Scripts.API.Services
     {
         IEnumerable<Script> GetAllScripts(string scriptname, int skipNumber, int takeNumber);
         int GetNumberOfAllScripts(string scriptname);
+        IEnumerable<int> GetAllScriptIds(string scriptname);
         Script GetScriptById(int id);
         bool Update(Script script);
         bool Delete(Script script);

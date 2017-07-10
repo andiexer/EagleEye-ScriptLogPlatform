@@ -31,6 +31,16 @@ namespace EESLP.Services.Scripts.API.Services
             }
         }
 
+        public IEnumerable<int> GetAllHostIDs(string hostname)
+        {
+            hostname = hostname == null ? "" : hostname;
+            using (var db = Connection)
+            {
+                db.Open();
+                return db.Query<int>($"SELECT Id FROM Host WHERE hostname LIKE CONCAT(\"%\",@hostname,\"%\")", new { hostname = hostname });
+            }
+        }
+
         public int GetNumberOfAllHosts(string hostname)
         {
             hostname = hostname == null ? "" : hostname;

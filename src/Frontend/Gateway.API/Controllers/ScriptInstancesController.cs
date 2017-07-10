@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EESLP.BuildingBlocks.Resilence.Http;
 using EESLP.Frontend.Gateway.API.Entities;
+using EESLP.Frontend.Gateway.API.Enums;
 using EESLP.Frontend.Gateway.API.Infrastructure.Extensions;
 using EESLP.Frontend.Gateway.API.Infrastructure.Options;
 using EESLP.Frontend.Gateway.API.Utils;
@@ -48,11 +49,11 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<ScriptInstanceViewModel>), 200)]
         [ProducesResponseType(typeof(object), 404)]
         [ProducesResponseType(typeof(object), 400)]
-        public IActionResult Get()
+        public IActionResult Get(string hostname, string scriptname, ScriptInstanceStatus[] status, DateTime? from, DateTime? to)
         {
             try
             {
-                var scriptinstancesResponse = _http.GetAsync(_apiOptions.LoggingApiUrl + "/api/ScriptInstances", Request.Headers["Pagination"], null, null).Result;
+                var scriptinstancesResponse = _http.GetAsync(_apiOptions.LoggingApiUrl + "/api/ScriptInstances" + Request.QueryString.Value, Request.Headers["Pagination"], null, null).Result;
                 IEnumerable<string> headerValues;
                 if (scriptinstancesResponse.Headers.TryGetValues("Pagination", out headerValues))
                 {
@@ -132,21 +133,21 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         /// <response code="400">if something went really wrong</response>
         [HttpGet]
         [Route("{id}/logs", Name = "GetLogs")]
-        [ProducesResponseType(typeof(IEnumerable<Log>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<LogViewModel>), 200)]
         [ProducesResponseType(typeof(object), 400)]
         [ProducesResponseType(typeof(object), 404)]
-        public IActionResult GetLogs(int id)
+        public IActionResult GetLogs(int id, Enums.LogLevel[] logLevel, string logText)
         {
             try
             {
-                var result = _http.GetAsync(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id + "/logs", Request.Headers["Pagination"], null, null).Result;
+                var result = _http.GetAsync(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id + "/logs" + Request.QueryString.Value, Request.Headers["Pagination"], null, null).Result;
                 IEnumerable<string> headerValues;
                 if (result.Headers.TryGetValues("Pagination", out headerValues))
                 {
                     Response.Headers.Add("Pagination", headerValues.First());
                 }
 
-                return Ok(result.StatusCode != System.Net.HttpStatusCode.OK ? default(IEnumerable<Log>) : JsonConvert.DeserializeObject<IEnumerable<Log>>(result.Content.ReadAsStringAsync().Result));
+                return Ok(result.StatusCode != System.Net.HttpStatusCode.OK ? default(IEnumerable<LogViewModel>) : JsonConvert.DeserializeObject<IEnumerable<LogViewModel>>(result.Content.ReadAsStringAsync().Result));
             }
             catch (Exception e)
             {

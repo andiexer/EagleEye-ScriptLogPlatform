@@ -11,6 +11,7 @@ using EESLP.Services.Logging.API.ViewModel;
 using Dapper;
 using EESLP.BuildingBlocks.Resilence.Http;
 using EESLP.Services.Logging.API.Infrastructure.Exceptions;
+using EESLP.Services.Logging.API.Enums;
 
 namespace EESLP.Services.Logging.API.Services
 {
@@ -24,21 +25,26 @@ namespace EESLP.Services.Logging.API.Services
             _apiOptions = apiOptions.Value;
         }
 
-        public IEnumerable<ScriptInstance> GetAllScriptInstances(int skipNumber, int takeNumber)
+        public IEnumerable<ScriptInstance> GetAllScriptInstances(ScriptInstanceStatus[] status, string hostname, string scriptname, DateTime? from, DateTime? to, int skipNumber, int takeNumber)
         {
+            string query = $"SELECT * FROM EESLP.ScriptInstance ";
+            query += getScriptInstanceWhereQuery(status, hostname, scriptname, from, to);
+            query += $"LIMIT {skipNumber},{takeNumber}";
             using (var db = Connection)
             {
                 db.Open();
-                return db.Query<ScriptInstance>($"SELECT * FROM EESLP.ScriptInstance LIMIT {skipNumber},{takeNumber}");
+                return db.Query<ScriptInstance>(query);
             }
         }
 
-        public int GetNumberOfScriptInstances()
+        public int GetNumberOfScriptInstances(ScriptInstanceStatus[] status, string hostname, string scriptname, DateTime? from, DateTime? to)
         {
+            string query = $"SELECT COUNT(*) FROM EESLP.ScriptInstance ";
+            query += getScriptInstanceWhereQuery(status, hostname, scriptname, from, to);
             using (var db = Connection)
             {
                 db.Open();
-                return db.Query<int>($"SELECT COUNT(*) FROM EESLP.ScriptInstance").ToArray()[0];
+                return db.Query<int>(query).ToArray()[0];
             }
         }
 
@@ -138,6 +144,62 @@ namespace EESLP.Services.Logging.API.Services
         {
             var script = _http.GetStringAsync(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + hostid).Result;
             return script != null && script != "";
+        }
+
+        private string getScriptInstanceWhereQuery(ScriptInstanceStatus[] status, string hostname, string scriptname, DateTime? from, DateTime? to)
+        {
+            if (status.Count() > 0 || hostname != null || scriptname != null || from != null || to != null)
+            {
+                string query = $"WHERE ";
+                
+                if (status.Count() > 0)
+                {
+                    string queryStatus = "";
+                    status.ToList().ForEach((ScriptInstanceStatus localStatus) => { queryStatus += $"{(int)localStatus},"; });
+                    query += $"AND InstanceStatus IN ({queryStatus.Remove(queryStatus.Length - 1, 1)}) ";
+                }
+
+                query += from != null && to != null ? $"AND CreatedDateTime BETWEEN '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", from)}' AND '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", to)}' " : "";
+                query += from != null && to == null ? $"AND CreatedDateTime BETWEEN '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", from)}' AND '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.MaxValue)}' " : "";
+                query += from == null && to != null ? $"AND CreatedDateTime BETWEEN '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.MinValue)}' AND '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", to)}' " : "";
+                if (scriptname != null)
+                {
+                    var scripts = _http.GetAsync<IEnumerable<int>>(_apiOptions.ScriptsApiUrl + "/api/Scripts/IDs?scriptname=" + scriptname).Result;
+
+                    if (scripts.Count() > 0)
+                    {
+                        string sqlScripts = "(";
+                        scripts.ToList().ForEach((int id) => { sqlScripts += $"{id},"; });
+                        sqlScripts = sqlScripts.Remove(sqlScripts.Length - 1, 1);
+                        sqlScripts += ")";
+                        query += $"AND ScriptId IN {sqlScripts} ";
+                    }
+                    else
+                    {
+                        query += $"AND ScriptId IS NULL ";
+                    }
+                }
+                if (hostname != null)
+                {
+                    var hosts = _http.GetAsync<IEnumerable<int>>(_apiOptions.ScriptsApiUrl + "/api/Hosts/IDs?hostname=" + hostname).Result;
+
+                    if (hosts.Count() > 0)
+                    {
+                        string sqlHosts = "(";
+                        hosts.ToList().ForEach((int id) => { sqlHosts += $"{id},"; });
+                        sqlHosts = sqlHosts.Remove(sqlHosts.Length - 1, 1);
+                        sqlHosts += ")";
+                        query += $"AND HostId IN {sqlHosts} ";
+                    }
+                    else
+                    {
+                        query += $"AND HostId IS NULL ";
+                    }
+                }
+                query = query.Replace("WHERE AND", "WHERE");
+                return query;
+            }
+            return "";
         }
 
     }

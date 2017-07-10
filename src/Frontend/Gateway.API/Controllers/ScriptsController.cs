@@ -41,7 +41,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         [Route("")]
         [ProducesResponseType(typeof(IEnumerable<Script>), 200)]
         [ProducesResponseType(typeof(object), 400)]
-        public IActionResult Get()
+        public IActionResult Get(string scriptname)
         {
             try
             {

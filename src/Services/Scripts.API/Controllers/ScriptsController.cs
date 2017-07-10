@@ -47,7 +47,7 @@ namespace EESLP.Services.Scripts.API.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<ScriptViewModel>), 200)]
         [ProducesResponseType(typeof(object), 400)]
-        public IActionResult Get()
+        public IActionResult Get(string scriptname)
         {
             try
             {
@@ -60,19 +60,40 @@ namespace EESLP.Services.Scripts.API.Controllers
                 }
                 int currentPage = page;
                 int currentPageSize = pageSize;
-                var totalScripts = _scriptService.GetNumberOfAllScripts(Request.Query["scriptname"]);
+                var totalScripts = _scriptService.GetNumberOfAllScripts(scriptname);
                 var totalPages = (int)Math.Ceiling((double)totalScripts / pageSize);
 
                 Response.AddPagination(page, pageSize, totalScripts, totalPages);
 
                 return Ok(
-                    _mapper.Map<IEnumerable<Script>, IEnumerable<ScriptViewModel>>(_scriptService.GetAllScripts(Request.Query["scriptname"], (currentPage - 1) * currentPageSize, currentPageSize)));
+                    _mapper.Map<IEnumerable<Script>, IEnumerable<ScriptViewModel>>(_scriptService.GetAllScripts(scriptname, (currentPage - 1) * currentPageSize, currentPageSize)));
             }
             catch (Exception e)
             {
                 return BadRequest();
             }
-            
+        }
+
+        /// <summary>
+        /// gets a list of all script IDs
+        /// </summary>
+        /// <returns>list of all script IDs</returns>
+        /// <response code="200">returns a list of all script IDs</response>
+        /// <response code="400">if something went really wrong</response>
+        [HttpGet]
+        [Route("IDs")]
+        [ProducesResponseType(typeof(IEnumerable<int>), 200)]
+        [ProducesResponseType(typeof(object), 400)]
+        public IActionResult GetIds(string scriptname)
+        {
+            try
+            {
+                return Ok(_scriptService.GetAllScriptIds(scriptname));
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
         }
 
         /// <summary>

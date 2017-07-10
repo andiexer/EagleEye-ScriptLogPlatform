@@ -26,6 +26,7 @@ namespace EESLP.Services.Scripts.API.Services
                 return result;
             }
         }
+
         public int GetNumberOfAllScripts(string scriptname)
         {
             scriptname = scriptname == null ? "" : scriptname;
@@ -33,6 +34,17 @@ namespace EESLP.Services.Scripts.API.Services
             {
                 db.Open();
                 return db.Query<int>($"SELECT COUNT(*) FROM Script WHERE Scriptname LIKE CONCAT(\"%\",@scriptname,\"%\")", new { scriptname = scriptname }).ToArray()[0];
+            }
+        }
+
+        public IEnumerable<int> GetAllScriptIds(string scriptname)
+        {
+            scriptname = scriptname == null ? "" : scriptname;
+            using (var db = Connection)
+            {
+                db.Open();
+                var result = db.Query<int>($"SELECT Id FROM Script WHERE Scriptname LIKE CONCAT(\"%\",@scriptname,\"%\")", new { scriptname = scriptname });
+                return result;
             }
         }
 

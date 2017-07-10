@@ -50,7 +50,7 @@ namespace EESLP.Services.Scripts.API.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Host>),200)]
         [ProducesResponseType(typeof(object), 400)]
-        public IActionResult Get()
+        public IActionResult Get(string hostname)
         {
             try
             {
@@ -63,12 +63,34 @@ namespace EESLP.Services.Scripts.API.Controllers
                 }
                 int currentPage = page;
                 int currentPageSize = pageSize;
-                var totalHosts = _hostService.GetNumberOfAllHosts(Request.Query["hostname"]);
+                var totalHosts = _hostService.GetNumberOfAllHosts(hostname);
                 var totalPages = (int)Math.Ceiling((double)totalHosts / pageSize);
                 
                 Response.AddPagination(page, pageSize, totalHosts, totalPages);
 
-                return Ok(_mapper.Map<IEnumerable<Host>, IEnumerable<HostViewModel>>(_hostService.GetAllHosts(Request.Query["hostname"], (currentPage - 1) * currentPageSize, currentPageSize)));
+                return Ok(_mapper.Map<IEnumerable<Host>, IEnumerable<HostViewModel>>(_hostService.GetAllHosts(hostname, (currentPage - 1) * currentPageSize, currentPageSize)));
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        /// <summary>
+        /// get a list of all host ids
+        /// </summary>
+        /// <returns>list of host ids</returns>
+        /// <response code="200">if hosts are found</response>
+        /// <response code="400">if something went really wrong</response>
+        [HttpGet]
+        [Route("IDs")]
+        [ProducesResponseType(typeof(IEnumerable<int>), 200)]
+        [ProducesResponseType(typeof(object), 400)]
+        public IActionResult GetIds(string hostname)
+        {
+            try
+            {
+                return Ok(_hostService.GetAllHostIDs(hostname));
             }
             catch (Exception e)
             {

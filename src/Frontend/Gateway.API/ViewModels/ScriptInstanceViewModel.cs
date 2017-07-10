@@ -10,7 +10,7 @@ namespace EESLP.Frontend.Gateway.API.ViewModels
     public class ScriptInstanceViewModel
     {
         public int Id { get; set; }
-        public ScriptInstanceStatus InstanceStatus { get; set; }
+        public string InstanceStatus { get; set; }
         public Host Host { get; set; }
         public Script Script { get; set; }
         public string TransactionId { get; set; }
