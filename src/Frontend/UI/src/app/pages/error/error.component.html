@@ -1,0 +1,21 @@
+<md-card>
+  <md-card-title>Oops... there was an error</md-card-title>
+  <md-card-content>
+    <button md-button (click)="showMore = true" *ngIf="!showMore">Show more</button>
+    <button md-button (click)="showMore = false" *ngIf="showMore">Show less</button>
+    <div *ngIf="showMore">
+      <p>
+        <dt>Affected component</dt>
+        <dd>{{component}}</dd>
+        <dt>Error message</dt>
+        <dd>{{error}}</dd>
+        <dt>Api URL</dt>
+        <dd>{{this.configService.getApiURI()}}</dd>
+        <dt>Version</dt>
+        <dd>{{configService.getVersion()}}</dd>
+      </p>
+
+      <p>Please send this information to the developers.</p>
+    </div>
+  </md-card-content>
+</md-card>

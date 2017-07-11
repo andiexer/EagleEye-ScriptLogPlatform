@@ -1,0 +1,23 @@
+<md-card style="height:90%;">
+  <md-card-header>
+    <md-card-title>Tenant {{formFunction}}</md-card-title>
+  </md-card-header>
+  <form [formGroup]="tenantForm" (ngSubmit)="onSave()">
+    <md-card-content>
+      <div class="form-group" [class.has-error]="!tenantForm.controls['tenantName'].valid && !tenantForm.controls['tenantName'].pending">
+        <md-input-container class="full-width">
+          <input mdInput id="tenantname" class="form-control" type="text" placeholder="Enter the tenantname" formControlName="tenantName">
+          <md-hint *ngIf="tenantForm.controls['tenantName'].touched && !tenantForm.controls['tenantName'].valid && !tenantForm.controls['tenantName'].pending">
+            <span class="help-block" *ngIf="tenantForm.controls['tenantName'].errors.required">Tenantname is required</span>
+            <span class="help-block" *ngIf="tenantForm.controls['tenantName'].errors.exists">Tenantname already exists</span>
+          </md-hint>
+        </md-input-container>
+      </div>
+    </md-card-content>
+    <md-card-actions>
+        <button md-button type="submit" *ngIf="formFunction == 'edit'" [disabled]="!tenantForm.valid && !tenantForm.pending"><md-icon>save</md-icon>Save</button>
+        <button md-button type="submit" *ngIf="formFunction == 'new'" [disabled]="!tenantForm.valid && !tenantForm.pending"><md-icon>save</md-icon>Create</button>
+        <button md-button type="button" (click)="goBack()" color="warn"><md-icon>cancel</md-icon>Cancel</button>
+    </md-card-actions>
+  </form>
+</md-card>

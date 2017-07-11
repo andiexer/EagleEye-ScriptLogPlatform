@@ -1,0 +1,23 @@
+<md-card>
+  <md-card-header>
+    <md-card-title>Host Detail</md-card-title>
+  </md-card-header>
+  <md-card-content>
+    <dl class="dl-horizontal">
+      <dt>Hostname</dt>
+      <dd>{{host?.hostName}}</dd>
+      <dt>Domain</dt>
+      <dd>{{host?.domain}}</dd>
+      <dt>Cloud Zone</dt>
+      <dd>{{host?.cloudZone}}</dd>
+      <dt>PowerShell Version</dt>
+      <dd>{{host?.powershellVersion}}</dd>
+      <dt>Tenant Name</dt>
+      <dd>{{host?.tenant.tenantName}}</dd>
+    </dl>
+  </md-card-content>
+  <md-card-actions>
+    <button md-button (click)="onEdit()"><md-icon>edit</md-icon>Edit</button>
+    <button md-button (click)="goBack()"><md-icon>close</md-icon>Close</button>
+  </md-card-actions>
+</md-card>

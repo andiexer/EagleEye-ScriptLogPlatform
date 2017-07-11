@@ -1,0 +1,31 @@
+<md-card style="height: 90%;">
+  <md-card-header>
+    <md-card-title>Tenants List</md-card-title>
+  </md-card-header>
+  <button md-button type="button" (click)="onNew()"><md-icon>add</md-icon>New tenant</button>
+  <md-card-content>
+    <table class="mdl-data-table mdl-js-data-table table-shadow">
+      <thead>
+        <tr>
+          <th style="width: 100px;"></th>
+          <th>Tenant Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let tenant of tenants
+                      | orderBy : ['tenantName'] 
+                      | paginate : {itemsPerPage: 10, currentPage: currentPage}">
+          <td width="350px">
+            <button md-button (click)="onDetails(tenant.id)"><md-icon>more_horiz</md-icon>Details</button>
+            <button md-button (click)="onEdit(tenant.id)"><md-icon>edit</md-icon>Edit</button>
+            <button md-button (click)="openDialog(tenant.id)"><md-icon>delete</md-icon>Delete</button>
+          </td>
+          <td>{{tenant.tenantName}}</td>
+          </tr>
+      </tbody>
+    </table>
+  </md-card-content>
+  <md-card-actions>
+    <app-pagination (pageChange)="currentPage = $event"></app-pagination>
+  </md-card-actions>
+</md-card>

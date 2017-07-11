@@ -1,0 +1,15 @@
+<md-card style="height:90%">
+  <md-card-header>
+    <md-card-title>Tenant Detail</md-card-title>
+  </md-card-header>
+  <md-card-content>
+    <dl class="dl-horizontal">
+      <dt>Tenantname</dt>
+      <dd>{{tenant?.tenantName}}</dd>
+    </dl>
+  </md-card-content>
+  <md-card-actions>
+    <button md-button (click)="onEdit()"><md-icon>edit</md-icon>Edit</button>
+    <button md-button (click)="onClose()"><md-icon>close</md-icon>Close</button>
+  </md-card-actions>
+</md-card>

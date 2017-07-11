@@ -1,0 +1,110 @@
+<button md-button (click)="goBack()" style="margin-bottom:5px;"><md-icon>arrow_back</md-icon>Go Back</button>
+<div fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" style="margin-bottom: 15px;">
+  <div fxFlex="30%">
+    <md-card>
+      <md-card-header>
+        <md-card-title>Script Instance Informations</md-card-title>
+      </md-card-header>
+      <md-card-content>
+        <dl class="dl-horizontal">
+          <dt>Status</dt>
+          <dd>{{scriptInstance?.instanceStatus}}</dd>
+          <dt>Start Time</dt>
+          <dd>{{scriptInstance?.startDateTime | date:"dd.MM.yyyy HH:mm:ss"}}</dd>
+          <dt>End Time</dt>
+          <dd>{{scriptInstance?.endDateTime | date:"dd.MM.yyyy HH:mm:ss"}}</dd>
+          <dt>Transaction ID </dt>
+          <dd>{{scriptInstance?.transactionId}}</dd>
+        </dl>
+      </md-card-content>
+    </md-card>
+  </div>
+  <div fxFlex="30%">
+    <md-card>
+      <md-card-header>
+        <md-card-title>Host Informations</md-card-title>
+      </md-card-header>
+      <md-card-content>
+        <dl class="dl-horizontal">
+          <dt>Hostname</dt>
+          <dd>{{scriptInstance?.host.hostName + '.' + scriptInstance?.host.domain}}</dd>
+          <dt>Cloud Zone</dt>
+          <dd>{{scriptInstance?.host.cloudZone}}</dd>
+          <dt>PowerShell Version</dt>
+          <dd>{{scriptInstance?.host.powershellVersion}}</dd>
+          <dt>Tenant</dt>
+          <dd>{{scriptInstance?.host.tenant.tenantName}}</dd>
+        </dl>
+      </md-card-content>
+    </md-card>
+  </div>
+  <div fxFlex="30%">
+    <md-card>
+      <md-card-header>
+        <md-card-title>Script Informations</md-card-title>
+      </md-card-header>
+      <md-card-content>
+
+        <dl class="dl-horizontal">
+          <dt>Script Name</dt>
+          <dd>{{scriptInstance?.script.scriptName}}</dd>
+          <dt>Description</dt>
+          <dd>{{scriptInstance?.script.description}}</dd>
+        </dl>
+      </md-card-content>
+    </md-card>
+  </div>
+</div>
+<md-card>
+  <md-card-header fxLayout="row" fxLayoutAlign="space-between stretch" fxLayoutWrap>
+    <md-card-title fxFlexAlign="left">Logs</md-card-title>
+    <div fxFlexAlign="right">
+      <form fxLayout="row" [formGroup]="searchForm" (ngSubmit)="onSearch()">
+        <span *ngIf="searchForm.controls['itemsPerPage'].dirty && !searchForm.controls['itemsPerPage'].valid" [class.has-error]="!searchForm.controls['itemsPerPage'].valid"
+          class="help-block" style="margin-right: 15px">The items per page need to be between 10 and 100</span>
+        <div fxFlex="230px">
+          <md-select class="form-control" placeholder="Log Level" name="logLevel" formControlName="logLevel" multiple>
+            <md-option *ngFor="let option of logLevelOptions" [value]="option.value">
+              {{option.label}}
+            </md-option>
+          </md-select>
+        </div>
+        <div fxFlex="230px">
+          <md-input-container>
+            <input mdInput id="text" class="form-control" placeholder="Text" formControlName="text">
+          </md-input-container>
+        </div>
+        <div fxFlex="230px">
+          <md-input-container [class.has-error]="!searchForm.controls['itemsPerPage'].valid">
+            <input mdInput type="number" id="itemsPerPage" class="form-control" placeholder="Items per page" formControlName="itemsPerPage">
+          </md-input-container>
+        </div>
+        <button md-button type="submit" [disabled]="!searchForm.valid"><md-icon>search</md-icon>Search</button>
+        <button md-button color="warn" (click)="onSearchClear()"><md-icon>clear</md-icon>Clear</button>
+      </form>
+    </div>
+  </md-card-header>
+  <md-card-content>
+    <table class="mdl-data-table mdl-js-data-table table-shadow">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Level</th>
+          <th>Text</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let log of scriptInstanceLogs 
+          | filterLogs : searchLogLevel : searchText
+          | paginate: {itemsPerPage: itemsPerPage, currentPage: currentPage}">
+          <td width="200px">{{log.logDateTime | date:"dd.MM.yyyy HH:mm:ss"}}</td>
+          <td width="150px"><span [class]="'logLevel ' + logLevel[log.logLevel]"><md-icon>{{logLevelIcon[log.logLevel]}}</md-icon></span> {{logLevel[log.logLevel]}}</td>
+          <td>{{log.logText}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </md-card-content>
+  <md-card-actions>
+    <app-pagination (pageChange)="currentPage = $event"></app-pagination>
+  </md-card-actions>
+</md-card>

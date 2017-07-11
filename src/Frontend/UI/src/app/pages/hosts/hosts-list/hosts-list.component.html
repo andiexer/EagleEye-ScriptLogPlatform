@@ -1,0 +1,64 @@
+<md-card>
+  <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+    <md-card-content>
+      <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap>
+        <div fxFlex="230px">
+          <md-input-container>
+            <input mdInput id="hostname" class="form-control" type="text" placeholder="Hostname" formControlName="hostname">
+          </md-input-container>
+        </div>
+        <div fxFlex="230px">
+          <!--<label for="tenant">Tenant</label>
+          <ng-select [options]="tenantOptions" placeholder="Select a tenant" formControlName="tenant">
+          </ng-select>-->
+          <md-select class="form-control" placeholder="Tenant" name="tenant" formControlName="tenant">
+            <md-option *ngFor="let option of tenantOptions" [value]="option.value">
+              {{option.label}}
+            </md-option>
+          </md-select>
+        </div>
+      </div>
+    </md-card-content>
+    <md-card-actions>
+      <button md-button type="submit"><md-icon>search</md-icon>Search</button>
+      <button md-button (click)="onSearchClear()" color="warn"><md-icon>clear</md-icon>Clear</button>
+    </md-card-actions>
+  </form>
+</md-card>
+<md-card>
+  <md-card-content>
+    <button md-button type="button" (click)="onNew()"><md-icon>add</md-icon>New host</button>
+    <table class="mdl-data-table mdl-js-data-table table-shadow">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Hostname</th>
+          <th>Domain</th>
+          <th>Cloud Zone</th>
+          <th>PowerShell Version</th>
+          <th>Tenant Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let host of hosts
+                        | filterHosts : searchHostname : searchTenant
+                        | orderBy : ['hostName'] 
+                        | paginate : {itemsPerPage: 10, currentPage: currentPage}">
+          <td width="350px">
+            <button md-button (click)="onDetails(host.id)"><md-icon>more_horiz</md-icon>Details</button>
+            <button md-button (click)="onEdit(host.id)"><md-icon>edit</md-icon>Edit</button>
+            <button md-button (click)="openDialog(host.id)"><md-icon>delete</md-icon>Delete</button>
+          </td>
+          <td>{{host.hostName}}</td>
+          <td>{{host.domain}}</td>
+          <td>{{host.cloudZone}}</td>
+          <td>{{host.powershellVersion}}</td>
+          <td>{{host.tenant.tenantName}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </md-card-content>
+  <md-card-actions>
+    <app-pagination (pageChange)="currentPage = $event"></app-pagination>
+  </md-card-actions>
+</md-card>

@@ -1,0 +1,53 @@
+<md-card>
+  <md-card-header>
+    <md-card-title>Host {{formFunction}}</md-card-title>
+  </md-card-header>
+  <form [formGroup]="hostForm" (ngSubmit)="onSave()">
+    <md-card-content>
+      <div [class.has-error]="!hostForm.controls['hostName'].valid && !hostForm.controls['hostName'].pending">
+        <md-input-container class="full-width" dividerColor="primary">
+          <input mdInput id="hostName" type="text" placeholder="Hostname" formControlName="hostName">
+          <md-hint *ngIf="hostForm.controls['hostName'].touched && !hostForm.controls['hostName'].valid && !hostForm.controls['hostName'].pending">
+            <span class="help-block" *ngIf="hostForm.controls['hostName'].errors.required">Hostname is required</span>
+          </md-hint>
+        </md-input-container>
+      </div>
+      <div [class.has-error]="!hostForm.controls['domain'].valid && !hostForm.controls['domain'].pending">
+        <md-input-container class="full-width">
+          <input mdInput id="domain" type="text" placeholder="Domain" formControlName="domain">
+          <md-hint *ngIf="hostForm.controls['domain'].touched && !hostForm.controls['domain'].valid && !hostForm.controls['domain'].pending">
+            <span class="help-block" *ngIf="hostForm.controls['domain'].errors.required">Domain is required</span>
+          </md-hint>
+        </md-input-container>
+      </div>
+      <div>
+        <md-input-container class="full-width">
+          <input mdInput id="cloudZone" type="text" placeholder="Cloudzone" formControlName="cloudZone">
+        </md-input-container>
+      </div>
+      <div [class.has-error]="hostForm.controls['powershellVersion'].touched && !hostForm.controls['powershellVersion'].valid && !hostForm.controls['powershellVersion'].pending">
+        <md-input-container class="full-width">
+          <input mdInput id="powershellVersion" type="text" placeholder="PowerShell version" formControlName="powershellVersion">
+          <md-hint *ngIf="hostForm.controls['powershellVersion'].touched && !hostForm.controls['powershellVersion'].valid && !hostForm.controls['powershellVersion'].pending">
+            <span class="help-block" *ngIf="hostForm.controls['powershellVersion'].errors.required">PowerShell version is required</span>
+          </md-hint>
+        </md-input-container>
+      </div>
+      <div [class.has-error]="hostForm.controls['tenantId'].touched && !hostForm.controls['tenantId'].valid && !hostForm.controls['tenantId'].pending">
+        <md-select class="full-width form-control" placeholder="Tenant" name="tenantId" formControlName="tenantId">
+          <md-option *ngFor="let option of tenantOptions" [value]="option.value">
+            {{option.label}}
+          </md-option>
+        </md-select>
+        <md-hint *ngIf="hostForm.controls['tenantId'].touched && !hostForm.controls['tenantId'].valid && !hostForm.controls['tenantId'].pending" class="select-hint">
+          <span class="help-block" *ngIf="hostForm.controls['tenantId'].errors.required">Tenant is required</span>
+        </md-hint>
+      </div>
+    </md-card-content>
+    <md-card-actions>
+      <button md-button type="submit" *ngIf="formFunction == 'edit'" [disabled]="!hostForm.valid && !hostForm.pending"><md-icon>save</md-icon>Save</button>
+      <button md-button type="submit" *ngIf="formFunction == 'new'" [disabled]="!hostForm.valid && !hostForm.pending"><md-icon>save</md-icon>Create</button>
+      <button md-button type="button" (click)="goBack()" color="warn"><md-icon>cancel</md-icon>Cancel</button>
+    </md-card-actions>
+  </form>
+</md-card>

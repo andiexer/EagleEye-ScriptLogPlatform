@@ -1,0 +1,19 @@
+<md-card>
+  <md-card-header>
+    <md-card-title>Script Detail</md-card-title>
+  </md-card-header>
+  <md-card-content>
+    <dl class="dl-horizontal">
+      <dt>ID</dt>
+      <dd>{{script?.id}}</dd>
+      <dt>Scriptname</dt>
+      <dd>{{script?.scriptName}}</dd>
+      <dt>Description</dt>
+      <dd>{{script?.description}}</dd>
+    </dl>
+  </md-card-content>
+  <md-card-actions>
+    <button md-button (click)="onEdit()"><md-icon>edit</md-icon>Edit</button>
+    <button md-button (click)="goBack()"><md-icon>close</md-icon>Close</button>
+  </md-card-actions>
+</md-card>

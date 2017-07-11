@@ -1,0 +1,27 @@
+<md-card>
+  <md-card-header>
+    <md-card-title>Script {{formFunction}}</md-card-title>
+  </md-card-header>
+  <form [formGroup]="scriptForm" (ngSubmit)="onSave()">
+    <md-card-content>
+      <div [class.has-error]="!scriptForm.controls['scriptName'].valid && !scriptForm.controls['scriptName'].pending">
+        <md-input-container class="full-width">
+          <input mdInput id="scriptName" class="form-control" type="text" placeholder="Scriptname" formControlName="scriptName">
+          <md-hint *ngIf="scriptForm.controls['scriptName'].touched && !scriptForm.controls['scriptName'].valid && !scriptForm.controls['scriptName'].pending">
+            <span class="help-block" *ngIf="scriptForm.controls['scriptName'].errors.required">Scriptname is required</span>
+          </md-hint>
+        </md-input-container>
+      </div>
+      <div>
+        <md-input-container class="full-width">
+          <input mdInput id="description" class="form-control" type="text" placeholder="Description" formControlName="description">
+        </md-input-container>
+      </div>
+    </md-card-content>
+    <md-card-actions>
+      <button md-button type="submit" *ngIf="formFunction == 'edit'" [disabled]="!scriptForm.valid && !scriptForm.pending"><md-icon>save</md-icon>Save</button>
+      <button md-button type="submit" *ngIf="formFunction == 'new'" [disabled]="!scriptForm.valid && !scriptForm.pending"><md-icon>save</md-icon>Create</button>
+      <button md-button color="warn" type="button" (click)="goBack()"><md-icon>cancel</md-icon>Cancel</button>
+    </md-card-actions>
+  </form>
+</md-card>
