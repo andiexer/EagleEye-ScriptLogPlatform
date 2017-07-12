@@ -9,7 +9,6 @@ const routes: Routes = [
     // Root
     { path: '', component: HomeComponent},
     { path: 'scriptinstances', loadChildren: 'app/pages/scriptinstances/scriptinstances.module#ScriptinstancesModule' },
-    { path: 'tenants', loadChildren: 'app/pages/tenants/tenants.module#TenantsModule' },
     { path: 'hosts', loadChildren: 'app/pages/hosts/hosts.module#HostsModule' },
     { path: 'scripts', loadChildren: 'app/pages/scripts/scripts.module#ScriptsModule' },
     { path: 'error', component: ErrorComponent }

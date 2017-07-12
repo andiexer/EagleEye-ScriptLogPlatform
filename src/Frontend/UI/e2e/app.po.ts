@@ -1,6 +1,6 @@
 import { browser, element, by } from 'protractor';
 
-export class PoshlogmonitorPage {
+export class EagleEyeScriptLogMonitorPage {
   navigateTo() {
     return browser.get('/');
   }

@@ -1,10 +1,10 @@
-import { PoshlogmonitorPage } from './app.po';
+import { EagleEyeScriptLogMonitorPage } from './app.po';
 
-describe('poshlogmonitor App', function() {
-  let page: PoshlogmonitorPage;
+describe('EagleEye-ScriptLogMonitor App', function() {
+  let page: EagleEyeScriptLogMonitorPage;
 
   beforeEach(() => {
-    page = new PoshlogmonitorPage();
+    page = new EagleEyeScriptLogMonitorPage();
   });
 
   it('should display message saying app works', () => {

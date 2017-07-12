@@ -12,7 +12,6 @@ export class AppComponent {
     {name: 'Scriptinstances', route: 'scriptinstances', exact: false},
     {name: 'Scripts', route: 'scripts', exact: false},
     {name: 'Hosts', route: 'hosts', exact: false},
-    {name: 'Tenants', route: 'tenants', exact: false}
   ];
 
   constructor(

@@ -2,9 +2,8 @@ import { ITenant } from './itenant';
 export interface IHost {
     id?: number;
     hostName: string;
-    domain: string;
-    cloudZone: string;
+    fqdn: string;
     apiKey?: string;
-    powershellVersion: string;
-    tenant: ITenant;
+    createdDateTime: Date;
+    lastModDateTime: Date;
 }
