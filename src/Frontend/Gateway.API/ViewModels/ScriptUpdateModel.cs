@@ -8,6 +8,7 @@ namespace EESLP.Frontend.Gateway.API.ViewModels
 {
     public class ScriptUpdateModel
     {
+        public string Scriptname { get; set; }
         public string Description { get; set; }
     }
 }
