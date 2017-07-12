@@ -32,7 +32,6 @@ export class LatestLogsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
-      console.log('destroyed');
     }
   }
 

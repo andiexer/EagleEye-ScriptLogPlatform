@@ -1,11 +1,12 @@
 import { IScript } from './iscript';
 import { IHost } from './ihost';
 export interface IScriptInstance {
+    id: number;
     instanceStatus: string;
-    instanceGuid: string;
-    startDateTime: Date;
-    endDateTime: Date;
     host: IHost;
     script: IScript;
     transactionId: string;
+    endDateTime: Date;
+    createdDateTime: Date;
+    lastModDateTime: Date;
 }

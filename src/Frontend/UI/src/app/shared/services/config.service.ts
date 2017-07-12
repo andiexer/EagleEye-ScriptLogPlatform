@@ -4,7 +4,7 @@ import { Http } from '@angular/http';
 @Injectable()
 export class ConfigService {
   private _apiURI: string;
-  private version: string = 'v0.2.4 beta';
+  private version: string = 'v0.0.1';
 
   constructor(
     private http: Http

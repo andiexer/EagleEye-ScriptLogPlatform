@@ -21,8 +21,15 @@ export class ScriptDataService {
     this._baseUrl = configService.getApiURI();
   }
 
-  getScripts(): Observable<IScript[]> {
-    return this.http.get(this._baseUrl + 'Scripts')
+  getScripts(scriptname?: string, currentPage?: number, itemsPerPage?: number): Observable<IScript[]> {
+    let headers = new Headers();
+    if (currentPage && itemsPerPage) {
+      headers.append('Pagination', currentPage + ',' + itemsPerPage);
+    }
+    let queryParams = new URLSearchParams();
+    queryParams.append('scriptname', scriptname);
+    let options = new RequestOptions({ headers: headers, params: queryParams });
+    return this.http.get(this._baseUrl + 'Scripts', options)
       .map((res: Response) => {
         return res.json();
       })

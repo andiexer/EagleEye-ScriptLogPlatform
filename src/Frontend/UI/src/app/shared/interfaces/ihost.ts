@@ -1,4 +1,3 @@
-import { ITenant } from './itenant';
 export interface IHost {
     id?: number;
     hostName: string;

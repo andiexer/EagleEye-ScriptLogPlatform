@@ -1,6 +1,5 @@
-import { LogLevel } from '../enums/log-level.enum';
 export interface ILog {
-    logLevel: LogLevel;
+    logLevel: string;
     logText: string;
     logDateTime: Date;
     scriptInstance: number;

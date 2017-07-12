@@ -1,4 +1,5 @@
 // external module
+import 'hammerjs';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
@@ -15,7 +16,6 @@ import {
   LogDataService,
   ConfigService,
   ScriptinstanceDataService,
-  TenantDataService,
   HostDataService,
   DialogsService,
   ScriptDataService
@@ -36,7 +36,6 @@ let services = [
   LogDataService,
   ConfigService,
   ScriptinstanceDataService,
-  TenantDataService,
   HostDataService,
   ScriptDataService,
   DialogsService

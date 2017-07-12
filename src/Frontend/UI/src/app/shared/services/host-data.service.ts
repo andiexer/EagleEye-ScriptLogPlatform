@@ -21,16 +21,25 @@ export class HostDataService {
     this._baseUrl = configService.getApiURI();
   }
 
-  getHosts(): Observable<IHost[]> {
-    return this.http.get(this._baseUrl + 'Hosts')
+  getHosts(hostname?: string, currentPage?: number, itemsPerPage?: number): Observable<IHost[]> {
+    let headers = new Headers();
+    if (currentPage && itemsPerPage) {
+      headers.append('Pagination', currentPage + ',' + itemsPerPage);
+    }
+    let queryParams = new URLSearchParams();
+    queryParams.append('hostname', hostname);
+    let options = new RequestOptions({ headers: headers, params: queryParams });
+    return this.http.get(this._baseUrl + 'Hosts', options)
       .map((res: Response) => {
         return res.json();
       })
       .catch((error: Response) => {
-        this.router.navigate(['/error'], { queryParams: {
-          error: error,
-          component: 'HostDataService'
-        }});
+        this.router.navigate(['/error'], {
+          queryParams: {
+            error: error,
+            component: 'HostDataService'
+          }
+        });
         return Observable.throw(error.json().error || 'Server connection error');
       });
   }
@@ -41,10 +50,12 @@ export class HostDataService {
         return res.json();
       })
       .catch((error: Response) => {
-        this.router.navigate(['/error'], { queryParams: {
-          error: error,
-          component: 'HostDataService'
-        }});
+        this.router.navigate(['/error'], {
+          queryParams: {
+            error: error,
+            component: 'HostDataService'
+          }
+        });
         return Observable.throw(error.json().error || 'Server connection error');
       });
   }
@@ -55,10 +66,12 @@ export class HostDataService {
     return this.http.put(this._baseUrl + 'Hosts/' + hostId, host, options)
       .map(() => this.hostChangeSource.next(host))
       .catch((error: Response) => {
-        this.router.navigate(['/error'], { queryParams: {
-          error: error,
-          component: 'HostDataService'
-        }});
+        this.router.navigate(['/error'], {
+          queryParams: {
+            error: error,
+            component: 'HostDataService'
+          }
+        });
         return Observable.throw(error.json().error || 'Server connection error');
       });
   }
@@ -69,10 +82,12 @@ export class HostDataService {
     return this.http.post(this._baseUrl + 'Hosts', host, options)
       .map(() => this.hostChangeSource.next(host))
       .catch((error: Response) => {
-        this.router.navigate(['/error'], { queryParams: {
-          error: error,
-          component: 'HostDataService'
-        }});
+        this.router.navigate(['/error'], {
+          queryParams: {
+            error: error,
+            component: 'HostDataService'
+          }
+        });
         return Observable.throw(error.json().error || 'Server connection error');
       });
   }
@@ -80,10 +95,12 @@ export class HostDataService {
   removeHost(id: number): Observable<any> {
     return this.http.delete(this._baseUrl + 'Hosts/' + id)
       .catch((error: Response) => {
-        this.router.navigate(['/error'], { queryParams: {
-          error: error,
-          component: 'HostDataService'
-        }});
+        this.router.navigate(['/error'], {
+          queryParams: {
+            error: error,
+            component: 'HostDataService'
+          }
+        });
         return Observable.throw(error.json().error || 'Server connection error');
       });
   }
