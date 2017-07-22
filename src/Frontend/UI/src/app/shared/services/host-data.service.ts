@@ -6,6 +6,8 @@ import { Headers, Http, Response, RequestOptions } from '@angular/http';
 import { ConfigService } from './config.service';
 import { Observable } from 'rxjs/Rx';
 import { IHostEdit } from '../interfaces/ihost-edit';
+import { IHosts } from '../interfaces/ihosts';
+import { IPagination } from '../interfaces/ipagination';
 
 @Injectable()
 export class HostDataService {
@@ -21,17 +23,19 @@ export class HostDataService {
     this._baseUrl = configService.getApiURI();
   }
 
-  getHosts(hostname?: string, currentPage?: number, itemsPerPage?: number): Observable<IHost[]> {
+  getHosts(hostname?: string, currentPage?: number, itemsPerPage?: number): Observable<IHosts> {
     let headers = new Headers();
     if (currentPage && itemsPerPage) {
       headers.append('Pagination', currentPage + ',' + itemsPerPage);
     }
-    let queryParams = new URLSearchParams();
-    queryParams.append('hostname', hostname);
+    let queryParams = {'hostname': hostname.toString()};
     let options = new RequestOptions({ headers: headers, params: queryParams });
     return this.http.get(this._baseUrl + 'Hosts', options)
       .map((res: Response) => {
-        return res.json();
+        let result: IHosts = {pagination: null, hosts: null};
+        result.pagination = JSON.parse(res.headers.get('Pagination'));
+        result.hosts = res.json();
+        return result;
       })
       .catch((error: Response) => {
         this.router.navigate(['/error'], {

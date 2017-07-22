@@ -8,13 +8,15 @@ import { Ng2PaginationModule } from 'ng2-pagination';
 import { OrderByPipe } from './';
 import { PaginationComponent } from './component/pagination/pagination.component';
 import { ConfirmDialogComponent } from './component/confirm-dialog/confirm-dialog.component';
+import { MomentModule } from 'angular2-moment';
 
 @NgModule({
     imports: [
         Ng2PaginationModule,
         CommonModule,
         MaterialModule,
-        FlexLayoutModule
+        FlexLayoutModule,
+        MomentModule
     ],
     declarations: [
         OrderByPipe,
@@ -29,7 +31,8 @@ import { ConfirmDialogComponent } from './component/confirm-dialog/confirm-dialo
         PaginationComponent,
         MaterialModule,
         FlexLayoutModule,
-        ConfirmDialogComponent
+        ConfirmDialogComponent,
+        MomentModule
     ],
     entryComponents: [
         ConfirmDialogComponent

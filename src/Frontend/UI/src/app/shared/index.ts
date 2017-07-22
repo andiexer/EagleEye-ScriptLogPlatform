@@ -3,6 +3,8 @@ export * from './interfaces/ihost'
 export * from './interfaces/iscript'
 export * from './interfaces/iscript-instance'
 export * from './interfaces/icandeactivate'
+export * from './interfaces/ihosts'
+export * from './interfaces/ipagination'
 
 export * from './pipes/order-by.pipe'
 

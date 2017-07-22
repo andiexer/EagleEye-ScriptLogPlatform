@@ -2,9 +2,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { HostDataService, IHost } from '../../../shared';
+import { HostDataService, IHost, IHosts } from '../../../shared';
 import { IHostEdit } from '../../../shared/interfaces/ihost-edit';
 import { DialogsService } from '../../../shared/services/dialogs.service';
+import { PageEvent } from '@angular/material';
 
 @Component({
   selector: 'app-hosts-list',
@@ -14,13 +15,14 @@ export class HostsListComponent implements OnInit, OnDestroy {
   private querySubscription: Subscription;
   private hostChangeSubscription: Subscription;
   private hostSubscription: Subscription;
-  private tenantSubscription: Subscription;
   public hosts: IHost[];
   public tenantOptions = [];
-  public searchHostname: String = '';
-  public searchTenant: String = '';
+  public searchHostname: string = '';
   public searchForm: FormGroup;
-  public currentPage;
+  public length = 100;
+  public pageSize = 10;
+  public pageSizeOptions = [5, 10, 25, 100];
+  public currentPage: number;
 
   constructor(
     private hostDataService: HostDataService,
@@ -28,33 +30,21 @@ export class HostsListComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private router: Router,
     private route: ActivatedRoute
-  ) {
-    // get tenant data from router resolver
-    this.tenantSubscription = this.route.data.subscribe(
-      (res: any) => {
-        this.tenantOptions = res.tenants.map(tenant => {
-          // {value: 'Created', label: 'Created'},
-          return { value: tenant.tenantName, label: tenant.tenantName };
-        });
-      });
-  }
+  ) { }
 
   ngOnInit() {
-    this.getHosts();
-    // everytime when a host changes refresh the hosts array
-    this.hostChangeSubscription = this.hostDataService.hostChange.subscribe((res: IHostEdit) => {
-      this.getHosts();
-    });
     // get query parameter from active route
     this.querySubscription = this.route.queryParams.subscribe(
       (queryParam: any) => {
         if (queryParam['hostname']) {
           this.searchHostname = queryParam['hostname'];
         }
-        if (queryParam['tenant']) {
-          this.searchTenant = queryParam['tenant'];
-        }
       });
+    this.getHosts();
+    // everytime when a host changes refresh the hosts array
+    this.hostChangeSubscription = this.hostDataService.hostChange.subscribe((res: IHostEdit) => {
+      this.getHosts();
+    });
     this.initForm();
   }
 
@@ -68,26 +58,24 @@ export class HostsListComponent implements OnInit, OnDestroy {
     if (this.hostSubscription) {
       this.hostSubscription.unsubscribe();
     }
-    if (this.tenantSubscription) {
-      this.tenantSubscription.unsubscribe();
-    }
   }
 
   private initForm() {
     let hostname = this.searchHostname;
-    let tenant = this.searchTenant;
 
     this.searchForm = this.formBuilder.group({
       hostname: [hostname],
-      tenant: [tenant]
     });
   }
 
   getHosts() {
-    this.hostSubscription = this.hostDataService.getHosts()
+    this.hostSubscription = this.hostDataService.getHosts(this.searchHostname, this.currentPage + 1, this.pageSize)
       .subscribe(
-      (res: IHost[]) => {
-        this.hosts = res;
+      (res: IHosts) => {
+        this.hosts = res.hosts;
+        this.currentPage = res.pagination.CurrentPage - 1;
+        this.pageSize = res.pagination.ItemsPerPage;
+        this.length = res.pagination.TotalItems;
       },
       error => {
         console.log(error);
@@ -97,11 +85,10 @@ export class HostsListComponent implements OnInit, OnDestroy {
 
   onSearch() {
     this.searchHostname = this.searchForm.value.hostname;
-    this.searchTenant = this.searchForm.value.tenant;
     let queryParams: any = {};
     if (this.searchHostname) { queryParams.hostname = this.searchHostname; }
-    if (this.searchTenant) { queryParams.tenant = this.searchTenant; }
     this.router.navigate(['/hosts'], { queryParams: queryParams });
+    this.getHosts();
   }
 
   onSearchClear() {
@@ -111,7 +98,7 @@ export class HostsListComponent implements OnInit, OnDestroy {
   }
 
   onDetails(id: string) {
-    this.router.navigate(['/hosts', id], { queryParams: { returnUrl: this.router.url}});
+    this.router.navigate(['/hosts', id], { queryParams: { returnUrl: this.router.url } });
   }
 
   onDelete(id: string) {
@@ -122,11 +109,17 @@ export class HostsListComponent implements OnInit, OnDestroy {
   }
 
   onNew() {
-    this.router.navigate(['/hosts', 'new'], { queryParams: { returnUrl: this.router.url}});
+    this.router.navigate(['/hosts', 'new'], { queryParams: { returnUrl: this.router.url } });
   }
 
   onEdit(hostsId: number) {
-    this.router.navigate(['/hosts', hostsId, 'edit'], { queryParams: { returnUrl: this.router.url}});
+    this.router.navigate(['/hosts', hostsId, 'edit'], { queryParams: { returnUrl: this.router.url } });
+  }
+
+  onPageChange(pageEvent: PageEvent) {
+    this.currentPage = pageEvent.pageIndex;
+    this.pageSize = pageEvent.pageSize;
+    this.getHosts();
   }
 
   openDialog(id: string) {

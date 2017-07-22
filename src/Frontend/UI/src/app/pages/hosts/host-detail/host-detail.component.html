@@ -5,15 +5,15 @@
   <md-card-content>
     <dl class="dl-horizontal">
       <dt>Hostname</dt>
-      <dd>{{host?.hostName}}</dd>
-      <dt>Domain</dt>
-      <dd>{{host?.domain}}</dd>
-      <dt>Cloud Zone</dt>
-      <dd>{{host?.cloudZone}}</dd>
-      <dt>PowerShell Version</dt>
-      <dd>{{host?.powershellVersion}}</dd>
-      <dt>Tenant Name</dt>
-      <dd>{{host?.tenant.tenantName}}</dd>
+      <dd>{{host?.hostname}}</dd>
+      <dt>FQDN</dt>
+      <dd>{{host?.fqdn}}</dd>
+      <dt>ApiKey</dt>
+      <dd>{{host?.apiKey}}</dd>
+      <dt>Created</dt>
+      <dd>{{host?.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</dd>
+      <dt>Modified</dt>
+      <dd>{{host?.lastModDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</dd>
     </dl>
   </md-card-content>
   <md-card-actions>

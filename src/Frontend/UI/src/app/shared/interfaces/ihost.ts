@@ -1,6 +1,6 @@
 export interface IHost {
     id?: number;
-    hostName: string;
+    hostname: string;
     fqdn: string;
     apiKey?: string;
     createdDateTime: Date;

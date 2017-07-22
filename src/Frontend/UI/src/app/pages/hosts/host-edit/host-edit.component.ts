@@ -21,7 +21,6 @@ export class HostEditComponent implements OnInit, OnDestroy, ICanDeactivate {
   private returnUrl: string;
   public hostForm: FormGroup;
   public formFunction: string = 'new';
-  public tenantOptions = [];
 
   constructor(
     private hostDataService: HostDataService,
@@ -32,9 +31,6 @@ export class HostEditComponent implements OnInit, OnDestroy, ICanDeactivate {
     this.hostRouteSubscription = this.route.data.subscribe(
       (res: any) => {
         this.host = res.host;
-        this.tenantOptions = res.tenants.map(tenant => {
-          return { value: tenant.id.toString(), label: tenant.tenantName };
-        });
       });
   }
 
@@ -50,7 +46,7 @@ export class HostEditComponent implements OnInit, OnDestroy, ICanDeactivate {
       (queryParam: any) => {
         this.returnUrl = queryParam['returnUrl'] || '/hosts';
       });
-    // this.initForm();
+    this.initForm();
   }
 
   ngOnDestroy() {
@@ -59,28 +55,22 @@ export class HostEditComponent implements OnInit, OnDestroy, ICanDeactivate {
     if (this.routeQuerySubscription) { this.routeQuerySubscription.unsubscribe(); }
   }
 
-  // private initForm() {
-  //   let hostName: string = '';
-  //   let hostDomain: string = '';
-  //   let cloudZone: string = '';
-  //   let powershellVersion: string = '';
-  //   let tenantId: string;
-  //   if (this.host) {
-  //     hostName = this.host.hostName;
-  //     hostDomain = this.host.domain;
-  //     cloudZone = this.host.cloudZone;
-  //     powershellVersion = this.host.powershellVersion;
-  //     tenantId = this.host.tenant.id.toString();
-  //   }
+  private initForm() {
+    let hostname: string = '';
+    let fqdn: string = '';
+    let apiKey: string = '';
+    if (this.host) {
+      hostname = this.host.hostname;
+      fqdn = this.host.fqdn;
+      apiKey = this.host.apiKey;
+    }
 
-  //   this.hostForm = this.formBuilder.group({
-  //     hostName: [hostName, Validators.required],
-  //     domain: [hostDomain, Validators.required],
-  //     cloudZone: [cloudZone],
-  //     powershellVersion: [powershellVersion, Validators.required],
-  //     tenantId: [tenantId, Validators.required]
-  //   });
-  // }
+    this.hostForm = this.formBuilder.group({
+      hostname: [hostname, Validators.required],
+      fqdn: [fqdn, Validators.required],
+      apiKey: [apiKey, Validators.required]
+    });
+  }
 
   goBack() {
     this.router.navigateByUrl(this.returnUrl);

@@ -101,7 +101,7 @@ md-icon {
 .select-hint {
     position: relative !important;
 }
-md-select {
+/*md-select {
     margin-top: 1em;
 }
 .mat-select-trigger {
@@ -114,4 +114,4 @@ md-select {
 }
 .mat-select-placeholder.mat-floating-placeholder {
     top: -1em !important;
-}
+}*/

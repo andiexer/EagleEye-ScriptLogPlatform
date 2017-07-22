@@ -4,44 +4,29 @@
   </md-card-header>
   <form [formGroup]="hostForm" (ngSubmit)="onSave()">
     <md-card-content>
-      <div [class.has-error]="!hostForm.controls['hostName'].valid && !hostForm.controls['hostName'].pending">
+      <div [class.has-error]="!hostForm.controls['hostname'].valid && !hostForm.controls['hostname'].pending">
         <md-input-container class="full-width" dividerColor="primary">
-          <input mdInput id="hostName" type="text" placeholder="Hostname" formControlName="hostName">
-          <md-hint *ngIf="hostForm.controls['hostName'].touched && !hostForm.controls['hostName'].valid && !hostForm.controls['hostName'].pending">
-            <span class="help-block" *ngIf="hostForm.controls['hostName'].errors.required">Hostname is required</span>
+          <input mdInput id="hostname" type="text" placeholder="Hostname" formControlName="hostname">
+          <md-hint *ngIf="hostForm.controls['hostname'].touched && !hostForm.controls['hostname'].valid && !hostForm.controls['hostname'].pending">
+            <span class="help-block" *ngIf="hostForm.controls['hostname'].errors.required">Hostname is required</span>
           </md-hint>
         </md-input-container>
       </div>
-      <div [class.has-error]="!hostForm.controls['domain'].valid && !hostForm.controls['domain'].pending">
+      <div [class.has-error]="!hostForm.controls['fqdn'].valid && !hostForm.controls['fqdn'].pending">
         <md-input-container class="full-width">
-          <input mdInput id="domain" type="text" placeholder="Domain" formControlName="domain">
-          <md-hint *ngIf="hostForm.controls['domain'].touched && !hostForm.controls['domain'].valid && !hostForm.controls['domain'].pending">
-            <span class="help-block" *ngIf="hostForm.controls['domain'].errors.required">Domain is required</span>
+          <input mdInput id="fqdn" type="text" placeholder="FQDN" formControlName="fqdn">
+          <md-hint *ngIf="hostForm.controls['fqdn'].touched && !hostForm.controls['fqdn'].valid && !hostForm.controls['fqdn'].pending">
+            <span class="help-block" *ngIf="hostForm.controls['fqdn'].errors.required">FQDN is required</span>
           </md-hint>
         </md-input-container>
       </div>
-      <div>
+      <div [class.has-error]="hostForm.controls['apiKey'].touched && !hostForm.controls['apiKey'].valid && !hostForm.controls['apiKey'].pending">
         <md-input-container class="full-width">
-          <input mdInput id="cloudZone" type="text" placeholder="Cloudzone" formControlName="cloudZone">
-        </md-input-container>
-      </div>
-      <div [class.has-error]="hostForm.controls['powershellVersion'].touched && !hostForm.controls['powershellVersion'].valid && !hostForm.controls['powershellVersion'].pending">
-        <md-input-container class="full-width">
-          <input mdInput id="powershellVersion" type="text" placeholder="PowerShell version" formControlName="powershellVersion">
-          <md-hint *ngIf="hostForm.controls['powershellVersion'].touched && !hostForm.controls['powershellVersion'].valid && !hostForm.controls['powershellVersion'].pending">
-            <span class="help-block" *ngIf="hostForm.controls['powershellVersion'].errors.required">PowerShell version is required</span>
+          <input mdInput id="apiKey" type="text" placeholder="API Key" formControlName="apiKey">
+          <md-hint *ngIf="hostForm.controls['apiKey'].touched && !hostForm.controls['apiKey'].valid && !hostForm.controls['apiKey'].pending">
+            <span class="help-block" *ngIf="hostForm.controls['apiKey'].errors.required">API Key is required</span>
           </md-hint>
         </md-input-container>
-      </div>
-      <div [class.has-error]="hostForm.controls['tenantId'].touched && !hostForm.controls['tenantId'].valid && !hostForm.controls['tenantId'].pending">
-        <md-select class="full-width form-control" placeholder="Tenant" name="tenantId" formControlName="tenantId">
-          <md-option *ngFor="let option of tenantOptions" [value]="option.value">
-            {{option.label}}
-          </md-option>
-        </md-select>
-        <md-hint *ngIf="hostForm.controls['tenantId'].touched && !hostForm.controls['tenantId'].valid && !hostForm.controls['tenantId'].pending" class="select-hint">
-          <span class="help-block" *ngIf="hostForm.controls['tenantId'].errors.required">Tenant is required</span>
-        </md-hint>
       </div>
     </md-card-content>
     <md-card-actions>

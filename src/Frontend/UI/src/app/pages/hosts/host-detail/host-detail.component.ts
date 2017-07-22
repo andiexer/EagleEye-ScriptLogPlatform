@@ -18,7 +18,6 @@ export class HostDetailComponent implements OnInit, OnDestroy {
   private hostId: number;
   private returnUrl: string;
   public host: IHost;
-  public tenantOptions = [];
 
   constructor(
     private route: ActivatedRoute,
