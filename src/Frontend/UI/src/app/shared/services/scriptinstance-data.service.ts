@@ -73,7 +73,7 @@ export class ScriptinstanceDataService {
       });
   }
 
-  getScriptInstanceLogs(id: number, logLevel: string[], logText: string, currentPage?: number, itemsPerPage?: number): Observable<ILog[]> {
+  getScriptInstanceLogs(id: number, logLevel?: string[], logText?: string, currentPage?: number, itemsPerPage?: number): Observable<ILog[]> {
     const headers = new Headers();
     if (currentPage && itemsPerPage) {
       headers.append('Pagination', currentPage + ',' + itemsPerPage);

@@ -2,7 +2,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { HostDataService, IHost, TenantDataService } from '../../../shared';
+import { HostDataService, IHost } from '../../../shared';
 import { IHostEdit } from '../../../shared/interfaces/ihost-edit';
 import { DialogsService } from '../../../shared/services/dialogs.service';
 
@@ -24,7 +24,6 @@ export class HostsListComponent implements OnInit, OnDestroy {
 
   constructor(
     private hostDataService: HostDataService,
-    private tenantDataService: TenantDataService,
     private dialogsService: DialogsService,
     private formBuilder: FormBuilder,
     private router: Router,

@@ -8,8 +8,6 @@
           <th>Log Level</th>
           <th>Log Text</th>
           <th>Script Instance</th>
-          <th>Script Name</th>
-          <th>Hostname</th>
         </tr>
       </thead>
       <tbody>
@@ -17,9 +15,7 @@
           <td>{{latestLog.logDateTime | date:"dd.MM.yyyy HH:mm:ss"}}</td>
           <td><span [class]="'logLevel ' + logLevel[latestLog.logLevel]"><md-icon>{{logLevelIcon[latestLog.logLevel]}}</md-icon></span> {{logLevel[latestLog.logLevel]}}</td>
           <td>{{latestLog.logText}}</td>
-          <td><a [routerLink]="['scriptinstances', latestLog.scriptInstance]" [queryParams]="{returnUrl: '/'}">{{latestLog.scriptInstance}}</a></td>
-          <td>{{latestLog.scriptName}}</td>
-          <td>{{latestLog.hostName}}</td>
+          <td><a [routerLink]="['scriptinstances', latestLog.scriptInstanceId]" [queryParams]="{returnUrl: '/'}">{{latestLog.scriptInstanceId}}</a></td>
         </tr>
       </tbody>
     </table>

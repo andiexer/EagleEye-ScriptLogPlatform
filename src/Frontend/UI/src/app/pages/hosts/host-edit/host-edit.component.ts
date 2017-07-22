@@ -50,7 +50,7 @@ export class HostEditComponent implements OnInit, OnDestroy, ICanDeactivate {
       (queryParam: any) => {
         this.returnUrl = queryParam['returnUrl'] || '/hosts';
       });
-    this.initForm();
+    // this.initForm();
   }
 
   ngOnDestroy() {
@@ -59,28 +59,28 @@ export class HostEditComponent implements OnInit, OnDestroy, ICanDeactivate {
     if (this.routeQuerySubscription) { this.routeQuerySubscription.unsubscribe(); }
   }
 
-  private initForm() {
-    let hostName: string = '';
-    let hostDomain: string = '';
-    let cloudZone: string = '';
-    let powershellVersion: string = '';
-    let tenantId: string;
-    if (this.host) {
-      hostName = this.host.hostName;
-      hostDomain = this.host.domain;
-      cloudZone = this.host.cloudZone;
-      powershellVersion = this.host.powershellVersion;
-      tenantId = this.host.tenant.id.toString();
-    }
+  // private initForm() {
+  //   let hostName: string = '';
+  //   let hostDomain: string = '';
+  //   let cloudZone: string = '';
+  //   let powershellVersion: string = '';
+  //   let tenantId: string;
+  //   if (this.host) {
+  //     hostName = this.host.hostName;
+  //     hostDomain = this.host.domain;
+  //     cloudZone = this.host.cloudZone;
+  //     powershellVersion = this.host.powershellVersion;
+  //     tenantId = this.host.tenant.id.toString();
+  //   }
 
-    this.hostForm = this.formBuilder.group({
-      hostName: [hostName, Validators.required],
-      domain: [hostDomain, Validators.required],
-      cloudZone: [cloudZone],
-      powershellVersion: [powershellVersion, Validators.required],
-      tenantId: [tenantId, Validators.required]
-    });
-  }
+  //   this.hostForm = this.formBuilder.group({
+  //     hostName: [hostName, Validators.required],
+  //     domain: [hostDomain, Validators.required],
+  //     cloudZone: [cloudZone],
+  //     powershellVersion: [powershellVersion, Validators.required],
+  //     tenantId: [tenantId, Validators.required]
+  //   });
+  // }
 
   goBack() {
     this.router.navigateByUrl(this.returnUrl);

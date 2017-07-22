@@ -57,8 +57,8 @@ export class ScriptinstanceDetailsComponent implements OnInit, OnDestroy, DoChec
     this.guidSubscription = this.route.params.subscribe(
       (params: any) => {
         this.scriptInstanceGuid = params['guid'];
-        this.getScriptInstance(this.scriptInstanceGuid.toString());
-        this.getScriptInstanceLogs(this.scriptInstanceGuid.toString());
+        this.getScriptInstance(parseInt(this.scriptInstanceGuid.toString(), 10));
+        this.getScriptInstanceLogs(parseInt(this.scriptInstanceGuid.toString(), 10));
       }
     );
     this.querySubscription = this.route.queryParams.subscribe(
@@ -109,15 +109,15 @@ export class ScriptinstanceDetailsComponent implements OnInit, OnDestroy, DoChec
     });
   }
 
-  getScriptInstance(guid: string) {
-    this.subscription = this.scriptinstanceDataService.getScriptInstance(guid)
+  getScriptInstance(id: number) {
+    this.subscription = this.scriptinstanceDataService.getScriptInstance(id)
       .subscribe((res: IScriptInstance) => {
         this.scriptInstance = res;
       });
   }
 
-  getScriptInstanceLogs(guid: string) {
-    this.logSubscription = this.scriptinstanceDataService.getScriptInstanceLogs(guid)
+  getScriptInstanceLogs(id: number) {
+    this.logSubscription = this.scriptinstanceDataService.getScriptInstanceLogs(id)
       .subscribe((res: ILog[]) => {
         this.scriptInstanceLogs = res;
       });

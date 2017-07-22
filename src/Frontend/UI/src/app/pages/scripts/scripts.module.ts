@@ -7,7 +7,6 @@ import { ScriptDetailResolver } from './script-detail/script-detail.resolver';
 import { ScriptEditGuard } from './script-edit/script-edit.guard';
 import { ScriptEditComponent } from './script-edit/script-edit.component';
 import { scriptRouting } from './scripts.routing';
-import { FilterScriptsPipe } from '../../shared';
 import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
@@ -19,8 +18,7 @@ import { SharedModule } from '../../shared/shared.module';
     ScriptsComponent,
     ScriptsListComponent,
     ScriptDetailComponent,
-    ScriptEditComponent,
-    FilterScriptsPipe
+    ScriptEditComponent
   ],
   providers: [
     ScriptDetailResolver,

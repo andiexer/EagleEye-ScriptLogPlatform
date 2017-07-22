@@ -6,6 +6,7 @@ import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { MaterialModule } from '@angular/material';
+import { CdkTableModule } from '@angular/cdk';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { routing } from './app.routing';
@@ -27,9 +28,10 @@ let modules = [
   ReactiveFormsModule,
   HttpModule,
   CoreModule,
-  MaterialModule,
   FlexLayoutModule,
-  BrowserAnimationsModule
+  BrowserAnimationsModule,
+  MaterialModule,
+  CdkTableModule
 ];
 
 let services = [

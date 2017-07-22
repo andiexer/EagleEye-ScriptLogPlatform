@@ -10,6 +10,7 @@ import { ILog, LogLevel, LogDataService } from '../../../shared';
 export class LatestLogsComponent implements OnInit, OnDestroy {
   @Input() totalItems: number = 10;
   private subscription: Subscription;
+  public displayedColumns = ['logDateTime', 'logLevel', 'logText', 'scriptInstance'];
   public logLevel = LogLevel;
   public logLevelIcon: String[] = [
     'error',
