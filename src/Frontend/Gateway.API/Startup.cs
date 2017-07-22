@@ -58,7 +58,8 @@ namespace EESLP.Frontend.Gateway.API
             {
                 builder.AllowAnyOrigin()
                     .AllowAnyMethod()
-                    .AllowAnyHeader();
+                    .AllowAnyHeader()
+                    .WithExposedHeaders("Pagination");
             }));
 
             // Add distributed cache
