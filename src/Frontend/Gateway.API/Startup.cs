@@ -53,6 +53,14 @@ namespace EESLP.Frontend.Gateway.API
             services.AddMvc();
             services.AddAutoMapper();
 
+            // Add Cors support
+            services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
+
             // Add distributed cache
             services.AddDistributedRedisCache(options =>
             {
@@ -64,6 +72,9 @@ namespace EESLP.Frontend.Gateway.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            // use Cors
+            app.UseCors("CorsPolicy");
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
