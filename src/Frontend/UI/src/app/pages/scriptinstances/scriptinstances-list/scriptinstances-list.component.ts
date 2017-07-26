@@ -3,9 +3,9 @@ import { ActivatedRoute, Router, RouterStateSnapshot } from '@angular/router';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Rx';
 import { IScriptInstance } from '../../../shared/interfaces/iscript-instance';
-import {
-  ScriptinstanceDataService
-} from '../../../shared';
+import { ScriptinstanceDataService } from '../../../shared';
+import { PageEvent } from '@angular/material';
+import { IScriptInstances } from '../../../shared/interfaces/iscript-instances';
 
 declare var moment: any;
 
@@ -16,16 +16,16 @@ declare var moment: any;
 export class ScriptinstancesListComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
   private querySubscription: Subscription;
-  private minDate: String = '2017-02-03';
+  private minDate: string = '2017-02-03';
   private timeRegex: string = '(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]';
   public scriptInstances: IScriptInstance[];
-  public searchScriptInstanceStatus: String[] = [];
-  public searchScriptInstanceHostname: String = '';
-  public searchScriptInstanceScriptname: String = '';
-  public searchScriptInstanceDateFrom: String = '';
-  public searchScriptInstanceDateTo: String = '';
-  public searchScriptInstanceHourFrom: String = '';
-  public searchScriptInstanceHourTo: String = '';
+  public searchScriptInstanceStatus: string[] = [];
+  public searchScriptInstanceHostname: string = '';
+  public searchScriptInstanceScriptname: string = '';
+  public searchScriptInstanceDateFrom: string = '';
+  public searchScriptInstanceDateTo: string = '';
+  public searchScriptInstanceHourFrom: string = '';
+  public searchScriptInstanceHourTo: string = '';
   public searchForm: FormGroup;
   public statusOptions = [
     { value: 'Created', label: 'Created' },
@@ -36,7 +36,10 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
     { value: 'Aborted', label: 'Aborted' },
     { value: 'Timeout', label: 'Timeout' },
   ];
-  public currentPage;
+  public length = 100;
+  public pageSize = 10;
+  public pageSizeOptions = [5, 10, 25, 100];
+  public currentPage: number;
 
 
   constructor(
@@ -47,7 +50,6 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.getScriptInstances();
     this.querySubscription = this.route.queryParams.subscribe(
       (queryParam: any) => {
         if (queryParam['status']) {
@@ -72,8 +74,10 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
           this.searchScriptInstanceHourTo = queryParam['hourTo'];
         }
       });
+    this.getScriptInstances();
     this.initForm();
   }
+
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
@@ -128,14 +132,41 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
   }
 
   getScriptInstances() {
-    this.subscription = this.scriptinstanceDataService.getScriptInstances()
-      .subscribe((res: IScriptInstance[]) => {
-        this.scriptInstances = res;
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    // define query parameters
+    let filterFromDate: Date;
+    let filterToDate: Date;
+    if (this.searchScriptInstanceDateFrom) {
+      filterFromDate = new Date(this.searchScriptInstanceDateFrom + ' ' + this.searchScriptInstanceHourFrom);
+    } else {
+      filterFromDate = null;
+    }
+    if (this.searchScriptInstanceDateTo) {
+      filterToDate = new Date(this.searchScriptInstanceDateTo + ' ' + this.searchScriptInstanceHourTo);
+    } else {
+      filterToDate = null;
+    }
+    this.subscription = this.scriptinstanceDataService.getScriptInstances(
+      this.searchScriptInstanceHostname,
+      this.searchScriptInstanceScriptname,
+      this.searchScriptInstanceStatus,
+      filterFromDate,
+      filterToDate,
+      this.currentPage + 1,
+      this.pageSize
+    )
+      .subscribe((res: IScriptInstances) => {
+        this.scriptInstances = res.scriptInstances;
+        this.currentPage = res.pagination.CurrentPage - 1;
+        this.pageSize = res.pagination.ItemsPerPage;
+        this.length = res.pagination.TotalItems;
       });
   }
 
-  onDetails(guid: String) {
-    this.router.navigate(['/scriptinstances', guid], { queryParams: { returnUrl: this.router.url}});
+  onDetails(guid: string) {
+    this.router.navigate(['/scriptinstances', guid], { queryParams: { returnUrl: this.router.url } });
   }
 
   onSearch() {
@@ -155,6 +186,7 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
     if (this.searchScriptInstanceHourFrom !== '00:00') { queryParams.hourFrom = this.searchScriptInstanceHourFrom; }
     if (this.searchScriptInstanceHourTo !== '23:59') { queryParams.hourTo = this.searchScriptInstanceHourTo; }
     this.router.navigate(['/scriptinstances'], { queryParams: queryParams });
+    this.getScriptInstances();
   }
 
   onSearchClear() {
@@ -168,6 +200,12 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
       hourTo: '23:59'
     });
     this.onSearch();
+  }
+
+  onPageChange(pageEvent: PageEvent) {
+    this.currentPage = pageEvent.pageIndex;
+    this.pageSize = pageEvent.pageSize;
+    this.getScriptInstances();
   }
 
 }

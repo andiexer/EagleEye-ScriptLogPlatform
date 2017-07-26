@@ -82,36 +82,36 @@ md-icon {
     color: #9E9E9E;
 }
 /* Forms */
-.full-width {
+form .full-width {
     width: 100%;
 }
-.form-control {
+form .form-control {
     font-size: 14px;
     min-width: 200px;
 }
-.form-control span {
+form .form-control span {
     font-size: 14px;
 }
-.mat-select-trigger, .mat-select-arrow {
+form .mat-select-trigger, .mat-select-arrow {
     color: rgba(0, 0, 0, 0.38) !important;
 }
-.mat-select-underline {
+form .mat-select-underline {
     background-color: rgba(0, 0, 0, 0.12) !important;
 }
-.select-hint {
+form .select-hint {
     position: relative !important;
 }
-/*md-select {
+form md-select {
     margin-top: 1em;
 }
-.mat-select-trigger {
+form .mat-select-trigger {
     height: auto !important;
 }
-.mat-select-placeholder {
+form .mat-select-placeholder {
     padding-left: 0px !important;
     padding-right: 0px !important;
     padding-bottom: 6px !important;
 }
-.mat-select-placeholder.mat-floating-placeholder {
+form .mat-select-placeholder.mat-floating-placeholder {
     top: -1em !important;
-}*/
+}

@@ -1,5 +1,5 @@
 <button md-button (click)="goBack()" style="margin-bottom:5px;"><md-icon>arrow_back</md-icon>Go Back</button>
-<div fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" style="margin-bottom: 15px;">
+<!-- <div fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" style="margin-bottom: 15px;">
   <div fxFlex="30%">
     <md-card>
       <md-card-header>
@@ -10,9 +10,9 @@
           <dt>Status</dt>
           <dd>{{scriptInstance?.instanceStatus}}</dd>
           <dt>Start Time</dt>
-          <dd>{{scriptInstance?.startDateTime | date:"dd.MM.yyyy HH:mm:ss"}}</dd>
+          <dd>{{scriptInstance?.startDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</dd>
           <dt>End Time</dt>
-          <dd>{{scriptInstance?.endDateTime | date:"dd.MM.yyyy HH:mm:ss"}}</dd>
+          <dd>{{scriptInstance?.endDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</dd>
           <dt>Transaction ID </dt>
           <dd>{{scriptInstance?.transactionId}}</dd>
         </dl>
@@ -28,12 +28,6 @@
         <dl class="dl-horizontal">
           <dt>Hostname</dt>
           <dd>{{scriptInstance?.host.hostName + '.' + scriptInstance?.host.domain}}</dd>
-          <dt>Cloud Zone</dt>
-          <dd>{{scriptInstance?.host.cloudZone}}</dd>
-          <dt>PowerShell Version</dt>
-          <dd>{{scriptInstance?.host.powershellVersion}}</dd>
-          <dt>Tenant</dt>
-          <dd>{{scriptInstance?.host.tenant.tenantName}}</dd>
         </dl>
       </md-card-content>
     </md-card>
@@ -54,7 +48,7 @@
       </md-card-content>
     </md-card>
   </div>
-</div>
+</div> -->
 <md-card>
   <md-card-header fxLayout="row" fxLayoutAlign="space-between stretch" fxLayoutWrap>
     <md-card-title fxFlexAlign="left">Logs</md-card-title>
@@ -94,10 +88,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let log of scriptInstanceLogs 
-          | filterLogs : searchLogLevel : searchText
-          | paginate: {itemsPerPage: itemsPerPage, currentPage: currentPage}">
-          <td width="200px">{{log.logDateTime | date:"dd.MM.yyyy HH:mm:ss"}}</td>
+        <tr *ngFor="let log of scriptInstanceLogs ">
+          <td width="200px">{{log.logDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
           <td width="150px"><span [class]="'logLevel ' + logLevel[log.logLevel]"><md-icon>{{logLevelIcon[log.logLevel]}}</md-icon></span> {{logLevel[log.logLevel]}}</td>
           <td>{{log.logText}}</td>
         </tr>

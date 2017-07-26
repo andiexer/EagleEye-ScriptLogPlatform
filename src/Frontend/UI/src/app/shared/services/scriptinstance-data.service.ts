@@ -5,6 +5,7 @@ import { IScriptInstance } from '../interfaces/iscript-instance';
 import { ConfigService } from './config.service';
 import { ILog } from '../interfaces/ilog';
 import { Router } from '@angular/router';
+import { IScriptInstances } from '../interfaces/iscript-instances';
 
 @Injectable()
 export class ScriptinstanceDataService {
@@ -26,24 +27,33 @@ export class ScriptinstanceDataService {
     to?: Date,
     currentPage?: number,
     itemsPerPage?: number
-  ): Observable<IScriptInstance[]> {
+  ): Observable<IScriptInstances> {
     const headers = new Headers();
     if (currentPage && itemsPerPage) {
       headers.append('Pagination', currentPage + ',' + itemsPerPage);
     }
-    const queryParams = new URLSearchParams();
-    queryParams.append('hostname', hostname);
-    queryParams.append('scriptname', scriptname);
-    for (const item in status) {
-      queryParams.append('status', item);
+    let queryParams: URLSearchParams = new URLSearchParams();
+    queryParams.set('hostname', hostname);
+    queryParams.set('scriptname', scriptname);
+    for (let i = 0; i < status.length; i++) {
+      queryParams.append('status', status[i]);
     }
-    queryParams.append('from', from.toDateString());
-    queryParams.append('to', from.toDateString());
-    const options = new RequestOptions({ headers: headers, params: queryParams });
+    if (from) {
+      queryParams.set('from', from.toDateString());
+    }
+    if (to) {
+      queryParams.set('to', to.toDateString());
+    }
+    const options = new RequestOptions({ headers: headers, params: queryParams.toString() });
     return Observable.timer(0, 5000)
       .flatMap(() => {
         return this.http.get(this._baseUrl + 'ScriptInstances', options)
-          .map((res: Response) => { return res.json(); })
+          .map((res: Response) => {
+            let result: IScriptInstances = { pagination: null, scriptInstances: null };
+            result.pagination = JSON.parse(res.headers.get('Pagination'));
+            result.scriptInstances = res.json();
+            return result;
+          })
           .catch((error: Response) => {
             this.router.navigate(['/error'], {
               queryParams: {

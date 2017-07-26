@@ -3,14 +3,11 @@
     <md-card-content>
       <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap>
         <div fxFlex="230px">
-          <!--<label for="status">Status</label>
-            <ng-select [options]="statusOptions" multiple="true" placeholder="Status" formControlName="status">
-            </ng-select>-->
-          <md-select class="form-control" placeholder="Status" name="status" formControlName="status" multiple>
-            <md-option *ngFor="let option of statusOptions" [value]="option.value">
-              {{option.label}}
-            </md-option>
-          </md-select>
+            <md-select class="form-control" placeholder="Status" name="status" formControlName="status" multiple>
+              <md-option *ngFor="let option of statusOptions" [value]="option.value">
+                {{option.label}}
+              </md-option>
+            </md-select>
         </div>
         <div fxFlex="230px">
           <md-input-container>
@@ -38,12 +35,10 @@
               </div>
             </div>
             <div fxLayout="column">
-              <div *ngIf="searchForm.get('dateTime').get('dateFrom').dirty && !searchForm.get('dateTime').get('dateFrom').valid"
-                [class.has-error]="!searchForm.get('dateTime').get('dateFrom').valid">
+              <div *ngIf="searchForm.get('dateTime').get('dateFrom').dirty && !searchForm.get('dateTime').get('dateFrom').valid" [class.has-error]="!searchForm.get('dateTime').get('dateFrom').valid">
                 <span class="help-block">The date should be in the following format: dd.MM.yyyy (for example 27.05.2016)</span>
               </div>
-              <div *ngIf="searchForm.get('dateTime').get('hourFrom').dirty && !searchForm.get('dateTime').get('hourFrom').valid"
-                [class.has-error]="!searchForm.get('dateTime').get('hourFrom').valid">
+              <div *ngIf="searchForm.get('dateTime').get('hourFrom').dirty && !searchForm.get('dateTime').get('hourFrom').valid" [class.has-error]="!searchForm.get('dateTime').get('hourFrom').valid">
                 <span class="help-block">The time should be in the following format: HH:mm (for example 17:28)</span>
               </div>
             </div>
@@ -63,12 +58,10 @@
               </div>
             </div>
             <div fxLayout="column">
-              <div *ngIf="searchForm.get('dateTime').get('dateTo').dirty && !searchForm.get('dateTime').get('dateTo').valid"
-                [class.has-error]="!searchForm.get('dateTime').get('dateTo').valid">
+              <div *ngIf="searchForm.get('dateTime').get('dateTo').dirty && !searchForm.get('dateTime').get('dateTo').valid" [class.has-error]="!searchForm.get('dateTime').get('dateTo').valid">
                 <span class="help-block">The date should be in the following format: dd.MM.yyyy (for example 27.05.2016)</span>
               </div>
-              <div *ngIf="searchForm.get('dateTime').get('hourTo').dirty && !searchForm.get('dateTime').get('hourTo').valid"
-                [class.has-error]="!searchForm.get('dateTime').get('hourTo').valid">
+              <div *ngIf="searchForm.get('dateTime').get('hourTo').dirty && !searchForm.get('dateTime').get('hourTo').valid" [class.has-error]="!searchForm.get('dateTime').get('hourTo').valid">
                 <span class="help-block">The time should be in the following format: HH:mm (for example 17:28)</span>
               </div>
             </div>
@@ -100,22 +93,21 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let scriptInstance of scriptInstances
-                        | filterScriptInstances : searchScriptInstanceStatus : searchScriptInstanceHostname : searchScriptInstanceScriptname : searchScriptInstanceDateFrom : searchScriptInstanceDateTo : searchScriptInstanceHourFrom : searchScriptInstanceHourTo
-                        | orderBy : ['-startDateTime'] 
-                        | paginate : {itemsPerPage: 10, currentPage: currentPage}">
+        <tr *ngFor="let scriptInstance of scriptInstances">
           <td><button md-button (click)="onDetails(scriptInstance.instanceGuid)"><md-icon>more_horiz</md-icon> Details</button></td>
           <td>{{scriptInstance.instanceStatus}}</td>
-          <td>{{scriptInstance.startDateTime | date:"dd.MM.yyyy HH:mm:ss"}}</td>
-          <td>{{scriptInstance.endDateTime | date:"dd.MM.yyyy HH:mm:ss"}}</td>
-          <td>{{scriptInstance.host.hostName}}</td>
-          <td>{{scriptInstance.script.scriptName}}</td>
+          <td>{{scriptInstance.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
+          <td *ngIf="scriptInstance.endDateTime != null">{{scriptInstance.endDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
+          <td *ngIf="scriptInstance.endDateTime == null">Scriptinstance is not finished</td>
+          <td>{{scriptInstance.host.hostname}}</td>
+          <td>{{scriptInstance.script.scriptname}}</td>
           <td>{{scriptInstance.transactionId}}</td>
         </tr>
       </tbody>
     </table>
   </md-card-content>
   <md-card-actions>
-    <app-pagination (pageChange)="currentPage = $event"></app-pagination>
+    <md-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+    </md-paginator>
   </md-card-actions>
 </md-card>
