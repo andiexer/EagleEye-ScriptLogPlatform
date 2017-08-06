@@ -37,10 +37,13 @@ namespace EESLP.Services.Logging.API.Services
 
         public int GetNumberOfLogsPerScriptInstance(int id, LogLevel[] logLevel, string text)
         {
+            text = text == null ? "" : text;
+            string query = "SELECT COUNT(*) FROM Log ";
+            query += getLogsPerScriptInstanceWhereQuery(id, logLevel);
             using (var db = Connection)
             {
                 db.Open();
-                return db.Query<int>($"SELECT COUNT(*) FROM Log WHERE ScriptInstanceId = {id}").ToArray()[0];
+                return db.Query<int>(query, new { text = text }).ToArray()[0];
             }
         }
 
