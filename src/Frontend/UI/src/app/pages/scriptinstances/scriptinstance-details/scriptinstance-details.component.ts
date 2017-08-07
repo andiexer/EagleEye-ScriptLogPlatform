@@ -5,6 +5,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/Rx';
 import { CustomValidators } from 'ng2-validation';
 import { ILog, LogLevel, IScriptInstance, ScriptinstanceDataService } from '../../../shared';
+import { ILogs } from '../../../shared/interfaces/ilogs';
+import { PageEvent } from '@angular/material';
 
 declare var moment: any;
 
@@ -15,17 +17,16 @@ declare var moment: any;
 })
 export class ScriptinstanceDetailsComponent implements OnInit, OnDestroy, DoCheck {
   private subscription: Subscription;
-  private guidSubscription: Subscription;
+  private idSubscription: Subscription;
   private logSubscription: Subscription;
   private querySubscription: Subscription;
-  private scriptInstanceGuid: String;
+  private scriptInstanceId: number;
   private returnUrl: string;
-  public itemsPerPage: Number = 10;
   public searchForm: FormGroup;
-  public searchLogLevel: LogLevel[];
-  public searchText: String = '';
+  public searchLogLevel: string[] = [];
+  public searchText: string = '';
   public logLevel = LogLevel;
-  public logLevelIcon: String[] = [
+  public logLevelIcon: string[] = [
     'error',
     'error',
     'warning',
@@ -35,17 +36,21 @@ export class ScriptinstanceDetailsComponent implements OnInit, OnDestroy, DoChec
     'info'
   ];
   public logLevelOptions = [
-    {value: LogLevel.Fatal, label: 'Fatal'},
-    {value: LogLevel.Error, label: 'Error'},
-    {value: LogLevel.Warning, label: 'Warning'},
-    {value: LogLevel.Info, label: 'Info'},
-    {value: LogLevel.Debug, label: 'Debug'},
-    {value: LogLevel.Trace, label: 'Trace'},
-    {value: LogLevel.All, label: 'All'}
+    { value: LogLevel.Fatal, label: 'Fatal' },
+    { value: LogLevel.Error, label: 'Error' },
+    { value: LogLevel.Warning, label: 'Warning' },
+    { value: LogLevel.Info, label: 'Info' },
+    { value: LogLevel.Debug, label: 'Debug' },
+    { value: LogLevel.Trace, label: 'Trace' },
+    { value: LogLevel.All, label: 'All' }
   ]
   public scriptInstance: IScriptInstance;
   public scriptInstanceLogs: ILog[];
-  public currentPage;
+  public length = 100;
+  public pageSize = 10;
+  public pageSizeOptions = [5, 10, 25, 100];
+  public currentPage: number;
+  private loaded: boolean = false;
 
   constructor(private scriptinstanceDataService: ScriptinstanceDataService,
     private route: ActivatedRoute,
@@ -54,18 +59,8 @@ export class ScriptinstanceDetailsComponent implements OnInit, OnDestroy, DoChec
   ) { }
 
   ngOnInit() {
-    this.guidSubscription = this.route.params.subscribe(
-      (params: any) => {
-        this.scriptInstanceGuid = params['guid'];
-        this.getScriptInstance(parseInt(this.scriptInstanceGuid.toString(), 10));
-        this.getScriptInstanceLogs(parseInt(this.scriptInstanceGuid.toString(), 10));
-      }
-    );
     this.querySubscription = this.route.queryParams.subscribe(
       (queryParam: any) => {
-        if (queryParam['itemsPerPage']) {
-          this.itemsPerPage = queryParam['itemsPerPage'];
-        }
         if (queryParam['logLevel']) {
           this.searchLogLevel = queryParam['logLevel'].split(',').map(item => parseInt(item, 10));
         }
@@ -74,13 +69,20 @@ export class ScriptinstanceDetailsComponent implements OnInit, OnDestroy, DoChec
         }
         this.returnUrl = queryParam['returnUrl'] || '/scriptinstances';
       });
+    this.idSubscription = this.route.params.subscribe(
+      (params: any) => {
+        this.scriptInstanceId = parseInt(params['guid'], 10);
+        this.getScriptInstance();
+        this.getScriptInstanceLogs();
+      }
+    );
     this.initForm();
   }
 
   ngOnDestroy() {
     if (this.subscription) { this.subscription.unsubscribe(); }
     if (this.querySubscription) { this.querySubscription.unsubscribe(); }
-    if (this.guidSubscription) { this.guidSubscription.unsubscribe(); }
+    if (this.idSubscription) { this.idSubscription.unsubscribe(); }
     if (this.logSubscription) { this.logSubscription.unsubscribe(); }
   }
 
@@ -90,7 +92,7 @@ export class ScriptinstanceDetailsComponent implements OnInit, OnDestroy, DoChec
         if (this.subscription) {
           this.subscription.unsubscribe();
         }
-        if (this.logSubscription && this.scriptInstanceLogs) {
+        if (this.logSubscription && this.loaded) {
           this.logSubscription.unsubscribe();
         }
       }
@@ -98,52 +100,65 @@ export class ScriptinstanceDetailsComponent implements OnInit, OnDestroy, DoChec
   }
 
   private initForm() {
-    let itemsPerPage = this.itemsPerPage;
     let logLevel = this.searchLogLevel;
     let text = this.searchText;
 
     this.searchForm = this.formBuilder.group({
-      itemsPerPage: [itemsPerPage, [CustomValidators.range([10, 100])]],
       logLevel: [logLevel],
       text: [text]
     });
   }
 
-  getScriptInstance(id: number) {
-    this.subscription = this.scriptinstanceDataService.getScriptInstance(id)
+  getScriptInstance() {
+    this.subscription = this.scriptinstanceDataService.getScriptInstance(this.scriptInstanceId)
       .subscribe((res: IScriptInstance) => {
         this.scriptInstance = res;
       });
   }
 
-  getScriptInstanceLogs(id: number) {
-    this.logSubscription = this.scriptinstanceDataService.getScriptInstanceLogs(id)
-      .subscribe((res: ILog[]) => {
-        this.scriptInstanceLogs = res;
-      });
+  getScriptInstanceLogs() {
+    this.loaded = false;
+    if (this.logSubscription) { this.logSubscription.unsubscribe(); }
+    this.logSubscription = this.scriptinstanceDataService.getScriptInstanceLogs(
+      this.scriptInstanceId,
+      this.searchLogLevel,
+      this.searchText,
+      this.currentPage + 1,
+      this.pageSize
+    ).subscribe((res: ILogs) => {
+      this.loaded = true;
+      this.scriptInstanceLogs = res.logs;
+      this.currentPage = res.pagination.CurrentPage - 1;
+      this.pageSize = res.pagination.ItemsPerPage;
+      this.length = res.pagination.TotalItems;
+    });
   }
 
   onSearch() {
-    this.itemsPerPage = this.searchForm.value.itemsPerPage;
     this.searchLogLevel = this.searchForm.value.logLevel;
     this.searchText = this.searchForm.value.text;
     let queryParams: any = {};
-    if (this.itemsPerPage !== 10) { queryParams.itemsPerPage = this.itemsPerPage; }
     if (this.searchLogLevel.length > 0) { queryParams.logLevel = this.searchLogLevel.toString(); }
     if (this.searchText) { queryParams.text = this.searchText; }
     if (this.returnUrl) { queryParams.returnUrl = this.returnUrl; }
-    this.router.navigate(['/scriptinstances', this.scriptInstanceGuid], { queryParams: queryParams });
+    this.router.navigate(['/scriptinstances', this.scriptInstanceId], { queryParams: queryParams });
+    this.getScriptInstanceLogs();
   }
 
   onSearchClear() {
-    this.searchForm.controls['itemsPerPage'].setValue(10);
-    this.searchForm.controls['logLevel'].setValue([]);
     this.searchForm.controls['text'].setValue('');
+    this.searchForm.controls['logLevel'].setValue([]);
     this.onSearch();
   }
 
   goBack() {
     this.router.navigateByUrl(this.returnUrl);
+  }
+
+  onPageChange(pageEvent: PageEvent) {
+    this.currentPage = pageEvent.pageIndex;
+    this.pageSize = pageEvent.pageSize;
+    this.getScriptInstanceLogs();
   }
 
 }

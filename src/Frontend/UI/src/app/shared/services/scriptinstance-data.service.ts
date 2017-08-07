@@ -1,3 +1,4 @@
+import { ILogs } from '../interfaces/ilogs';
 import { Injectable } from '@angular/core';
 import { Http, Response, RequestOptions, Headers } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
@@ -83,21 +84,32 @@ export class ScriptinstanceDataService {
       });
   }
 
-  getScriptInstanceLogs(id: number, logLevel?: string[], logText?: string, currentPage?: number, itemsPerPage?: number): Observable<ILog[]> {
+  getScriptInstanceLogs(
+    id: number,
+    logLevel?: string[],
+    logText?: string,
+    currentPage?: number,
+    itemsPerPage?: number
+  ): Observable<ILogs> {
     const headers = new Headers();
     if (currentPage && itemsPerPage) {
       headers.append('Pagination', currentPage + ',' + itemsPerPage);
     }
     const queryParams = new URLSearchParams();
-    for (const item in logLevel) {
-      queryParams.append('logLevel', item);
+    for (let i = 0; i < logLevel.length; i++) {
+      queryParams.append('logLevel', logLevel[i]);
     }
-    queryParams.append('logText', logText);
-    const options = new RequestOptions({ headers: headers, params: queryParams });
-    return Observable.timer(0, 1000)
+    queryParams.set('logText', logText);
+    const options = new RequestOptions({ headers: headers, params: queryParams.toString() });
+    return Observable.timer(0, 3000)
       .flatMap(() => {
         return this.http.get(this._baseUrl + 'ScriptInstances/' + id + '/Logs', options)
-          .map((res: Response) => { return res.json(); })
+          .map((res: Response) => {
+            let result: ILogs = { pagination: null, logs: null };
+            result.pagination = JSON.parse(res.headers.get('Pagination'));
+            result.logs = res.json();
+            return result;
+          })
           .catch((error: Response) => {
             this.router.navigate(['/error'], {
               queryParams: {

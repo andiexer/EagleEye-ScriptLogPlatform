@@ -1,4 +1,5 @@
 export * from './interfaces/ilog'
+export * from './interfaces/ilogs'
 export * from './interfaces/ihost'
 export * from './interfaces/iscript'
 export * from './interfaces/iscript-instance'

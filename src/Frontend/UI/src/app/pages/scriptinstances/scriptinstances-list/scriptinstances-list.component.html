@@ -94,7 +94,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let scriptInstance of scriptInstances">
-          <td><button md-button (click)="onDetails(scriptInstance.instanceGuid)"><md-icon>more_horiz</md-icon> Details</button></td>
+          <td><button md-button (click)="onDetails(scriptInstance.id)"><md-icon>more_horiz</md-icon> Details</button></td>
           <td>{{scriptInstance.instanceStatus}}</td>
           <td>{{scriptInstance.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
           <td *ngIf="scriptInstance.endDateTime != null">{{scriptInstance.endDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>

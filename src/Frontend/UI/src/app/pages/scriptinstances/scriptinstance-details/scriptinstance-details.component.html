@@ -1,5 +1,5 @@
 <button md-button (click)="goBack()" style="margin-bottom:5px;"><md-icon>arrow_back</md-icon>Go Back</button>
-<!-- <div fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" style="margin-bottom: 15px;">
+<div fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" style="margin-bottom: 15px;">
   <div fxFlex="30%">
     <md-card>
       <md-card-header>
@@ -10,9 +10,10 @@
           <dt>Status</dt>
           <dd>{{scriptInstance?.instanceStatus}}</dd>
           <dt>Start Time</dt>
-          <dd>{{scriptInstance?.startDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</dd>
+          <dd>{{scriptInstance?.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</dd>
           <dt>End Time</dt>
-          <dd>{{scriptInstance?.endDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</dd>
+          <dd *ngIf="scriptInstance?.endDateTime != null">{{scriptInstance?.endDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</dd>
+          <dd *ngIf="scriptInstance?.endDateTime == null">Scriptinstance is not finished</dd>
           <dt>Transaction ID </dt>
           <dd>{{scriptInstance?.transactionId}}</dd>
         </dl>
@@ -27,7 +28,7 @@
       <md-card-content>
         <dl class="dl-horizontal">
           <dt>Hostname</dt>
-          <dd>{{scriptInstance?.host.hostName + '.' + scriptInstance?.host.domain}}</dd>
+          <dd>{{scriptInstance?.host.fqdn}}</dd>
         </dl>
       </md-card-content>
     </md-card>
@@ -48,14 +49,12 @@
       </md-card-content>
     </md-card>
   </div>
-</div> -->
+</div>
 <md-card>
   <md-card-header fxLayout="row" fxLayoutAlign="space-between stretch" fxLayoutWrap>
     <md-card-title fxFlexAlign="left">Logs</md-card-title>
     <div fxFlexAlign="right">
       <form fxLayout="row" [formGroup]="searchForm" (ngSubmit)="onSearch()">
-        <span *ngIf="searchForm.controls['itemsPerPage'].dirty && !searchForm.controls['itemsPerPage'].valid" [class.has-error]="!searchForm.controls['itemsPerPage'].valid"
-          class="help-block" style="margin-right: 15px">The items per page need to be between 10 and 100</span>
         <div fxFlex="230px">
           <md-select class="form-control" placeholder="Log Level" name="logLevel" formControlName="logLevel" multiple>
             <md-option *ngFor="let option of logLevelOptions" [value]="option.value">
@@ -66,11 +65,6 @@
         <div fxFlex="230px">
           <md-input-container>
             <input mdInput id="text" class="form-control" placeholder="Text" formControlName="text">
-          </md-input-container>
-        </div>
-        <div fxFlex="230px">
-          <md-input-container [class.has-error]="!searchForm.controls['itemsPerPage'].valid">
-            <input mdInput type="number" id="itemsPerPage" class="form-control" placeholder="Items per page" formControlName="itemsPerPage">
           </md-input-container>
         </div>
         <button md-button type="submit" [disabled]="!searchForm.valid"><md-icon>search</md-icon>Search</button>
@@ -97,6 +91,7 @@
     </table>
   </md-card-content>
   <md-card-actions>
-    <app-pagination (pageChange)="currentPage = $event"></app-pagination>
+    <md-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+    </md-paginator>
   </md-card-actions>
 </md-card>
