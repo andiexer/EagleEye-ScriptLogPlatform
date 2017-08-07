@@ -92,26 +92,6 @@ form .form-control {
 form .form-control span {
     font-size: 14px;
 }
-form .mat-select-trigger, .mat-select-arrow {
-    color: rgba(0, 0, 0, 0.38) !important;
-}
-form .mat-select-underline {
-    background-color: rgba(0, 0, 0, 0.12) !important;
-}
-form .select-hint {
-    position: relative !important;
-}
 form md-select {
-    margin-top: 1em;
-}
-form .mat-select-trigger {
-    height: auto !important;
-}
-form .mat-select-placeholder {
-    padding-left: 0px !important;
-    padding-right: 0px !important;
-    padding-bottom: 6px !important;
-}
-form .mat-select-placeholder.mat-floating-placeholder {
-    top: -1em !important;
+    margin-top: 0.759em;
 }
