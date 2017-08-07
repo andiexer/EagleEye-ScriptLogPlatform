@@ -17,9 +17,11 @@
 </md-card>
 <md-card>
   <md-card-content>
-    <button md-button type="button" (click)="onNew()"><md-icon>add</md-icon>New host</button>
-    <md-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
-    </md-paginator>
+    <div fxLayout="row" fxLayoutAlign="space-between">
+      <button md-button type="button" (click)="onNew()"><md-icon>add</md-icon>New host</button>
+      <md-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+      </md-paginator>
+    </div>
     <table class="mdl-data-table mdl-js-data-table table-shadow">
       <thead>
         <tr>
