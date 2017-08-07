@@ -99,8 +99,8 @@
           <td>{{scriptInstance.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
           <td *ngIf="scriptInstance.endDateTime != null">{{scriptInstance.endDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
           <td *ngIf="scriptInstance.endDateTime == null">Scriptinstance is not finished</td>
-          <td>{{scriptInstance.host.hostname}}</td>
-          <td>{{scriptInstance.script.scriptname}}</td>
+          <td>{{scriptInstance.host?.hostname}}</td>
+          <td>{{scriptInstance.script?.scriptname}}</td>
           <td>{{scriptInstance.transactionId}}</td>
         </tr>
       </tbody>

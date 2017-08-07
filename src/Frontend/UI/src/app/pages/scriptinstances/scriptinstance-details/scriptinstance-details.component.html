@@ -26,10 +26,11 @@
         <md-card-title>Host Informations</md-card-title>
       </md-card-header>
       <md-card-content>
-        <dl class="dl-horizontal">
+        <dl class="dl-horizontal" *ngIf="scriptInstance?.host != null">
           <dt>Hostname</dt>
           <dd>{{scriptInstance?.host.fqdn}}</dd>
         </dl>
+        <span *ngIf="scriptInstance?.host == null">Host doesn't exist anymore.</span>
       </md-card-content>
     </md-card>
   </div>
@@ -39,13 +40,13 @@
         <md-card-title>Script Informations</md-card-title>
       </md-card-header>
       <md-card-content>
-
-        <dl class="dl-horizontal">
+        <dl class="dl-horizontal" *ngIf="scriptInstance?.script != null">
           <dt>Script Name</dt>
           <dd>{{scriptInstance?.script.scriptName}}</dd>
           <dt>Description</dt>
           <dd>{{scriptInstance?.script.description}}</dd>
         </dl>
+        <span *ngIf="scriptInstance?.script == null">Script doesn't exist anymore.</span>
       </md-card-content>
     </md-card>
   </div>
