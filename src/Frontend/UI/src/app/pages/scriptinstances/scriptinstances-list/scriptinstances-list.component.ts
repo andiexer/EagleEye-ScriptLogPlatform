@@ -40,6 +40,7 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
   public pageSize = 10;
   public pageSizeOptions = [5, 10, 25, 100];
   public currentPage: number;
+  public loadingScriptInstances: boolean;
 
 
   constructor(
@@ -132,6 +133,7 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
   }
 
   getScriptInstances() {
+    this.loadingScriptInstances = true;
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
@@ -156,13 +158,13 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
       filterToDate,
       this.currentPage + 1,
       this.pageSize
-    )
-      .subscribe((res: IScriptInstances) => {
-        this.scriptInstances = res.scriptInstances;
-        this.currentPage = res.pagination.CurrentPage - 1;
-        this.pageSize = res.pagination.ItemsPerPage;
-        this.length = res.pagination.TotalItems;
-      });
+    ).subscribe((res: IScriptInstances) => {
+      this.loadingScriptInstances = false;
+      this.scriptInstances = res.scriptInstances;
+      this.currentPage = res.pagination.CurrentPage - 1;
+      this.pageSize = res.pagination.ItemsPerPage;
+      this.length = res.pagination.TotalItems;
+    });
   }
 
   onDetails(guid: string) {

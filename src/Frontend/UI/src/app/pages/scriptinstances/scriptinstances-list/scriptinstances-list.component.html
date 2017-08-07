@@ -92,7 +92,7 @@
           <th>Transaction ID</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody *ngIf="!loadingScriptInstances">
         <tr *ngFor="let scriptInstance of scriptInstances">
           <td><button md-button (click)="onDetails(scriptInstance.id)"><md-icon>more_horiz</md-icon> Details</button></td>
           <td>{{scriptInstance.instanceStatus}}</td>
@@ -105,9 +105,12 @@
         </tr>
       </tbody>
     </table>
+    <div fxLayoutAlign="center" *ngIf="loadingScriptInstances">
+      <md-spinner></md-spinner>
+    </div>
   </md-card-content>
   <md-card-actions>
-    <md-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+    <md-paginator *ngIf="!loadingScriptInstances" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
     </md-paginator>
   </md-card-actions>
 </md-card>

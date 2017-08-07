@@ -22,6 +22,7 @@ export class LatestLogsComponent implements OnInit, OnDestroy {
     'info'
   ];
   public latestLogs: ILog[];
+  public loadingLogs: boolean;
 
   constructor(
     private logDataService: LogDataService
@@ -37,8 +38,10 @@ export class LatestLogsComponent implements OnInit, OnDestroy {
   }
 
   getLogs(totalItems: number) {
+    this.loadingLogs = true;
     this.subscription = this.logDataService.getLatestLogs(totalItems)
       .subscribe((res: ILog[]) => {
+        this.loadingLogs = false;
         this.latestLogs = res;
       });
   }

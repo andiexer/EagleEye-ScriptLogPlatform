@@ -6,7 +6,7 @@
         <md-card-title>Script Instance Informations</md-card-title>
       </md-card-header>
       <md-card-content>
-        <dl class="dl-horizontal">
+        <dl class="dl-horizontal" *ngIf="!loadingScriptInstance">
           <dt>Status</dt>
           <dd>{{scriptInstance?.instanceStatus}}</dd>
           <dt>Start Time</dt>
@@ -17,6 +17,9 @@
           <dt>Transaction ID </dt>
           <dd>{{scriptInstance?.transactionId}}</dd>
         </dl>
+        <div fxLayoutAlign="center" *ngIf="loadingScriptInstance">
+          <md-spinner></md-spinner>
+        </div>
       </md-card-content>
     </md-card>
   </div>
@@ -26,10 +29,13 @@
         <md-card-title>Host Informations</md-card-title>
       </md-card-header>
       <md-card-content>
-        <dl class="dl-horizontal" *ngIf="scriptInstance?.host != null">
+        <dl class="dl-horizontal" *ngIf="scriptInstance?.host != null && !loadingScriptInstance">
           <dt>Hostname</dt>
           <dd>{{scriptInstance?.host.fqdn}}</dd>
         </dl>
+        <div fxLayoutAlign="center" *ngIf="loadingScriptInstance">
+          <md-spinner></md-spinner>
+        </div>
         <span *ngIf="scriptInstance?.host == null">Host doesn't exist anymore.</span>
       </md-card-content>
     </md-card>
@@ -40,12 +46,15 @@
         <md-card-title>Script Informations</md-card-title>
       </md-card-header>
       <md-card-content>
-        <dl class="dl-horizontal" *ngIf="scriptInstance?.script != null">
+        <dl class="dl-horizontal" *ngIf="scriptInstance?.script != null && !loadingScriptInstance">
           <dt>Script Name</dt>
-          <dd>{{scriptInstance?.script.scriptName}}</dd>
+          <dd>{{scriptInstance?.script.scriptname}}</dd>
           <dt>Description</dt>
           <dd>{{scriptInstance?.script.description}}</dd>
         </dl>
+        <div fxLayoutAlign="center" *ngIf="loadingScriptInstance">
+          <md-spinner></md-spinner>
+        </div>
         <span *ngIf="scriptInstance?.script == null">Script doesn't exist anymore.</span>
       </md-card-content>
     </md-card>
@@ -82,17 +91,21 @@
           <th>Text</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody *ngIf="!loadingScriptInstanceLogs">
         <tr *ngFor="let log of scriptInstanceLogs ">
           <td width="200px">{{log.logDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
-          <td width="150px"><span [class]="'logLevel ' + (log.logLevel | logLevelIcon)"><md-icon>{{log.logLevel | logLevelIcon}}</md-icon></span> {{log.logLevel}}</td>
+          <td width="150px"><span [class]="'logLevel ' + (log.logLevel | logLevelIcon)"><md-icon>{{log.logLevel | logLevelIcon}}</md-icon></span>            {{log.logLevel}}</td>
           <td>{{log.logText}}</td>
         </tr>
       </tbody>
     </table>
+    <div fxLayoutAlign="center" *ngIf="loadingScriptInstanceLogs">
+      <md-spinner></md-spinner>
+    </div>
   </md-card-content>
   <md-card-actions>
-    <md-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+    <md-paginator *ngIf="!loadingScriptInstanceLogs" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+      (page)="onPageChange($event)">
     </md-paginator>
   </md-card-actions>
 </md-card>

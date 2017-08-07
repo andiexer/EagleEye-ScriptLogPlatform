@@ -24,6 +24,7 @@ export class ScriptsListComponent implements OnInit, OnDestroy {
   public pageSize = 10;
   public pageSizeOptions = [5, 10, 25, 100];
   public currentPage: number;
+  public loadingScripts: boolean;
 
   constructor(
     private scriptDataService: ScriptDataService,
@@ -70,8 +71,10 @@ export class ScriptsListComponent implements OnInit, OnDestroy {
   }
 
   getScripts() {
+    this.loadingScripts = true;
     this.scriptSubscription = this.scriptDataService.getScripts(this.searchScriptname, this.currentPage + 1, this.pageSize)
       .subscribe((res: IScripts) => {
+        this.loadingScripts = false;
         this.scripts = res.scripts;
         this.currentPage = res.pagination.CurrentPage - 1;
         this.pageSize = res.pagination.ItemsPerPage;

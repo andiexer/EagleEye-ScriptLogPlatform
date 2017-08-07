@@ -29,7 +29,7 @@
           <th>Last modified</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody *ngIf="!loadingScripts">
         <tr *ngFor="let script of scripts">
           <td width="350px">
             <button md-button (click)="onDetails(script.id)"><md-icon>more_horiz</md-icon>Details</button>
@@ -44,9 +44,12 @@
         </tr>
       </tbody>
     </table>
+    <div fxLayoutAlign="center" *ngIf="loadingScripts">
+      <md-spinner></md-spinner>
+    </div>
   </md-card-content>
   <md-card-actions>
-    <md-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+    <md-paginator *ngIf="!loadingScripts" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
     </md-paginator>
   </md-card-actions>
 </md-card>

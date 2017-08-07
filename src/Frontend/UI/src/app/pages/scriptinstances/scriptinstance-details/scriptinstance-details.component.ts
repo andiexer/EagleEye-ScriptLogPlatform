@@ -40,7 +40,8 @@ export class ScriptinstanceDetailsComponent implements OnInit, OnDestroy, DoChec
   public pageSize = 10;
   public pageSizeOptions = [5, 10, 25, 100];
   public currentPage: number;
-  private loaded: boolean = false;
+  public loadingScriptInstance: boolean;
+  public loadingScriptInstanceLogs: boolean;
 
   constructor(private scriptinstanceDataService: ScriptinstanceDataService,
     private route: ActivatedRoute,
@@ -82,7 +83,7 @@ export class ScriptinstanceDetailsComponent implements OnInit, OnDestroy, DoChec
         if (this.subscription) {
           this.subscription.unsubscribe();
         }
-        if (this.logSubscription && this.loaded) {
+        if (this.logSubscription && this.loadingScriptInstanceLogs) {
           this.logSubscription.unsubscribe();
         }
       }
@@ -100,14 +101,16 @@ export class ScriptinstanceDetailsComponent implements OnInit, OnDestroy, DoChec
   }
 
   getScriptInstance() {
+    this.loadingScriptInstance = true;
     this.subscription = this.scriptinstanceDataService.getScriptInstance(this.scriptInstanceId)
       .subscribe((res: IScriptInstance) => {
+        this.loadingScriptInstance = false;
         this.scriptInstance = res;
       });
   }
 
   getScriptInstanceLogs() {
-    this.loaded = false;
+    this.loadingScriptInstanceLogs = true;
     if (this.logSubscription) { this.logSubscription.unsubscribe(); }
     this.logSubscription = this.scriptinstanceDataService.getScriptInstanceLogs(
       this.scriptInstanceId,
@@ -116,7 +119,7 @@ export class ScriptinstanceDetailsComponent implements OnInit, OnDestroy, DoChec
       this.currentPage + 1,
       this.pageSize
     ).subscribe((res: ILogs) => {
-      this.loaded = true;
+      this.loadingScriptInstanceLogs = false;
       this.scriptInstanceLogs = res.logs;
       this.currentPage = res.pagination.CurrentPage - 1;
       this.pageSize = res.pagination.ItemsPerPage;

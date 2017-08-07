@@ -13,11 +13,14 @@
       <tbody>
         <tr *ngFor="let latestLog of latestLogs">
           <td>{{latestLog.logDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
-          <td><span [class]="'logLevel ' + (latestLog.logLevel | logLevelIcon)"><md-icon>{{latestLog.logLevel | logLevelIcon}}</md-icon></span> {{latestLog.logLevel}}</td>
+          <td><span [class]="'logLevel ' + (latestLog.logLevel | logLevelIcon)"><md-icon>{{latestLog.logLevel | logLevelIcon}}</md-icon></span>            {{latestLog.logLevel}}</td>
           <td>{{latestLog.logText}}</td>
           <td><a [routerLink]="['scriptinstances', latestLog.scriptInstanceId]" [queryParams]="{returnUrl: '/'}">{{latestLog.scriptInstanceId}}</a></td>
         </tr>
       </tbody>
     </table>
+    <div fxLayoutAlign="center" *ngIf="loadingLogs">
+      <md-spinner></md-spinner>
+    </div>
   </md-card-content>
 </md-card>
