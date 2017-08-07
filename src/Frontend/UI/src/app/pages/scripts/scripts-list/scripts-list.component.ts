@@ -20,7 +20,7 @@ export class ScriptsListComponent implements OnInit, OnDestroy {
   public scripts: IScript[];
   public searchForm: FormGroup;
   public searchScriptname: string = '';
-  public length = 100;
+  public length = 0;
   public pageSize = 10;
   public pageSizeOptions = [5, 10, 25, 100];
   public currentPage: number;

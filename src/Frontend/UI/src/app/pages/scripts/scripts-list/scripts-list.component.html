@@ -18,6 +18,8 @@
 <md-card>
   <md-card-content>
     <button md-button type="button" (click)="onNew()"><md-icon>add</md-icon>New script</button>
+    <md-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+    </md-paginator>
     <table class="mdl-data-table mdl-js-data-table table-shadow">
       <thead>
         <tr>
@@ -29,6 +31,7 @@
           <th>Last modified</th>
         </tr>
       </thead>
+      <tbody *ngIf="loadingScripts"></tbody>
       <tbody *ngIf="!loadingScripts">
         <tr *ngFor="let script of scripts">
           <td width="350px">
@@ -48,8 +51,4 @@
       <md-spinner></md-spinner>
     </div>
   </md-card-content>
-  <md-card-actions>
-    <md-paginator *ngIf="!loadingScripts" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
-    </md-paginator>
-  </md-card-actions>
 </md-card>

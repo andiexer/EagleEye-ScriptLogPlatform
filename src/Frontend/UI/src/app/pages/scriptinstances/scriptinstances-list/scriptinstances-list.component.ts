@@ -36,7 +36,7 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
     { value: 'Aborted', label: 'Aborted' },
     { value: 'Timeout', label: 'Timeout' },
   ];
-  public length = 100;
+  public length = 0;
   public pageSize = 10;
   public pageSizeOptions = [5, 10, 25, 100];
   public currentPage: number;
@@ -159,11 +159,11 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
       this.currentPage + 1,
       this.pageSize
     ).subscribe((res: IScriptInstances) => {
-      this.loadingScriptInstances = false;
       this.scriptInstances = res.scriptInstances;
       this.currentPage = res.pagination.CurrentPage - 1;
       this.pageSize = res.pagination.ItemsPerPage;
       this.length = res.pagination.TotalItems;
+      this.loadingScriptInstances = false;
     });
   }
 

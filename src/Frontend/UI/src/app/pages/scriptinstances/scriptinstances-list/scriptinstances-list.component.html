@@ -80,6 +80,8 @@
 </md-card>
 <md-card>
   <md-card-content>
+    <md-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+    </md-paginator>
     <table class="mdl-data-table mdl-js-data-table table-shadow">
       <thead>
         <tr>
@@ -109,8 +111,4 @@
       <md-spinner></md-spinner>
     </div>
   </md-card-content>
-  <md-card-actions>
-    <md-paginator *ngIf="!loadingScriptInstances" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
-    </md-paginator>
-  </md-card-actions>
 </md-card>
