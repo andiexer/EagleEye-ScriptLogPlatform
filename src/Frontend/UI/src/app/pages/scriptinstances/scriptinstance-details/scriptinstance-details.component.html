@@ -84,7 +84,7 @@
       <tbody>
         <tr *ngFor="let log of scriptInstanceLogs ">
           <td width="200px">{{log.logDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
-          <td width="150px"><span [class]="'logLevel ' + logLevel[log.logLevel]"><md-icon>{{logLevelIcon[log.logLevel]}}</md-icon></span> {{logLevel[log.logLevel]}}</td>
+          <td width="150px"><span [class]="'logLevel ' + (log.logLevel | logLevelIcon)"><md-icon>{{log.logLevel | logLevelIcon}}</md-icon></span> {{log.logLevel}}</td>
           <td>{{log.logText}}</td>
         </tr>
       </tbody>

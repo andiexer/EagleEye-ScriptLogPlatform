@@ -31,11 +31,11 @@ namespace EESLP.Services.Logging.API.Controllers
         /// <response code="400">if something went really wrong</response>
         [HttpGet]
         [Route("latest/{amount}")]
-        [ProducesResponseType(typeof(IEnumerable<Log>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<LogViewModel>), 200)]
         [ProducesResponseType(typeof(object), 400)]
         public IActionResult GetLatestLogs(int amount)
         {
-            IEnumerable<Log> logs = _logService.GetLatestLogs(amount);
+            IEnumerable<LogViewModel> logs = _mapper.Map<IEnumerable<LogViewModel>>(_logService.GetLatestLogs(amount));
             return Ok(logs);
         }
     }

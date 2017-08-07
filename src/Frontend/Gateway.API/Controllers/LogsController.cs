@@ -38,13 +38,13 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         /// <response code="400">if something went really wrong</response>
         [HttpGet]
         [Route("latest/{amount}")]
-        [ProducesResponseType(typeof(IEnumerable<Log>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<LogViewModel>), 200)]
         [ProducesResponseType(typeof(object), 400)]
         public IActionResult GetLatestLogs(int amount)
         {
             try
             {
-                return Ok(_http.GetAsync<IEnumerable<Log>>(_apiOptions.LoggingApiUrl + "/api/Logs/latest/" + amount).Result);
+                return Ok(_http.GetAsync<IEnumerable<LogViewModel>>(_apiOptions.LoggingApiUrl + "/api/Logs/latest/" + amount).Result);
             }
             catch (Exception e)
             {

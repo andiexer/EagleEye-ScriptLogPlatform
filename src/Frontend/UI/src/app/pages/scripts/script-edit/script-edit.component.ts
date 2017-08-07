@@ -60,7 +60,7 @@ export class ScriptEditComponent implements OnInit, OnDestroy, ICanDeactivate {
     let scriptName: string = '';
     let description: string = '';
     if (this.script) {
-      scriptName = this.script.scriptName;
+      scriptName = this.script.scriptname;
       description = this.script.description;
     }
 

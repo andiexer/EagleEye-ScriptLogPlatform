@@ -28,8 +28,9 @@ export class HostDataService {
     if (currentPage && itemsPerPage) {
       headers.append('Pagination', currentPage + ',' + itemsPerPage);
     }
-    let queryParams = {'hostname': hostname.toString()};
-    let options = new RequestOptions({ headers: headers, params: queryParams });
+    let queryParams = new URLSearchParams();
+    queryParams.set('hostname', hostname)
+    let options = new RequestOptions({ headers: headers, params: queryParams.toString() });
     return this.http.get(this._baseUrl + 'Hosts', options)
       .map((res: Response) => {
         let result: IHosts = {pagination: null, hosts: null};

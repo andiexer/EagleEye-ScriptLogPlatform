@@ -93,7 +93,6 @@ export class HostsListComponent implements OnInit, OnDestroy {
 
   onSearchClear() {
     this.searchForm.controls['hostname'].setValue('');
-    this.searchForm.controls['tenant'].setValue('');
     this.onSearch();
   }
 

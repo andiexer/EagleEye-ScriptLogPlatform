@@ -6,6 +6,7 @@ import { Headers, Http, Response, RequestOptions } from '@angular/http';
 import { ConfigService } from '../';
 import { IScript } from '../interfaces/iscript';
 import { IScriptEdit } from '../interfaces/iscript-edit';
+import { IScripts } from '../interfaces/iscripts';
 
 @Injectable()
 export class ScriptDataService {
@@ -21,17 +22,20 @@ export class ScriptDataService {
     this._baseUrl = configService.getApiURI();
   }
 
-  getScripts(scriptname?: string, currentPage?: number, itemsPerPage?: number): Observable<IScript[]> {
+  getScripts(scriptname?: string, currentPage?: number, itemsPerPage?: number): Observable<IScripts> {
     let headers = new Headers();
     if (currentPage && itemsPerPage) {
       headers.append('Pagination', currentPage + ',' + itemsPerPage);
     }
     let queryParams = new URLSearchParams();
-    queryParams.append('scriptname', scriptname);
-    let options = new RequestOptions({ headers: headers, params: queryParams });
+    queryParams.set('scriptname', scriptname);
+    let options = new RequestOptions({ headers: headers, params: queryParams.toString() });
     return this.http.get(this._baseUrl + 'Scripts', options)
       .map((res: Response) => {
-        return res.json();
+        let result: IScripts = {pagination: null, scripts: null};
+        result.pagination = JSON.parse(res.headers.get('Pagination'));
+        result.scripts = res.json();
+        return result;
       })
       .catch((error: Response) => {
         this.router.navigate(['/error'], { queryParams: {

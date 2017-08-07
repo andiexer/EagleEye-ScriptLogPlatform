@@ -1,11 +1,13 @@
 import { isNullOrUndefined } from 'util';
 import { Router, ActivatedRoute } from '@angular/router';
-import { IScript } from '../../../shared';
+import { IScript, IScripts } from '../../../shared';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Rx';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ScriptDataService } from '../../../shared';
 import { DialogsService } from '../../../shared/services/dialogs.service';
+import { PageEvent } from '@angular/material';
+import { IScriptEdit } from '../../../shared/interfaces/iscript-edit';
 
 @Component({
   selector: 'app-scripts-list',
@@ -18,7 +20,10 @@ export class ScriptsListComponent implements OnInit, OnDestroy {
   public scripts: IScript[];
   public searchForm: FormGroup;
   public searchScriptname: string = '';
-  public currentPage;
+  public length = 100;
+  public pageSize = 10;
+  public pageSizeOptions = [5, 10, 25, 100];
+  public currentPage: number;
 
   constructor(
     private scriptDataService: ScriptDataService,
@@ -29,9 +34,8 @@ export class ScriptsListComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.getScripts();
     // everytime when a script changes refresh the scripts array
-    this.scriptChangeSubscription = this.scriptDataService.scriptChange.subscribe((res: IScript) => {
+    this.scriptChangeSubscription = this.scriptDataService.scriptChange.subscribe((res: IScriptEdit) => {
       this.getScripts();
     });
     // get query parameter from active route
@@ -41,6 +45,7 @@ export class ScriptsListComponent implements OnInit, OnDestroy {
           this.searchScriptname = queryParam['scriptname'];
         }
       });
+    this.getScripts();
     this.initForm();
   }
 
@@ -65,9 +70,15 @@ export class ScriptsListComponent implements OnInit, OnDestroy {
   }
 
   getScripts() {
-    this.scriptSubscription = this.scriptDataService.getScripts()
-      .subscribe((res: IScript[]) => {
-        this.scripts = res;
+    this.scriptSubscription = this.scriptDataService.getScripts(this.searchScriptname, this.currentPage + 1, this.pageSize)
+      .subscribe((res: IScripts) => {
+        this.scripts = res.scripts;
+        this.currentPage = res.pagination.CurrentPage - 1;
+        this.pageSize = res.pagination.ItemsPerPage;
+        this.length = res.pagination.TotalItems;
+      },
+      error => {
+        console.log(error);
       });
   }
 
@@ -76,6 +87,7 @@ export class ScriptsListComponent implements OnInit, OnDestroy {
     let queryParams: any = {};
     if (this.searchScriptname) { queryParams.scriptname = this.searchScriptname; }
     this.router.navigate(['/scripts'], { queryParams: queryParams });
+    this.getScripts();
   }
 
   onSearchClear() {
@@ -110,6 +122,12 @@ export class ScriptsListComponent implements OnInit, OnDestroy {
           this.onDelete(id);
         }
       });
+  }
+
+  onPageChange(pageEvent: PageEvent) {
+    this.currentPage = pageEvent.pageIndex;
+    this.pageSize = pageEvent.pageSize;
+    this.getScripts();
   }
 
 }

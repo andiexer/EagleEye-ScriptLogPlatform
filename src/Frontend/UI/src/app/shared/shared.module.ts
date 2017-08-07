@@ -9,6 +9,7 @@ import { OrderByPipe } from './';
 import { PaginationComponent } from './component/pagination/pagination.component';
 import { ConfirmDialogComponent } from './component/confirm-dialog/confirm-dialog.component';
 import { MomentModule } from 'angular2-moment';
+import { LogLevelIconPipe } from './pipes/log-level-icon.pipe';
 
 @NgModule({
     imports: [
@@ -21,7 +22,8 @@ import { MomentModule } from 'angular2-moment';
     declarations: [
         OrderByPipe,
         PaginationComponent,
-        ConfirmDialogComponent
+        ConfirmDialogComponent,
+        LogLevelIconPipe
     ],
     exports: [
         CommonModule,
@@ -32,7 +34,8 @@ import { MomentModule } from 'angular2-moment';
         MaterialModule,
         FlexLayoutModule,
         ConfirmDialogComponent,
-        MomentModule
+        MomentModule,
+        LogLevelIconPipe
     ],
     entryComponents: [
         ConfirmDialogComponent

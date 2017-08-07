@@ -25,26 +25,28 @@
           <th>ID</th>
           <th>Scriptname</th>
           <th>Description</th>
+          <th>Created</th>
+          <th>Last modified</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let script of scripts
-                        | filterScripts : searchScriptname
-                        | orderBy : ['scriptName'] 
-                        | paginate : {itemsPerPage: 10, currentPage: currentPage}">
+        <tr *ngFor="let script of scripts">
           <td width="350px">
             <button md-button (click)="onDetails(script.id)"><md-icon>more_horiz</md-icon>Details</button>
             <button md-button (click)="onEdit(script.id)"><md-icon>edit</md-icon>Edit</button>
             <button md-button (click)="openDialog(script.id)"><md-icon>delete</md-icon>Delete</button>
           </td>
           <td>{{script.id}}</td>
-          <td>{{script.scriptName}}</td>
+          <td>{{script.scriptname}}</td>
           <td>{{script.description}}</td>
+          <td>{{script.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
+          <td>{{script.lastModDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
         </tr>
       </tbody>
     </table>
   </md-card-content>
   <md-card-actions>
-    <app-pagination (pageChange)="currentPage = $event"></app-pagination>
+    <md-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+    </md-paginator>
   </md-card-actions>
 </md-card>

@@ -72,10 +72,10 @@ dd, dt {
 md-icon {
     vertical-align: middle;
 }
-.logLevel.Error, .logLevel.Fatal {
+.logLevel.error, .logLevel.fatal {
     color: #F44336;
 }
-.logLevel.Warning {
+.logLevel.warning {
     color: #FF9800;
 }
 .logLevel {

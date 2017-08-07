@@ -25,16 +25,6 @@ export class ScriptinstanceDetailsComponent implements OnInit, OnDestroy, DoChec
   public searchForm: FormGroup;
   public searchLogLevel: string[] = [];
   public searchText: string = '';
-  public logLevel = LogLevel;
-  public logLevelIcon: string[] = [
-    'error',
-    'error',
-    'warning',
-    'info',
-    'info',
-    'info',
-    'info'
-  ];
   public logLevelOptions = [
     { value: LogLevel.Fatal, label: 'Fatal' },
     { value: LogLevel.Error, label: 'Error' },

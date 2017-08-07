@@ -1,6 +1,6 @@
 export interface IScript {
     id: number;
-    scriptName: string;
+    scriptname: string;
     description: string;
     createdDateTime: string;
     lastModDateTime: string;
