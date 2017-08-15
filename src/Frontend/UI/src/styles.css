@@ -54,6 +54,9 @@ dd, dt {
     content: "";
     clear: both;
 }
+.siteTitle {
+    padding: 24px 24px 0px 24px;
+}
 /* Table design */
 .mdl-data-table th, td{
     text-align: left !important;

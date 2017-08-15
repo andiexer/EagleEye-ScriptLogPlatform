@@ -3,8 +3,8 @@
     <md-card-content>
       <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap>
         <div fxFlex="230px">
-          <md-input-container>
-            <input mdInput id="hostname" class="form-control" type="text" placeholder="Hostname" formControlName="hostname">
+          <md-input-container class="form-control">
+            <input mdInput id="hostname" type="text" placeholder="Hostname" formControlName="hostname">
           </md-input-container>
         </div>
       </div>
@@ -19,7 +19,7 @@
   <md-card-content>
     <div fxLayout="row" fxLayoutAlign="space-between">
       <button md-button type="button" (click)="onNew()"><md-icon>add</md-icon>New host</button>
-      <md-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+      <md-paginator [pageIndex]="currentPage" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
       </md-paginator>
     </div>
     <table class="mdl-data-table mdl-js-data-table table-shadow">
@@ -44,10 +44,15 @@
           <td>{{host.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
           <td>{{host.lastModDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
         </tr>
+        <tr *ngIf="hosts.length == 0" >
+          <td colspan="100" style="text-align: center !important">There are no items!</td>
+        </tr>
+      </tbody>
+      <tbody *ngIf="loadingHosts">
+        <tr>
+          <td colspan="100"><div fxLayoutAlign="center"><md-spinner></md-spinner></div></td>
+        </tr>
       </tbody>
     </table>
-    <div fxLayoutAlign="center" *ngIf="loadingHosts">
-      <md-spinner></md-spinner>
-    </div>
   </md-card-content>
 </md-card>

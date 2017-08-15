@@ -90,6 +90,7 @@ export class ScriptsListComponent implements OnInit, OnDestroy {
     let queryParams: any = {};
     if (this.searchScriptname) { queryParams.scriptname = this.searchScriptname; }
     this.router.navigate(['/scripts'], { queryParams: queryParams });
+    this.currentPage = 0;
     this.getScripts();
   }
 

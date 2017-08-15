@@ -1,6 +1,6 @@
 <button md-button (click)="goBack()" style="margin-bottom:5px;"><md-icon>arrow_back</md-icon>Go Back</button>
-<div fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" style="margin-bottom: 15px;">
-  <div fxFlex="30%">
+<div fxLayout="row" fxLayoutWrap fxLayoutAlign="space-around start" style="margin-bottom: 15px;">
+  <div fxFlex="32%">
     <md-card>
       <md-card-header>
         <md-card-title>Script Instance Informations</md-card-title>
@@ -73,8 +73,8 @@
           </md-select>
         </div>
         <div fxFlex="230px">
-          <md-input-container>
-            <input mdInput id="text" class="form-control" placeholder="Text" formControlName="text">
+          <md-input-container class="form-control" >
+            <input mdInput id="text"type="text" placeholder="Text" formControlName="text">
           </md-input-container>
         </div>
         <button md-button type="submit" [disabled]="!searchForm.valid"><md-icon>search</md-icon>Search</button>
@@ -83,8 +83,7 @@
     </div>
   </md-card-header>
   <md-card-content>
-    <md-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
-      (page)="onPageChange($event)">
+    <md-paginator [pageIndex]="currentPage" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
     </md-paginator>
     <table class="mdl-data-table mdl-js-data-table table-shadow">
       <thead>

@@ -3,8 +3,8 @@
     <md-card-content>
       <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap>
         <div fxFlex="230px">
-          <md-input-container>
-            <input mdInput id="scriptname" class="form-control" type="text" placeholder="Scriptname" formControlName="scriptname">
+          <md-input-container class="form-control">
+            <input mdInput id="scriptname" type="text" placeholder="Scriptname" formControlName="scriptname">
           </md-input-container>
         </div>
       </div>
@@ -19,7 +19,7 @@
   <md-card-content>
     <div fxLayout="row" fxLayoutAlign="space-between">
       <button md-button type="button" (click)="onNew()"><md-icon>add</md-icon>New script</button>
-      <md-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+      <md-paginator [pageIndex]="currentPage" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
       </md-paginator>
     </div>
     <table class="mdl-data-table mdl-js-data-table table-shadow">
@@ -47,10 +47,15 @@
           <td>{{script.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
           <td>{{script.lastModDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
         </tr>
+        <tr *ngIf="scripts.length == 0" >
+          <td colspan="100" style="text-align: center !important">There are no items!</td>
+        </tr>
+      </tbody>
+      <tbody *ngIf="loadingScripts">
+        <tr>
+          <td colspan="100"><div fxLayoutAlign="center"><md-spinner></md-spinner></div></td>
+        </tr>
       </tbody>
     </table>
-    <div fxLayoutAlign="center" *ngIf="loadingScripts">
-      <md-spinner></md-spinner>
-    </div>
   </md-card-content>
 </md-card>

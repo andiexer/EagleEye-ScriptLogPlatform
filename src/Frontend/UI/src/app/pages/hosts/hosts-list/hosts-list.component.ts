@@ -91,6 +91,7 @@ export class HostsListComponent implements OnInit, OnDestroy {
     let queryParams: any = {};
     if (this.searchHostname) { queryParams.hostname = this.searchHostname; }
     this.router.navigate(['/hosts'], { queryParams: queryParams });
+    this.currentPage = 0;
     this.getHosts();
   }
 

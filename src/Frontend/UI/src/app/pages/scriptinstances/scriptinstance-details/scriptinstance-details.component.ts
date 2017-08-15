@@ -135,6 +135,7 @@ export class ScriptinstanceDetailsComponent implements OnInit, OnDestroy, DoChec
     if (this.searchText) { queryParams.text = this.searchText; }
     if (this.returnUrl) { queryParams.returnUrl = this.returnUrl; }
     this.router.navigate(['/scriptinstances', this.scriptInstanceId], { queryParams: queryParams });
+    this.currentPage = 0;
     this.getScriptInstanceLogs();
   }
 
