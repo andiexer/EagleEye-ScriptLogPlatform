@@ -69,6 +69,11 @@
             </div>
           </div>
         </div>
+        <div fxFlex="230px">
+          <md-input-container class="form-control">
+            <input mdInput id="transactionId" type="text" placeholder="Transaction ID" formControlName="transactionId">
+          </md-input-container>
+        </div>
       </div>
       <div *ngIf="searchForm.get('dateTime').dirty && !searchForm.get('dateTime').valid" [class.has-error]="!searchForm.get('dateTime').valid">
         <span class="help-block">The second date time cannot be lower than the first</span>

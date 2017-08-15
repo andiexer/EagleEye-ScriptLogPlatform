@@ -55,7 +55,7 @@ namespace EESLP.Services.Logging.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<ScriptInstanceViewModel>), 200)]
         [ProducesResponseType(typeof(object), 404)]
         [ProducesResponseType(typeof(object), 400)]
-        public IActionResult Get(string hostname, string scriptname, ScriptInstanceStatus[] status, DateTime? from, DateTime? to)
+        public IActionResult Get(string hostname, string scriptname, string transactionId, ScriptInstanceStatus[] status, DateTime? from, DateTime? to)
         {
             var pagination = Request.Headers["Pagination"];
             if (!string.IsNullOrEmpty(pagination))
@@ -67,10 +67,10 @@ namespace EESLP.Services.Logging.API.Controllers
 
             int currentPage = page;
             int currentPageSize = pageSize;
-            var totalScriptInstances = _scriptInstanceService.GetNumberOfScriptInstances(status, hostname, scriptname, from, to);
+            var totalScriptInstances = _scriptInstanceService.GetNumberOfScriptInstances(status, hostname, scriptname, transactionId, from, to);
             var totalPages = (int)Math.Ceiling((double)totalScriptInstances / pageSize);
 
-            IEnumerable<ScriptInstanceViewModel> scriptinstances = _mapper.Map<IEnumerable<ScriptInstanceViewModel>>(_scriptInstanceService.GetAllScriptInstances(status, hostname, scriptname, from, to, (currentPage - 1) * currentPageSize, currentPageSize));
+            IEnumerable<ScriptInstanceViewModel> scriptinstances = _mapper.Map<IEnumerable<ScriptInstanceViewModel>>(_scriptInstanceService.GetAllScriptInstances(status, hostname, scriptname, transactionId, from, to, (currentPage - 1) * currentPageSize, currentPageSize));
 
             Response.AddPagination(page, pageSize, totalScriptInstances, totalPages);
 

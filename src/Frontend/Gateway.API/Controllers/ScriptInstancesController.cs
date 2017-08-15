@@ -49,7 +49,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<ScriptInstanceViewModel>), 200)]
         [ProducesResponseType(typeof(object), 404)]
         [ProducesResponseType(typeof(object), 400)]
-        public IActionResult Get(string hostname, string scriptname, ScriptInstanceStatus[] status, DateTime? from, DateTime? to)
+        public IActionResult Get(string hostname, string scriptname, string transactionId, ScriptInstanceStatus[] status, DateTime? from, DateTime? to)
         {
             try
             {

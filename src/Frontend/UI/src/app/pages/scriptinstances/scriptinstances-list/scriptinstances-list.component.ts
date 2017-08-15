@@ -22,6 +22,7 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
   public searchScriptInstanceStatus: string[] = [];
   public searchScriptInstanceHostname: string = '';
   public searchScriptInstanceScriptname: string = '';
+  public searchScriptInstanceTransactionId: string = '';
   public searchScriptInstanceDateFrom: Date = null;
   public searchScriptInstanceDateTo: Date = null;
   public searchScriptInstanceHourFrom: string = '';
@@ -115,6 +116,7 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
     let status = this.searchScriptInstanceStatus;
     let hostname = this.searchScriptInstanceHostname;
     let scriptname = this.searchScriptInstanceScriptname;
+    let transactionId = this.searchScriptInstanceTransactionId;
     let dateFrom = this.searchScriptInstanceDateFrom;
     let dateTo = this.searchScriptInstanceDateTo;
     let hourFrom = this.searchScriptInstanceHourFrom;
@@ -130,6 +132,7 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
       status: [status],
       hostname: [hostname],
       scriptname: [scriptname],
+      transactionId: [transactionId],
       dateTime: this.formBuilder.group({
         dateFrom: [dateFrom, this.dateValidator],
         dateTo: [dateTo, this.dateValidator],
@@ -165,6 +168,7 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
     this.subscription = this.scriptinstanceDataService.getScriptInstances(
       this.searchScriptInstanceHostname,
       this.searchScriptInstanceScriptname,
+      this.searchScriptInstanceTransactionId,
       this.searchScriptInstanceStatus,
       filterFromDate,
       filterToDate,
@@ -208,6 +212,7 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
     this.searchScriptInstanceDateTo = this.searchForm.value.dateTime.dateTo;
     this.searchScriptInstanceHourFrom = this.searchForm.value.dateTime.hourFrom;
     this.searchScriptInstanceHourTo = this.searchForm.value.dateTime.hourTo;
+    this.searchScriptInstanceTransactionId = this.searchForm.value.transactionId;
     let queryParams: any = {};
     if (this.searchScriptInstanceStatus.length > 0) { queryParams.status = this.searchScriptInstanceStatus.toString(); }
     if (this.searchScriptInstanceHostname) { queryParams.hostname = this.searchScriptInstanceHostname; }
@@ -220,6 +225,9 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
       queryParams.dateTo = this.searchScriptInstanceDateTo.toDateString();
       queryParams.hourTo = this.searchScriptInstanceHourTo;
     }
+    if (this.searchScriptInstanceTransactionId) {
+      queryParams.transactionId = this.searchScriptInstanceTransactionId;
+    }
     this.router.navigate(['/scriptinstances'], { queryParams: queryParams });
     this.currentPage = 0;
     this.getScriptInstances();
@@ -229,6 +237,7 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
     this.searchForm.controls['status'].setValue([]);
     this.searchForm.controls['hostname'].setValue('');
     this.searchForm.controls['scriptname'].setValue('');
+    this.searchForm.controls['transactionId'].setValue('');
     this.searchForm.controls['dateTime'].setValue({
       dateFrom: null,
       dateTo: null,
