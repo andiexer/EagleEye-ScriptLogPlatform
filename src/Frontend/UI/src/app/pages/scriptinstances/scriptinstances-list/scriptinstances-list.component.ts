@@ -6,6 +6,7 @@ import { IScriptInstance } from '../../../shared/interfaces/iscript-instance';
 import { ScriptinstanceDataService } from '../../../shared';
 import { PageEvent } from '@angular/material';
 import { IScriptInstances } from '../../../shared/interfaces/iscript-instances';
+import { DialogsService } from '../../../shared/services/dialogs.service';
 
 declare var moment: any;
 
@@ -46,7 +47,8 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
     private scriptinstanceDataService: ScriptinstanceDataService,
     private router: Router,
     private route: ActivatedRoute,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private dialogsService: DialogsService
   ) { }
 
   ngOnInit() {
@@ -179,6 +181,23 @@ export class ScriptinstancesListComponent implements OnInit, OnDestroy {
 
   onDetails(guid: string) {
     this.router.navigate(['/scriptinstances', guid], { queryParams: { returnUrl: this.router.url } });
+  }
+
+  onDelete(id: string) {
+    this.scriptinstanceDataService.removeScriptInstance(parseInt(id, 10)).subscribe(
+      () => {
+        this.getScriptInstances();
+      });
+  }
+
+  openDialog(id: string) {
+    this.dialogsService
+      .confirm('Scriptinstance delete', 'Are you sure you want to delete this scriptinstance?')
+      .subscribe(res => {
+        if (res === true) {
+          this.onDelete(id);
+        }
+      });
   }
 
   onSearch() {

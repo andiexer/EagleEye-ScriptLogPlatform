@@ -122,4 +122,17 @@ export class ScriptinstanceDataService {
       });
   }
 
+  removeScriptInstance(id: number): Observable<any> {
+    return this.http.delete(this._baseUrl + 'ScriptInstances/' + id)
+      .catch((error: Response) => {
+        this.router.navigate(['/error'], {
+          queryParams: {
+            error: error,
+            component: 'ScriptInstanceDataService'
+          }
+        });
+        return Observable.throw(error.json().error || 'Server connection error');
+      });
+  }
+
 }

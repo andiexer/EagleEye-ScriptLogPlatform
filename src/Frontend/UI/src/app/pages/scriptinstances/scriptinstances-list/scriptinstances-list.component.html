@@ -10,12 +10,12 @@
           </md-select>
         </div>
         <div fxFlex="230px">
-          <md-input-container class="form-control" >
-            <input mdInput id="hostname"type="text" placeholder="Hostname" formControlName="hostname">
+          <md-input-container class="form-control">
+            <input mdInput id="hostname" type="text" placeholder="Hostname" formControlName="hostname">
           </md-input-container>
         </div>
         <div fxFlex="230px">
-          <md-input-container class="form-control" >
+          <md-input-container class="form-control">
             <input mdInput id="scriptname" type="text" placeholder="Scriptname" formControlName="scriptname">
           </md-input-container>
         </div>
@@ -98,7 +98,10 @@
       </thead>
       <tbody *ngIf="!loadingScriptInstances">
         <tr *ngFor="let scriptInstance of scriptInstances">
-          <td><button md-button (click)="onDetails(scriptInstance.id)"><md-icon>more_horiz</md-icon> Details</button></td>
+          <td>
+            <button md-button (click)="onDetails(scriptInstance.id)"><md-icon>more_horiz</md-icon> Details</button>
+            <button md-button (click)="openDialog(scriptInstance.id)"><md-icon>delete</md-icon>Delete</button>
+          </td>
           <td>{{scriptInstance.instanceStatus}}</td>
           <td>{{scriptInstance.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
           <td *ngIf="scriptInstance.endDateTime != null">{{scriptInstance.endDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
@@ -107,13 +110,17 @@
           <td>{{scriptInstance.script?.scriptname}}</td>
           <td>{{scriptInstance.transactionId}}</td>
         </tr>
-        <tr *ngIf="scriptInstances.length == 0" >
+        <tr *ngIf="scriptInstances.length == 0">
           <td colspan="100" style="text-align: center !important">There are no items!</td>
         </tr>
       </tbody>
       <tbody *ngIf="loadingScriptInstances">
         <tr>
-          <td colspan="100"><div fxLayoutAlign="center"><md-spinner></md-spinner></div></td>
+          <td colspan="100">
+            <div fxLayoutAlign="center">
+              <md-spinner></md-spinner>
+            </div>
+          </td>
         </tr>
       </tbody>
     </table>
