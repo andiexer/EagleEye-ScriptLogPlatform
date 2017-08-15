@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { MaterialModule } from '@angular/material';
+import { MaterialModule, MdNativeDateModule } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { routing } from './app.routing';
@@ -30,6 +30,7 @@ let modules = [
   FlexLayoutModule,
   BrowserAnimationsModule,
   MaterialModule,
+  MdNativeDateModule
 ];
 
 let services = [

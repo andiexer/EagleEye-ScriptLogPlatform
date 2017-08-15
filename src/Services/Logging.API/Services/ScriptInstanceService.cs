@@ -29,7 +29,8 @@ namespace EESLP.Services.Logging.API.Services
         {
             string query = $"SELECT * FROM EESLP.ScriptInstance ";
             query += getScriptInstanceWhereQuery(status, hostname, scriptname, from, to);
-            query += $"LIMIT {skipNumber},{takeNumber}";
+            query += $"ORDER BY Id DESC ";
+            query += $"LIMIT {skipNumber},{takeNumber} ";
             using (var db = Connection)
             {
                 db.Open();
