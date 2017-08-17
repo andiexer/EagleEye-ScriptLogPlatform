@@ -10,5 +10,6 @@ namespace EESLP.Services.Logging.API.ViewModel
         public string LogLevel { get; set; }
         public string LogText { get; set; }
         public DateTime LogDateTime { get; set; }
+        public int ScriptInstanceId { get; set; }
     }
 }

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace EESLP.Frontend.Gateway.API.Controllers
 {
+    [Route("api/[controller]")]
     public class LogsController : Controller
     {
         private readonly ILogger<LogsController> _logger;

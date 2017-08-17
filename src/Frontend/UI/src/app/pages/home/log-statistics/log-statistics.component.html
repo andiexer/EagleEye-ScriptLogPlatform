@@ -1,0 +1,25 @@
+<md-card>
+	<md-card-title>Log Statistics</md-card-title>
+	<md-card-content>
+		<div fxLayout="row" fxLayoutAlign="space-around start">
+			<md-card class="log-card" style="background-color: #EEEEEE">
+				<md-card-header>
+					<md-card-title>Total amount of logs stored</md-card-title>
+					<md-card-subtitle>{{totalLogs}} Logs</md-card-subtitle>
+				</md-card-header>
+			</md-card>
+			<md-card class="log-card" style="background-color: #FFCC80">
+				<md-card-header>
+					<md-card-title>Total amount of warning logs</md-card-title>
+					<md-card-subtitle>{{totalByLogLevel[2]}} Logs</md-card-subtitle>
+				</md-card-header>
+			</md-card>
+			<md-card class="log-card" style="background-color: #EF9A9A">
+				<md-card-header>
+					<md-card-title>Total amount of error logs</md-card-title>
+					<md-card-subtitle>{{totalByLogLevel[1]}} Logs</md-card-subtitle>
+				</md-card-header>
+			</md-card>
+		</div>
+	</md-card-content>
+</md-card>

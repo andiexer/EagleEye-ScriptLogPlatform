@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EESLP.Services.Logging.API.Entities;
 using EESLP.Services.Logging.API.Services;
 using EESLP.Services.Logging.API.ViewModel;
 using Microsoft.AspNetCore.Mvc;

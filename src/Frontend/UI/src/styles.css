@@ -1,0 +1,97 @@
+/* You can add global styles to this file, and also import other style files */
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    margin: 0px;
+    padding-bottom: 32px;
+}
+* {
+    font-family: Roboto,"Helvetica Neue",sans-serif;
+}
+.no-padding {
+    padding: 0px !important;
+}
+.log-card {
+    width: 200px;
+}
+.appTitle {
+    margin-right: 25px;
+}
+.footer {
+    font-size: small !important;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    text-align: center;
+    min-height: 32px !important;
+}
+.footer .mat-toolbar-row {
+    height: 32px;
+}
+.dl-horizontal dt {
+	float: left;
+	width: 160px;
+	overflow: hidden;
+	clear: left;
+	text-align: right;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.dl-horizontal dd {
+	margin-left: 180px;
+}
+dt {
+	font-weight: 700;
+}
+dd, dt {
+	line-height: 1.42857143;
+}
+.dl-horizontal > dd:after {
+    display: table;
+    content: "";
+    clear: both;
+}
+/* Table design */
+.mdl-data-table th, td{
+    text-align: left !important;
+}
+.mdl-data-table {
+    table-layout: auto;
+    width:100%; 
+}
+.mdl-data-table td, th {
+    white-space: normal;
+}
+.table-shadow {
+    box-shadow:  0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+}
+/* Color for log level */
+md-icon {
+    vertical-align: middle;
+}
+.logLevel.error, .logLevel.fatal {
+    color: #F44336;
+}
+.logLevel.warning {
+    color: #FF9800;
+}
+.logLevel {
+    color: #9E9E9E;
+}
+/* Forms */
+form .full-width {
+    width: 100%;
+}
+form .form-control {
+    font-size: 14px;
+    min-width: 200px;
+}
+form .form-control span {
+    font-size: 14px;
+}
+form md-select {
+    margin-top: 0.759em;
+}

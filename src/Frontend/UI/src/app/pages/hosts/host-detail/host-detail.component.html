@@ -1,0 +1,23 @@
+<md-card>
+  <md-card-header>
+    <md-card-title>Host Detail</md-card-title>
+  </md-card-header>
+  <md-card-content>
+    <dl class="dl-horizontal">
+      <dt>Hostname</dt>
+      <dd>{{host?.hostname}}</dd>
+      <dt>FQDN</dt>
+      <dd>{{host?.fqdn}}</dd>
+      <dt>ApiKey</dt>
+      <dd>{{host?.apiKey}}</dd>
+      <dt>Created</dt>
+      <dd>{{host?.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</dd>
+      <dt>Modified</dt>
+      <dd>{{host?.lastModDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</dd>
+    </dl>
+  </md-card-content>
+  <md-card-actions>
+    <button md-button (click)="onEdit()"><md-icon>edit</md-icon>Edit</button>
+    <button md-button (click)="goBack()"><md-icon>close</md-icon>Close</button>
+  </md-card-actions>
+</md-card>
