@@ -6,6 +6,7 @@ using Dapper.Contrib.Extensions;
 using EESLP.Services.Scripts.API.Entities;
 using EESLP.Services.Scripts.API.Infrastructure.Options;
 using Microsoft.Extensions.Options;
+using Dapper;
 
 namespace EESLP.Services.Scripts.API.Services
 {
@@ -15,12 +16,35 @@ namespace EESLP.Services.Scripts.API.Services
         {
         }
 
-        public IEnumerable<Script> GetAllScripts()
+        public IEnumerable<Script> GetAllScripts(string scriptname, int skipNumber, int takeNumber)
         {
+            scriptname = scriptname == null ? "" : scriptname;
             using (var db = Connection)
             {
                 db.Open();
-                return db.GetAll<Script>().ToList();
+                var result = db.Query<Script>($"SELECT * FROM Script WHERE Scriptname LIKE CONCAT(\"%\",@scriptname,\"%\") LIMIT {skipNumber},{takeNumber}", new { scriptname = scriptname });
+                return result;
+            }
+        }
+
+        public int GetNumberOfAllScripts(string scriptname)
+        {
+            scriptname = scriptname == null ? "" : scriptname;
+            using (var db = Connection)
+            {
+                db.Open();
+                return db.Query<int>($"SELECT COUNT(*) FROM Script WHERE Scriptname LIKE CONCAT(\"%\",@scriptname,\"%\")", new { scriptname = scriptname }).ToArray()[0];
+            }
+        }
+
+        public IEnumerable<int> GetAllScriptIds(string scriptname)
+        {
+            scriptname = scriptname == null ? "" : scriptname;
+            using (var db = Connection)
+            {
+                db.Open();
+                var result = db.Query<int>($"SELECT Id FROM Script WHERE Scriptname LIKE CONCAT(\"%\",@scriptname,\"%\")", new { scriptname = scriptname });
+                return result;
             }
         }
 

@@ -16,6 +16,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EESLP.BuildingBlocks.Resilence.Http;
+using EESLP.Services.Logging.API.Infrastructure.Extensions;
+using System.Globalization;
 
 namespace EESLP.Services.Logging.API.Controllers
 {
@@ -28,6 +30,8 @@ namespace EESLP.Services.Logging.API.Controllers
         private readonly IMapper _mapper;
         private readonly IBusClient _busClient;
         private readonly IHttpApiClient _http;
+        int page = 1;
+        int pageSize = 10;
 
         public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService, IMapper mapper, ILogService logService, IBusClient busClient, IHttpApiClient http)
         {
@@ -51,10 +55,26 @@ namespace EESLP.Services.Logging.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<ScriptInstanceViewModel>), 200)]
         [ProducesResponseType(typeof(object), 404)]
         [ProducesResponseType(typeof(object), 400)]
-        public IActionResult Get()
+        public IActionResult Get(string hostname, string scriptname, ScriptInstanceStatus[] status, DateTime? from, DateTime? to)
         {
-            IEnumerable<ScriptInstanceViewModel> scriptInstances = _mapper.Map<IEnumerable<ScriptInstanceViewModel>>(_scriptInstanceService.GetAllScriptInstances());
-            return Ok(scriptInstances);
+            var pagination = Request.Headers["Pagination"];
+            if (!string.IsNullOrEmpty(pagination))
+            {
+                string[] vals = pagination.ToString().Split(',');
+                int.TryParse(vals[0], out page);
+                int.TryParse(vals[1], out pageSize);
+            }
+
+            int currentPage = page;
+            int currentPageSize = pageSize;
+            var totalScriptInstances = _scriptInstanceService.GetNumberOfScriptInstances(status, hostname, scriptname, from, to);
+            var totalPages = (int)Math.Ceiling((double)totalScriptInstances / pageSize);
+
+            IEnumerable<ScriptInstanceViewModel> scriptinstances = _mapper.Map<IEnumerable<ScriptInstanceViewModel>>(_scriptInstanceService.GetAllScriptInstances(status, hostname, scriptname, from, to, (currentPage - 1) * currentPageSize, currentPageSize));
+
+            Response.AddPagination(page, pageSize, totalScriptInstances, totalPages);
+
+            return Ok(scriptinstances);
         }
 
         /// <summary>
@@ -163,12 +183,27 @@ namespace EESLP.Services.Logging.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<LogViewModel>), 200)]
         [ProducesResponseType(typeof(object), 400)]
         [ProducesResponseType(typeof(object), 404)]
-        public IActionResult GetLogs(int id)
+        public IActionResult GetLogs(int id, Enums.LogLevel[] logLevel, string logText)
         {
             try
             {
+                var pagination = Request.Headers["Pagination"];
+                if (!string.IsNullOrEmpty(pagination))
+                {
+                    string[] vals = pagination.ToString().Split(',');
+                    int.TryParse(vals[0], out page);
+                    int.TryParse(vals[1], out pageSize);
+                }
+                int currentPage = page;
+                int currentPageSize = pageSize;
+                var totalLogs = _logService.GetNumberOfLogsPerScriptInstance(id, logLevel, logText);
+                var totalPages = (int)Math.Ceiling((double)totalLogs / pageSize);
+                
                 EnsureRequestScriptInstanceAvailable(id);
-                IEnumerable<LogViewModel> logs = _mapper.Map<IEnumerable<LogViewModel>>(_logService.GetLogsPerScriptInstance(id));
+                
+                IEnumerable<LogViewModel> logs = _mapper.Map<IEnumerable<LogViewModel>>(_logService.GetLogsPerScriptInstance(id, logLevel, logText, (currentPage - 1) * currentPageSize, currentPageSize));
+                
+                Response.AddPagination(page, pageSize, totalLogs, totalPages);
                 return Ok(logs);
             }
             catch (EntityNotFoundException e)

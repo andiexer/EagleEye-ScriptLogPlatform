@@ -1,4 +1,5 @@
 ﻿using EESLP.Services.Logging.API.Entities;
+using EESLP.Services.Logging.API.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,8 @@ namespace EESLP.Services.Logging.API.Services
 {
     public interface IScriptInstanceService
     {
-        IEnumerable<ScriptInstance> GetAllScriptInstances();
+        IEnumerable<ScriptInstance> GetAllScriptInstances(ScriptInstanceStatus[] status, string hostname, string scriptname, DateTime? from, DateTime? to, int skipNumber, int takeNumber);
+        int GetNumberOfScriptInstances(ScriptInstanceStatus[] status, string hostname, string scriptname, DateTime? from, DateTime? to);
         IEnumerable<ScriptInstance> GetLatestScriptInstances(int amount);
         ScriptInstance GetScriptInstanceById(int id);
         bool Update(ScriptInstance scriptInstance);

@@ -35,15 +35,28 @@ namespace EESLP.Services.Logging.API.Services
             }
         }
 
-        public IEnumerable<Log> GetLogsPerScriptInstance(int id)
+        public int GetNumberOfLogsPerScriptInstance(int id, LogLevel[] logLevel, string text)
         {
             using (var db = Connection)
             {
                 db.Open();
-                return db.Query<Log>($"SELECT LogLevel, LogText, ScriptInstanceId, LogDateTime FROM Log WHERE ScriptInstanceId = {id} ORDER BY Id DESC");
+                return db.Query<int>($"SELECT COUNT(*) FROM Log WHERE ScriptInstanceId = {id}").ToArray()[0];
             }
         }
 
+        public IEnumerable<Log> GetLogsPerScriptInstance(int id, LogLevel[] logLevel, string text, int skipNumber, int takeNumber)
+        {
+            text = text == null ? "" : text;
+            string query = "SELECT LogLevel, LogText, ScriptInstanceId, LogDateTime FROM Log ";
+            query += getLogsPerScriptInstanceWhereQuery(id, logLevel);
+            query += $"ORDER BY Id DESC LIMIT {skipNumber},{takeNumber}";
+            using (var db = Connection)
+            {
+                db.Open();
+                return db.Query<Log>(query, new { text = text });
+            }
+        }
+        
         public IEnumerable<Log> GetLogsPerScriptInstance(int id, LogLevel logLevel)
         {
             using (var db = Connection)
@@ -51,6 +64,19 @@ namespace EESLP.Services.Logging.API.Services
                 db.Open();
                 return db.Query<Log>($"SELECT LogLevel, LogText, ScriptInstanceId, LogDateTime FROM Log WHERE ScriptInstanceId = {id} AND LogLevel = {(int)logLevel} ORDER BY Id DESC");
             }
+        }
+
+        // helper functions
+        private string getLogsPerScriptInstanceWhereQuery(int id, LogLevel[] logLevel)
+        {
+            string query = $"WHERE ScriptInstanceId = {id} AND LogText LIKE CONCAT(\"%\",@text,\"%\") ";
+            if (logLevel.Count() > 0)
+            {
+                string queryLogLevel = "";
+                logLevel.ToList().ForEach((LogLevel localLogLevel) => { queryLogLevel += $"{(int)localLogLevel},"; });
+                query += $"AND LogLevel IN ({queryLogLevel.Remove(queryLogLevel.Length - 1, 1)}) ";
+            }
+            return query;
         }
     }
 }

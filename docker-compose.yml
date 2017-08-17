@@ -24,13 +24,34 @@ services:
     depends_on:
       - mysql.data
       - redis.cache
+      - scripts.api
     ports:
      - "5002:80"
     environment:
      - "Database:ConnectionString=Server=mysql.data;Port=3306;Database=EESLP;Uid=root;Pwd=supersecret"
      - "RabbitMq:Hostname=rabbit.eventbus"
      - "Services:redis.cache=redis.cache"
+     - "Services:scripts.api=http://scripts.api"
     entrypoint: dockerize -wait tcp://rabbit.eventbus:5672 -wait http://rabbit.eventbus:15672 -wait tcp://redis.cache:6379 -timeout 30s dotnet EESLP.Services.Logging.API.dll
+  frontend.gateway.api:
+    image: eeslp/frontent.gateway.api
+    build:
+      context: ./src/Frontend/Gateway.API
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql.data
+      - redis.cache
+      - scripts.api
+      - logging.api
+    ports:
+     - "5003:80"
+    environment:
+     - "Database:ConnectionString=Server=mysql.data;Port=3306;Database=EESLP;Uid=root;Pwd=supersecret"
+     - "RabbitMq:Hostname=rabbit.eventbus"
+     - "Services:redis.cache=redis.cache"
+     - "Services:scripts.api=http://scripts.api"
+     - "Services:logging.api=http://logging.api"
+    entrypoint: dockerize -wait tcp://rabbit.eventbus:5672 -wait http://rabbit.eventbus:15672 -wait tcp://redis.cache:6379 -timeout 30s dotnet EESLP.Frontend.Gateway.API.dll
   mysql.data:
     image: eeslp/mysql.data
     environment: 
@@ -54,3 +75,5 @@ services:
       - "5672:5672"
   redis.cache:
     image: redis
+    ports:
+      - "6379:6379"

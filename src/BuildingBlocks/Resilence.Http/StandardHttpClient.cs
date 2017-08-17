@@ -47,7 +47,7 @@ namespace EESLP.BuildingBlocks.Resilence.Http
             // a new StringContent must be created for each retry 
             // as it is disposed after each call
 
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, uri)
+            var requestMessage = new HttpRequestMessage(method, uri)
             {
                 Content = new StringContent(JsonConvert.SerializeObject(item), System.Text.Encoding.UTF8,
                     "application/json")
@@ -99,6 +99,20 @@ namespace EESLP.BuildingBlocks.Resilence.Http
 
             var response = await _client.SendAsync(requestMessage);
             return response.StatusCode != HttpStatusCode.OK ? default(T) : JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task<HttpResponseMessage> GetAsync(string uri, string pagination, string authorizationToken = null, string authorizationMethod = "Bearer")
+        {
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+            requestMessage.Headers.Add("Pagination", pagination);
+
+            if (authorizationToken != null)
+            {
+                requestMessage.Headers.Authorization = new AuthenticationHeaderValue(authorizationMethod, authorizationToken);
+            }
+
+            var response = await _client.SendAsync(requestMessage);
+            return response;
         }
 
         public async Task<HttpResponseMessage> DeleteAsync(string uri, string authorizationToken = null, string requestId = null, string authorizationMethod = "Bearer")

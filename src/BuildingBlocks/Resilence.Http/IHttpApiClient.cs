@@ -18,5 +18,6 @@ namespace EESLP.BuildingBlocks.Resilence.Http
         Task<HttpResponseMessage> PutAsync<T>(string uri, T item, string authorizationToken = null, string requestId = null, string authorizationMethod = "Bearer");
 
         Task<T> GetAsync<T>(string uri, string authorizationToken = null, string authorizationMethod = "Bearer");
+        Task<HttpResponseMessage> GetAsync(string uri, string pagination, string authorizationToken = null, string authorizationMethod = "Bearer");
     }
 }

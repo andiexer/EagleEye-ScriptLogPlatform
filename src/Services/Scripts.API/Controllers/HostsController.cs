@@ -29,6 +29,8 @@ namespace EESLP.Services.Scripts.API.Controllers
         private readonly IBusClient _busClient;
         private readonly IMapper _mapper;
         private readonly IDistributedCache _cache;
+        int page = 1;
+        int pageSize = 10;
 
         public HostsController(ILogger<HostsController> logger, IHostService hostService, IBusClient busClient, IMapper mapper, IDistributedCache cache)
         {
@@ -48,17 +50,52 @@ namespace EESLP.Services.Scripts.API.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Host>),200)]
         [ProducesResponseType(typeof(object), 400)]
-        public IActionResult Get()
+        public IActionResult Get(string hostname)
         {
             try
             {
-                return Ok(_mapper.Map<IEnumerable<Host>, IEnumerable<HostViewModel>>(_hostService.GetAllHosts()));
+                var pagination = Request.Headers["Pagination"];
+                if (!string.IsNullOrEmpty(pagination))
+                {
+                    string[] vals = pagination.ToString().Split(',');
+                    int.TryParse(vals[0], out page);
+                    int.TryParse(vals[1], out pageSize);
+                }
+                int currentPage = page;
+                int currentPageSize = pageSize;
+                var totalHosts = _hostService.GetNumberOfAllHosts(hostname);
+                var totalPages = (int)Math.Ceiling((double)totalHosts / pageSize);
+                
+                Response.AddPagination(page, pageSize, totalHosts, totalPages);
+
+                return Ok(_mapper.Map<IEnumerable<Host>, IEnumerable<HostViewModel>>(_hostService.GetAllHosts(hostname, (currentPage - 1) * currentPageSize, currentPageSize)));
             }
             catch (Exception e)
             {
                 return BadRequest();
             }
-            
+        }
+
+        /// <summary>
+        /// get a list of all host ids
+        /// </summary>
+        /// <returns>list of host ids</returns>
+        /// <response code="200">if hosts are found</response>
+        /// <response code="400">if something went really wrong</response>
+        [HttpGet]
+        [Route("IDs")]
+        [ProducesResponseType(typeof(IEnumerable<int>), 200)]
+        [ProducesResponseType(typeof(object), 400)]
+        public IActionResult GetIds(string hostname)
+        {
+            try
+            {
+                return Ok(_hostService.GetAllHostIDs(hostname));
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
         }
 
         /// <summary>

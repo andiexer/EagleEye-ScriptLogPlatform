@@ -21,12 +21,33 @@ namespace EESLP.Services.Scripts.API.Services
         {
         }
 
-        public IEnumerable<Host> GetAllHosts()
+        public IEnumerable<Host> GetAllHosts(string hostname, int skipNumber, int takeNumber)
         {
+            hostname = hostname == null ? "" : hostname;
             using (var db = Connection)
             {
                 db.Open();
-                return db.GetAll<Host>().ToList();
+                return db.Query<Host>($"SELECT * FROM Host WHERE hostname LIKE CONCAT(\"%\",@hostname,\"%\") LIMIT {skipNumber},{takeNumber}", new { hostname = hostname });
+            }
+        }
+
+        public IEnumerable<int> GetAllHostIDs(string hostname)
+        {
+            hostname = hostname == null ? "" : hostname;
+            using (var db = Connection)
+            {
+                db.Open();
+                return db.Query<int>($"SELECT Id FROM Host WHERE hostname LIKE CONCAT(\"%\",@hostname,\"%\")", new { hostname = hostname });
+            }
+        }
+
+        public int GetNumberOfAllHosts(string hostname)
+        {
+            hostname = hostname == null ? "" : hostname;
+            using (var db = Connection)
+            {
+                db.Open();
+                return db.Query<int>($"SELECT COUNT(*) FROM Host WHERE hostname LIKE CONCAT(\"%\",@hostname,\"%\")", new { hostname = hostname }).ToArray()[0];
             }
         }
 

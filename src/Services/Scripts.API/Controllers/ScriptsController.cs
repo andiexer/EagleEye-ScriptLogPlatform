@@ -14,6 +14,8 @@ using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using RawRabbit;
+using EESLP.Services.Scripts.API.Infrastructure.Extensions;
+using Microsoft.Extensions.Primitives;
 
 namespace EESLP.Services.Scripts.API.Controllers
 {
@@ -25,6 +27,8 @@ namespace EESLP.Services.Scripts.API.Controllers
         private readonly ILogger<ScriptsController> _logger;
         private readonly IBusClient _busClient;
         private readonly IMapper _mapper;
+        int page = 1;
+        int pageSize = 10;
 
         public ScriptsController(ILogger<ScriptsController> logger, IScriptService scriptService, IBusClient busClient, IMapper mapper)
         {
@@ -43,18 +47,53 @@ namespace EESLP.Services.Scripts.API.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<ScriptViewModel>), 200)]
         [ProducesResponseType(typeof(object), 400)]
-        public IActionResult Get()
+        public IActionResult Get(string scriptname)
         {
             try
             {
+                var pagination = Request.Headers["Pagination"];
+                if (!string.IsNullOrEmpty(pagination))
+                {
+                    string[] vals = pagination.ToString().Split(',');
+                    int.TryParse(vals[0], out page);
+                    int.TryParse(vals[1], out pageSize);
+                }
+                int currentPage = page;
+                int currentPageSize = pageSize;
+                var totalScripts = _scriptService.GetNumberOfAllScripts(scriptname);
+                var totalPages = (int)Math.Ceiling((double)totalScripts / pageSize);
+
+                Response.AddPagination(page, pageSize, totalScripts, totalPages);
+
                 return Ok(
-                    _mapper.Map<IEnumerable<Script>, IEnumerable<ScriptViewModel>>(_scriptService.GetAllScripts()));
+                    _mapper.Map<IEnumerable<Script>, IEnumerable<ScriptViewModel>>(_scriptService.GetAllScripts(scriptname, (currentPage - 1) * currentPageSize, currentPageSize)));
             }
             catch (Exception e)
             {
                 return BadRequest();
             }
-            
+        }
+
+        /// <summary>
+        /// gets a list of all script IDs
+        /// </summary>
+        /// <returns>list of all script IDs</returns>
+        /// <response code="200">returns a list of all script IDs</response>
+        /// <response code="400">if something went really wrong</response>
+        [HttpGet]
+        [Route("IDs")]
+        [ProducesResponseType(typeof(IEnumerable<int>), 200)]
+        [ProducesResponseType(typeof(object), 400)]
+        public IActionResult GetIds(string scriptname)
+        {
+            try
+            {
+                return Ok(_scriptService.GetAllScriptIds(scriptname));
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
         }
 
         /// <summary>
@@ -107,8 +146,8 @@ namespace EESLP.Services.Scripts.API.Controllers
             }
             catch (MySqlException e)
             {
-                _logger.LogError($"Error while adding host to database: {e.Message}");
-                return BadRequest("Error while adding host to database");
+                _logger.LogError($"Error while adding script to database: {e.Message}");
+                return BadRequest("Error while adding script to database");
             }
 
         }
@@ -151,7 +190,7 @@ namespace EESLP.Services.Scripts.API.Controllers
         }
 
         /// <summary>
-        /// delete a script instance
+        /// delete a script
         /// this will also raise a integration event for other microservices
         /// default wil delete all script instances associated with it
         /// </summary>
