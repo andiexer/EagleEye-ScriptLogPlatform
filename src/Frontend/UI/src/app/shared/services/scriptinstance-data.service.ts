@@ -23,6 +23,7 @@ export class ScriptinstanceDataService {
   getScriptInstances(
     hostname?: string,
     scriptname?: string,
+    transactionId?: string,
     status?: string[],
     from?: Date,
     to?: Date,
@@ -36,6 +37,7 @@ export class ScriptinstanceDataService {
     let queryParams: URLSearchParams = new URLSearchParams();
     queryParams.set('hostname', hostname);
     queryParams.set('scriptname', scriptname);
+    queryParams.set('transactionId', transactionId);
     for (let i = 0; i < status.length; i++) {
       queryParams.append('status', status[i]);
     }
@@ -119,6 +121,19 @@ export class ScriptinstanceDataService {
             });
             return Observable.throw(error.json().error || 'Server connection error');
           });
+      });
+  }
+
+  removeScriptInstance(id: number): Observable<any> {
+    return this.http.delete(this._baseUrl + 'ScriptInstances/' + id)
+      .catch((error: Response) => {
+        this.router.navigate(['/error'], {
+          queryParams: {
+            error: error,
+            component: 'ScriptInstanceDataService'
+          }
+        });
+        return Observable.throw(error.json().error || 'Server connection error');
       });
   }
 

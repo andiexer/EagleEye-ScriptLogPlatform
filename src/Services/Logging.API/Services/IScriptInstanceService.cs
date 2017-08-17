@@ -9,8 +9,8 @@ namespace EESLP.Services.Logging.API.Services
 {
     public interface IScriptInstanceService
     {
-        IEnumerable<ScriptInstance> GetAllScriptInstances(ScriptInstanceStatus[] status, string hostname, string scriptname, DateTime? from, DateTime? to, int skipNumber, int takeNumber);
-        int GetNumberOfScriptInstances(ScriptInstanceStatus[] status, string hostname, string scriptname, DateTime? from, DateTime? to);
+        IEnumerable<ScriptInstance> GetAllScriptInstances(ScriptInstanceStatus[] status, string hostname, string scriptname, string transactionId, DateTime? from, DateTime? to, int skipNumber, int takeNumber);
+        int GetNumberOfScriptInstances(ScriptInstanceStatus[] status, string hostname, string scriptname, string transactionId, DateTime? from, DateTime? to);
         IEnumerable<ScriptInstance> GetLatestScriptInstances(int amount);
         ScriptInstance GetScriptInstanceById(int id);
         bool Update(ScriptInstance scriptInstance);

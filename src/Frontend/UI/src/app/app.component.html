@@ -5,9 +5,12 @@
   </div>
 </md-toolbar>
 
-<div>
+<div *ngIf="!loading">
   <router-outlet></router-outlet>
 </div>
+<div fxLayoutAlign="center" *ngIf="loading">
+      <md-spinner></md-spinner>
+    </div>
 <md-toolbar color="primary" class="footer">
   <span>
     EagleEye-ScriptLogMonitor {{configService.getVersion()}} | Copyright &copy; 2017 <a href="https://www.inventx.ch">www.inventx.ch</a> - All rights reserved.

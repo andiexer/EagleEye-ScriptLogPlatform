@@ -3,8 +3,8 @@
     <md-card-content>
       <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap>
         <div fxFlex="230px">
-          <md-input-container>
-            <input mdInput id="scriptname" class="form-control" type="text" placeholder="Scriptname" formControlName="scriptname">
+          <md-input-container class="form-control">
+            <input mdInput id="scriptname" type="text" placeholder="Scriptname" formControlName="scriptname">
           </md-input-container>
         </div>
       </div>
@@ -17,7 +17,11 @@
 </md-card>
 <md-card>
   <md-card-content>
-    <button md-button type="button" (click)="onNew()"><md-icon>add</md-icon>New script</button>
+    <div fxLayout="row" fxLayoutAlign="space-between">
+      <button md-button type="button" (click)="onNew()"><md-icon>add</md-icon>New script</button>
+      <md-paginator [pageIndex]="currentPage" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+      </md-paginator>
+    </div>
     <table class="mdl-data-table mdl-js-data-table table-shadow">
       <thead>
         <tr>
@@ -29,7 +33,8 @@
           <th>Last modified</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody *ngIf="loadingScripts"></tbody>
+      <tbody *ngIf="!loadingScripts">
         <tr *ngFor="let script of scripts">
           <td width="350px">
             <button md-button (click)="onDetails(script.id)"><md-icon>more_horiz</md-icon>Details</button>
@@ -42,11 +47,15 @@
           <td>{{script.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
           <td>{{script.lastModDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
         </tr>
+        <tr *ngIf="scripts.length == 0" >
+          <td colspan="100" style="text-align: center !important">There are no items!</td>
+        </tr>
+      </tbody>
+      <tbody *ngIf="loadingScripts">
+        <tr>
+          <td colspan="100"><div fxLayoutAlign="center"><md-spinner></md-spinner></div></td>
+        </tr>
       </tbody>
     </table>
   </md-card-content>
-  <md-card-actions>
-    <md-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
-    </md-paginator>
-  </md-card-actions>
 </md-card>

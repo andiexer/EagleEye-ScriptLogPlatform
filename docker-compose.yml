@@ -52,6 +52,17 @@ services:
      - "Services:scripts.api=http://scripts.api"
      - "Services:logging.api=http://logging.api"
     entrypoint: dockerize -wait tcp://rabbit.eventbus:5672 -wait http://rabbit.eventbus:15672 -wait tcp://redis.cache:6379 -timeout 30s dotnet EESLP.Frontend.Gateway.API.dll
+  frontend.ui:
+    image: eeslp/frontend.ui
+    build:
+      context: ./src/Frontend/UI
+      dockerfile: Dockerfile
+    depends_on:
+      - frontend.gateway.api
+    ports:
+      - "80:80"
+    environment:
+      - "ApiUrl=http://frontend.gateway.api/api/"
   mysql.data:
     image: eeslp/mysql.data
     environment: 

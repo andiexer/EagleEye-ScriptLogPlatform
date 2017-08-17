@@ -25,26 +25,29 @@ namespace EESLP.Services.Logging.API.Services
             _apiOptions = apiOptions.Value;
         }
 
-        public IEnumerable<ScriptInstance> GetAllScriptInstances(ScriptInstanceStatus[] status, string hostname, string scriptname, DateTime? from, DateTime? to, int skipNumber, int takeNumber)
+        public IEnumerable<ScriptInstance> GetAllScriptInstances(ScriptInstanceStatus[] status, string hostname, string scriptname, string transactionId, DateTime? from, DateTime? to, int skipNumber, int takeNumber)
         {
+            transactionId = transactionId == null ? "" : transactionId;
             string query = $"SELECT * FROM EESLP.ScriptInstance ";
             query += getScriptInstanceWhereQuery(status, hostname, scriptname, from, to);
-            query += $"LIMIT {skipNumber},{takeNumber}";
+            query += $"ORDER BY Id DESC ";
+            query += $"LIMIT {skipNumber},{takeNumber} ";
             using (var db = Connection)
             {
                 db.Open();
-                return db.Query<ScriptInstance>(query);
+                return db.Query<ScriptInstance>(query, new { transactionId = transactionId });
             }
         }
 
-        public int GetNumberOfScriptInstances(ScriptInstanceStatus[] status, string hostname, string scriptname, DateTime? from, DateTime? to)
+        public int GetNumberOfScriptInstances(ScriptInstanceStatus[] status, string hostname, string scriptname, string transactionId, DateTime? from, DateTime? to)
         {
+            transactionId = transactionId == null ? "" : transactionId;
             string query = $"SELECT COUNT(*) FROM EESLP.ScriptInstance ";
             query += getScriptInstanceWhereQuery(status, hostname, scriptname, from, to);
             using (var db = Connection)
             {
                 db.Open();
-                return db.Query<int>(query).ToArray()[0];
+                return db.Query<int>(query, new { transactionId = transactionId }).ToArray()[0];
             }
         }
 
@@ -148,10 +151,10 @@ namespace EESLP.Services.Logging.API.Services
 
         private string getScriptInstanceWhereQuery(ScriptInstanceStatus[] status, string hostname, string scriptname, DateTime? from, DateTime? to)
         {
+            string query = $"WHERE ";
+            query += "TransactionId LIKE CONCAT(\"%\",@transactionId,\"%\") ";
             if (status.Count() > 0 || hostname != null || scriptname != null || from != null || to != null)
             {
-                string query = $"WHERE ";
-                
                 if (status.Count() > 0)
                 {
                     string queryStatus = "";
@@ -197,9 +200,8 @@ namespace EESLP.Services.Logging.API.Services
                     }
                 }
                 query = query.Replace("WHERE AND", "WHERE");
-                return query;
             }
-            return "";
+            return query;
         }
 
     }

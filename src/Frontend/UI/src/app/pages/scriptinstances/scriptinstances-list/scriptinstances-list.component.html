@@ -3,34 +3,35 @@
     <md-card-content>
       <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap>
         <div fxFlex="230px">
-            <md-select class="form-control" placeholder="Status" name="status" formControlName="status" multiple>
-              <md-option *ngFor="let option of statusOptions" [value]="option.value">
-                {{option.label}}
-              </md-option>
-            </md-select>
+          <md-select class="form-control" placeholder="Status" name="status" formControlName="status" multiple>
+            <md-option *ngFor="let option of statusOptions" [value]="option.value">
+              {{option.label}}
+            </md-option>
+          </md-select>
         </div>
         <div fxFlex="230px">
-          <md-input-container>
-            <input mdInput id="hostname" class="form-control" type="text" placeholder="Hostname" formControlName="hostname">
+          <md-input-container class="form-control">
+            <input mdInput id="hostname" type="text" placeholder="Hostname" formControlName="hostname">
           </md-input-container>
         </div>
         <div fxFlex="230px">
-          <md-input-container>
-            <input mdInput id="scriptname" class="form-control" type="text" placeholder="Scriptname" formControlName="scriptname">
+          <md-input-container class="form-control">
+            <input mdInput id="scriptname" type="text" placeholder="Scriptname" formControlName="scriptname">
           </md-input-container>
         </div>
         <div formGroupName="dateTime" fxLayout="row" fxLayout.xs="column" fxLayoutWrap>
           <div fxFlex="230px">
             <div fxLayout="row">
               <div [class.has-error]="!searchForm.get('dateTime').get('dateFrom').valid">
-                <md-input-container>
-                  <input style="min-width:100px; width:100px" mdInput id="dateFrom" class="form-control" placeholder="Date from" formControlName="dateFrom"
-                    ng2-datetime-picker date-only="true" date-format="DD.MM.YYYY">
+                <md-input-container class="form-control" style="min-width:100px; width:100px">
+                  <input mdInput [mdDatepicker]="pickerFrom" placeholder="Date from" id="dateFrom" formControlName="dateFrom">
+                  <button mdSuffix [mdDatepickerToggle]="pickerFrom"></button>
                 </md-input-container>
+                <md-datepicker #pickerFrom></md-datepicker>
               </div>
               <div [class.has-error]="!searchForm.get('dateTime').get('hourFrom').valid">
-                <md-input-container>
-                  <input style="min-width:100px; width:100px" mdInput id="hourFrom" class="form-control" placeholder="Time from" formControlName="hourFrom">
+                <md-input-container class="form-control" style="min-width:100px; width:100px">
+                  <input mdInput id="hourFrom" placeholder="Time from" formControlName="hourFrom">
                 </md-input-container>
               </div>
             </div>
@@ -46,14 +47,15 @@
           <div fxFlex="230px">
             <div fxLayout="row">
               <div [class.has-error]="!searchForm.get('dateTime').get('dateTo').valid">
-                <md-input-container>
-                  <input style="min-width:100px; width:100px" mdInput id="dateTo" class="form-control" placeholder="Date to" formControlName="dateTo"
-                    ng2-datetime-picker date-only="true" date-format="DD.MM.YYYY">
+                <md-input-container class="form-control" style="min-width:100px; width:100px">
+                  <input mdInput [mdDatepicker]="pickerTo" placeholder="Date to" id="dateTo" formControlName="dateTo">
+                  <button mdSuffix [mdDatepickerToggle]="pickerTo"></button>
                 </md-input-container>
+                <md-datepicker #pickerTo [startAt]="searchForm.get('dateTime').get('dateFrom').value"></md-datepicker>
               </div>
               <div [class.has-error]="!searchForm.get('dateTime').get('hourTo').valid">
-                <md-input-container>
-                  <input style="min-width:100px; width:100px" mdInput id="hourTo" class="form-control" placeholder="Enter the time" formControlName="hourTo">
+                <md-input-container class="form-control" style="min-width:100px; width:100px">
+                  <input mdInput id="hourTo" placeholder="Enter the time" formControlName="hourTo">
                 </md-input-container>
               </div>
             </div>
@@ -66,6 +68,11 @@
               </div>
             </div>
           </div>
+        </div>
+        <div fxFlex="230px">
+          <md-input-container class="form-control">
+            <input mdInput id="transactionId" type="text" placeholder="Transaction ID" formControlName="transactionId">
+          </md-input-container>
         </div>
       </div>
       <div *ngIf="searchForm.get('dateTime').dirty && !searchForm.get('dateTime').valid" [class.has-error]="!searchForm.get('dateTime').valid">
@@ -80,6 +87,8 @@
 </md-card>
 <md-card>
   <md-card-content>
+    <md-paginator [pageIndex]="currentPage" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+    </md-paginator>
     <table class="mdl-data-table mdl-js-data-table table-shadow">
       <thead>
         <tr>
@@ -92,9 +101,12 @@
           <th>Transaction ID</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody *ngIf="!loadingScriptInstances">
         <tr *ngFor="let scriptInstance of scriptInstances">
-          <td><button md-button (click)="onDetails(scriptInstance.id)"><md-icon>more_horiz</md-icon> Details</button></td>
+          <td>
+            <button md-button (click)="onDetails(scriptInstance.id)"><md-icon>more_horiz</md-icon> Details</button>
+            <button md-button (click)="openDialog(scriptInstance.id)"><md-icon>delete</md-icon>Delete</button>
+          </td>
           <td>{{scriptInstance.instanceStatus}}</td>
           <td>{{scriptInstance.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
           <td *ngIf="scriptInstance.endDateTime != null">{{scriptInstance.endDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
@@ -103,11 +115,19 @@
           <td>{{scriptInstance.script?.scriptname}}</td>
           <td>{{scriptInstance.transactionId}}</td>
         </tr>
+        <tr *ngIf="scriptInstances.length == 0">
+          <td colspan="100" style="text-align: center !important">There are no items!</td>
+        </tr>
+      </tbody>
+      <tbody *ngIf="loadingScriptInstances">
+        <tr>
+          <td colspan="100">
+            <div fxLayoutAlign="center">
+              <md-spinner></md-spinner>
+            </div>
+          </td>
+        </tr>
       </tbody>
     </table>
   </md-card-content>
-  <md-card-actions>
-    <md-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
-    </md-paginator>
-  </md-card-actions>
 </md-card>

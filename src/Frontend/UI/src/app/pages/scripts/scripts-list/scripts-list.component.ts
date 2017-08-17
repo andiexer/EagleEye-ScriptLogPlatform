@@ -20,10 +20,11 @@ export class ScriptsListComponent implements OnInit, OnDestroy {
   public scripts: IScript[];
   public searchForm: FormGroup;
   public searchScriptname: string = '';
-  public length = 100;
+  public length = 0;
   public pageSize = 10;
   public pageSizeOptions = [5, 10, 25, 100];
   public currentPage: number;
+  public loadingScripts: boolean;
 
   constructor(
     private scriptDataService: ScriptDataService,
@@ -70,8 +71,10 @@ export class ScriptsListComponent implements OnInit, OnDestroy {
   }
 
   getScripts() {
+    this.loadingScripts = true;
     this.scriptSubscription = this.scriptDataService.getScripts(this.searchScriptname, this.currentPage + 1, this.pageSize)
       .subscribe((res: IScripts) => {
+        this.loadingScripts = false;
         this.scripts = res.scripts;
         this.currentPage = res.pagination.CurrentPage - 1;
         this.pageSize = res.pagination.ItemsPerPage;
@@ -87,6 +90,7 @@ export class ScriptsListComponent implements OnInit, OnDestroy {
     let queryParams: any = {};
     if (this.searchScriptname) { queryParams.scriptname = this.searchScriptname; }
     this.router.navigate(['/scripts'], { queryParams: queryParams });
+    this.currentPage = 0;
     this.getScripts();
   }
 

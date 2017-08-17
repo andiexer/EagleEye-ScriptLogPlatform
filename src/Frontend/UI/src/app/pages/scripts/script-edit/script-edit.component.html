@@ -5,7 +5,7 @@
   <form [formGroup]="scriptForm" (ngSubmit)="onSave()">
     <md-card-content>
       <div [class.has-error]="!scriptForm.controls['scriptName'].valid && !scriptForm.controls['scriptName'].pending">
-        <md-input-container class="full-width">
+        <md-input-container class="full-width form-control">
           <input mdInput id="scriptName" class="form-control" type="text" placeholder="Scriptname" formControlName="scriptName">
           <md-hint *ngIf="scriptForm.controls['scriptName'].touched && !scriptForm.controls['scriptName'].valid && !scriptForm.controls['scriptName'].pending">
             <span class="help-block" *ngIf="scriptForm.controls['scriptName'].errors.required">Scriptname is required</span>
@@ -13,7 +13,7 @@
         </md-input-container>
       </div>
       <div>
-        <md-input-container class="full-width">
+        <md-input-container class="full-width form-control">
           <input mdInput id="description" class="form-control" type="text" placeholder="Description" formControlName="description">
         </md-input-container>
       </div>

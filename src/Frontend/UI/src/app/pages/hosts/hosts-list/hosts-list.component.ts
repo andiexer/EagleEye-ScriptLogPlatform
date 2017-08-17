@@ -19,10 +19,11 @@ export class HostsListComponent implements OnInit, OnDestroy {
   public tenantOptions = [];
   public searchHostname: string = '';
   public searchForm: FormGroup;
-  public length = 100;
+  public length = 0;
   public pageSize = 10;
   public pageSizeOptions = [5, 10, 25, 100];
   public currentPage: number;
+  public loadingHosts: boolean;
 
   constructor(
     private hostDataService: HostDataService,
@@ -69,9 +70,11 @@ export class HostsListComponent implements OnInit, OnDestroy {
   }
 
   getHosts() {
+    this.loadingHosts = true;
     this.hostSubscription = this.hostDataService.getHosts(this.searchHostname, this.currentPage + 1, this.pageSize)
       .subscribe(
       (res: IHosts) => {
+        this.loadingHosts = false;
         this.hosts = res.hosts;
         this.currentPage = res.pagination.CurrentPage - 1;
         this.pageSize = res.pagination.ItemsPerPage;
@@ -88,6 +91,7 @@ export class HostsListComponent implements OnInit, OnDestroy {
     let queryParams: any = {};
     if (this.searchHostname) { queryParams.hostname = this.searchHostname; }
     this.router.navigate(['/hosts'], { queryParams: queryParams });
+    this.currentPage = 0;
     this.getHosts();
   }
 
