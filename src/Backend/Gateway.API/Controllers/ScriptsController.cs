@@ -9,6 +9,7 @@ using EESLP.BuildingBlocks.Resilence.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using System;
@@ -26,12 +27,12 @@ namespace EESLP.Backend.Gateway.API.Controllers
         private readonly IHttpApiClient _http;
         private readonly ApiOptions _apiOptions;
 
-        public ScriptsController(ILogger<ScriptsController> logger, IMapper mapper, IHttpApiClient http, ApiOptions apiOptions)
+        public ScriptsController(ILogger<ScriptsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions)
         {
             _logger = logger;
             _mapper = mapper;
             _http = http;
-            _apiOptions = apiOptions;
+            _apiOptions = apiOptions.Value;
         }
 
         /// <summary>
@@ -65,6 +66,35 @@ namespace EESLP.Backend.Gateway.API.Controllers
         }
 
         /// <summary>
+        /// get a single script
+        /// </summary>
+        /// <param name="id">id of the script</param>
+        /// <returns>single script</returns>
+        /// <response code="200">returns a single script</response>
+        /// <response code="404">if script was not found</response>
+        [HttpGet]
+        [Route("{id:int}", Name = "GetSingleScript")]
+        [ProducesResponseType(typeof(Script), 200)]
+        [ProducesResponseType(typeof(object), 404)]
+        [ProducesResponseType(typeof(object), 400)]
+        public IActionResult GetSingle(int id)
+        {
+            try
+            {
+                var host = _http.GetAsync<Script>(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + id).Result;
+                if (host == null)
+                {
+                    return NotFound();
+                }
+                return Ok(host);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
         /// create a script
         /// </summary>
         /// <param name="model">model with script informations</param>
@@ -82,7 +112,8 @@ namespace EESLP.Backend.Gateway.API.Controllers
                 var result = _http.PostAsync(_apiOptions.ScriptsApiUrl + "/api/Scripts", model).Result;
                 if (result.StatusCode == System.Net.HttpStatusCode.Created)
                 {
-                    return Created(result.Headers.Location, null);
+                    var location = Request.Scheme + "://" + Request.Host + result.Headers.Location.AbsolutePath;
+                    return Created(location, null);
                 }
                 else if (result.StatusCode == System.Net.HttpStatusCode.InternalServerError)
                 {
@@ -121,7 +152,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
                     return BadRequest("ApiKey header is not defined");
                 }
                 string apiKey = headerValues.First();
-                var host = _http.GetAsync<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/apikey" + apiKey).Result;
+                var host = _http.GetAsync<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/apikey/" + apiKey).Result;
                 if (host == null)
                 {
                     _logger.LogInformation($"No host found with apiKey {apiKey}");
@@ -137,7 +168,8 @@ namespace EESLP.Backend.Gateway.API.Controllers
                 var result = _http.PostAsync(_apiOptions.LoggingApiUrl + "/api/ScriptInstances", scriptInstance).Result;
                 if (result.StatusCode == System.Net.HttpStatusCode.Created)
                 {
-                    return Created(result.Headers.Location, null);
+                    var location = Request.Scheme + "://" + Request.Host + result.Headers.Location.AbsolutePath;
+                    return Created(location, null);
                 }
                 else if (result.StatusCode == System.Net.HttpStatusCode.InternalServerError)
                 {
