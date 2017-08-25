@@ -16,19 +16,10 @@ using System.Threading.Tasks;
 namespace EESLP.Backend.Gateway.API.Controllers
 {
     [Route("api/[controller]")]
-    public class LogsController : Controller
+    public class LogsController : BaseController
     {
-        private readonly ILogger<LogsController> _logger;
-        private readonly IMapper _mapper;
-        private readonly IHttpApiClient _http;
-        private readonly ApiOptions _apiOptions;
-
-        public LogsController(ILogger<LogsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions)
+        public LogsController(ILogger<LogsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache) : base(logger, mapper, http, apiOptions, cache)
         {
-            _logger = logger;
-            _mapper = mapper;
-            _http = http;
-            _apiOptions = apiOptions.Value;
         }
 
         /// <summary>
@@ -48,12 +39,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
         {
             try
             {
-                var host = _http.GetAsync<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + id).Result;
-                if (host == null)
-                {
-                    return NotFound();
-                }
-                return Ok(host);
+                return BaseGet<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + id);
             }
             catch (Exception e)
             {
@@ -77,20 +63,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
         {
             try
             {
-                var result = _http.PostAsync(_apiOptions.ScriptsApiUrl + "/api/Hosts", model).Result;
-                if (result.StatusCode == System.Net.HttpStatusCode.Created)
-                {
-                    var location = Request.Scheme + "://" + Request.Host + result.Headers.Location.AbsolutePath;
-                    return Created(location, null);
-                }
-                else if (result.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-                {
-                    return BadRequest("Internal server error on service");
-                }
-                else
-                {
-                    return BadRequest(result.Content.ReadAsStringAsync().Result);
-                }
+                return BasePost(_apiOptions.ScriptsApiUrl + "/api/Hosts", model);
             }
             catch (Exception e)
             {

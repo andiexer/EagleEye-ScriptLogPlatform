@@ -18,21 +18,10 @@ using EESLP.Backend.Gateway.API.ViewModel;
 namespace EESLP.Backend.Gateway.API.Controllers
 {
     [Route("api/[controller]")]
-    public class ScriptInstancesController : Controller
+    public class ScriptInstancesController : BaseController
     {
-        private readonly ILogger<ScriptInstancesController> _logger;
-        private readonly IMapper _mapper;
-        private readonly IHttpApiClient _http;
-        private readonly ApiOptions _apiOptions;
-        private readonly IDistributedCache _cache;
-
-        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache)
+        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache) : base(logger, mapper, http, apiOptions, cache)
         {
-            _logger = logger;
-            _mapper = mapper;
-            _http = http;
-            _apiOptions = apiOptions.Value;
-            _cache = cache;
         }
 
         /// <summary>
@@ -52,21 +41,25 @@ namespace EESLP.Backend.Gateway.API.Controllers
         {
             try
             {
-                var scriptinstance = _http.GetAsync<ScriptInstance>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id).Result;
-                if (scriptinstance == null)
+                var scriptinstanceActionResult = BaseGet<ScriptInstance>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id);
+                try
                 {
-                    return NotFound();
+                    var scriptinstance = (scriptinstanceActionResult as OkObjectResult).Value as ScriptInstance;
+                    var host = _cache.TryGetOrAdd(
+                        CacheUtil.BuildCacheKey(new[] { "host", "id", scriptinstance.HostId.ToString() }),
+                        () => _http.GetAsync<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + scriptinstance.HostId).Result);
+                    var script = _cache.TryGetOrAdd(
+                        CacheUtil.BuildCacheKey(new[] { "script", "id", scriptinstance.ScriptId.ToString() }),
+                        () => _http.GetAsync<Script>(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + scriptinstance.ScriptId).Result);
+                    ScriptInstanceViewModel result = _mapper.Map<ScriptInstanceViewModel>(scriptinstance);
+                    result.Host = host;
+                    result.Script = script;
+                    return Ok(result);
                 }
-                var host = _cache.TryGetOrAdd(
-                    CacheUtil.BuildCacheKey(new[] { "host", "id", scriptinstance.HostId.ToString() }),
-                    () => _http.GetAsync<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + scriptinstance.HostId).Result);
-                var script = _cache.TryGetOrAdd(
-                    CacheUtil.BuildCacheKey(new[] { "script", "id", scriptinstance.ScriptId.ToString() }),
-                    () => _http.GetAsync<Script>(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + scriptinstance.ScriptId).Result);
-                ScriptInstanceViewModel result = _mapper.Map<ScriptInstanceViewModel>(scriptinstance);
-                result.Host = host;
-                result.Script = script;
-                return Ok(result);
+                catch
+                {
+                    return scriptinstanceActionResult;
+                }
             }
             catch (Exception e)
             {
@@ -91,23 +84,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
         {
             try
             {
-                var result = _http.PutAsync(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id + "/status", model).Result;
-                if (result.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    return Ok();
-                }
-                else if (result.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    return NotFound();
-                }
-                else if (result.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-                {
-                    return BadRequest("Internal server error on service");
-                }
-                else
-                {
-                    return BadRequest(result.Content.ReadAsStringAsync().Result);
-                }
+                return BasePut(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id + "/status", model);
             }
             catch (Exception e)
             {
@@ -131,20 +108,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
         {
             try
             {
-                var result = _http.PostAsync(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id + "/logs", model).Result;
-                if (result.StatusCode == System.Net.HttpStatusCode.Created)
-                {
-                    var location = Request.Scheme + "://" + Request.Host + result.Headers.Location.AbsolutePath;
-                    return Created(location, null);
-                }
-                else if (result.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-                {
-                    return BadRequest("Internal server error on service");
-                }
-                else
-                {
-                    return BadRequest(result.Content.ReadAsStringAsync().Result);
-                }
+                return BasePost(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id + "/logs", model);
             }
             catch (Exception e)
             {
@@ -161,19 +125,14 @@ namespace EESLP.Backend.Gateway.API.Controllers
         /// <response code="404">if scriptInstance was not found</response>
         [HttpGet]
         [Route("{id}/Logs")]
-        [ProducesResponseType(typeof(Script), 200)]
+        [ProducesResponseType(typeof(IEnumerable<LogViewModel>), 200)]
         [ProducesResponseType(typeof(object), 404)]
         [ProducesResponseType(typeof(object), 400)]
         public IActionResult GetLogs(int id)
         {
             try
             {
-                var logs = _http.GetAsync<Log[]>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id + "/Logs").Result;
-                if (logs == null)
-                {
-                    return NotFound();
-                }
-                return Ok(logs);
+                return BaseGet<IEnumerable<LogViewModel>>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id + "/Logs");
             }
             catch (Exception e)
             {
