@@ -19,7 +19,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
     [Route("api/[controller]")]
     public class ScriptsController : BaseController
     {
-        public ScriptsController(ILogger<HostsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache) : base(logger, mapper, http, apiOptions, cache)
+        public ScriptsController(ILogger<ScriptsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache) : base(logger, mapper, http, apiOptions, cache)
         {
         }
 

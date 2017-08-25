@@ -17,7 +17,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
     [Route("api/[controller]")]
     public class LogsController : BaseController
     {
-        public LogsController(ILogger<HostsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache) : base(logger, mapper, http, apiOptions, cache)
+        public LogsController(ILogger<LogsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache) : base(logger, mapper, http, apiOptions, cache)
         {
         }
 

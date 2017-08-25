@@ -22,7 +22,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
     [Route("api/[controller]")]
     public class ScriptInstancesController : BaseController
     {
-        public ScriptInstancesController(ILogger<HostsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache) : base(logger, mapper, http, apiOptions, cache)
+        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache) : base(logger, mapper, http, apiOptions, cache)
         {
         }
 

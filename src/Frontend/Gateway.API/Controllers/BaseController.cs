@@ -19,13 +19,13 @@ namespace EESLP.Frontend.Gateway.API.Controllers
 {
     public abstract class BaseController : Controller
     {
-        protected readonly ILogger<HostsController> _logger;
+        protected readonly ILogger<BaseController> _logger;
         protected readonly IMapper _mapper;
         protected readonly IHttpApiClient _http;
         protected readonly ApiOptions _apiOptions;
         protected readonly IDistributedCache _cache;
 
-        public BaseController(ILogger<HostsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache)
+        public BaseController(ILogger<BaseController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache)
         {
             _logger = logger;
             _mapper = mapper;
