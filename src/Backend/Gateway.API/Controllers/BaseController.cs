@@ -14,6 +14,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Primitives;
+using EESLP.Backend.Gateway.API.Entities;
+using EESLP.Backend.Gateway.API.Utils;
 
 namespace EESLP.Backend.Gateway.API.Controllers
 {
@@ -163,6 +166,26 @@ namespace EESLP.Backend.Gateway.API.Controllers
             {
                 return BadRequest(e.Message);
             }
+        }
+
+        protected Host ApiKeyAuthentication()
+        {
+            StringValues headerValues;
+            if (!Request.Headers.TryGetValue("ApiKey", out headerValues))
+            {
+                _logger.LogInformation($"ApiKey header is not defined");
+                throw new KeyNotFoundException("ApiKey header is not defined");
+            }
+            string apiKey = headerValues.First();
+            var host = _cache.TryGetOrAdd(
+                        CacheUtil.BuildCacheKey(new[] { "host", "apiKey", apiKey }),
+                        () => _http.GetAsync<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/apikey/" + apiKey).Result);
+            if (host == null)
+            {
+                _logger.LogInformation($"No host found with apiKey {apiKey}");
+                throw new KeyNotFoundException("No host found with this api key");
+            }
+            return host;
         }
     }
 }

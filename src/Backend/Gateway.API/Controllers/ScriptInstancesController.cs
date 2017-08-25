@@ -41,6 +41,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
         {
             try
             {
+                ApiKeyAuthentication();
                 var scriptinstanceActionResult = BaseGet<ScriptInstance>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id);
                 try
                 {
@@ -84,6 +85,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
         {
             try
             {
+                ApiKeyAuthentication();
                 return BasePut(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id + "/status", model);
             }
             catch (Exception e)
@@ -108,6 +110,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
         {
             try
             {
+                ApiKeyAuthentication();
                 return BasePost(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id + "/logs", model);
             }
             catch (Exception e)
@@ -132,6 +135,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
         {
             try
             {
+                ApiKeyAuthentication();
                 return BaseGet<IEnumerable<LogViewModel>>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id + "/Logs");
             }
             catch (Exception e)

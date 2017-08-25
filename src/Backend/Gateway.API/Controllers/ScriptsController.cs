@@ -40,6 +40,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
         {
             try
             {
+                ApiKeyAuthentication();
                 return BaseGetWithPaging<IEnumerable<Script>>(_apiOptions.ScriptsApiUrl + "/api/Scripts" + Request.QueryString.Value);
             }
             catch (Exception e)
@@ -65,6 +66,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
         {
             try
             {
+                ApiKeyAuthentication();
                 return BaseGet<Script>(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + id);
             }
             catch (Exception e)
@@ -88,6 +90,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
         {
             try
             {
+                ApiKeyAuthentication();
                 return BasePost(_apiOptions.ScriptsApiUrl + "/api/Scripts", model);
             }
             catch (Exception e)
@@ -111,19 +114,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
             try
             {
                 _logger.LogInformation($"create a scriptinstance for script with id {id}");
-                StringValues headerValues;
-                if (!Request.Headers.TryGetValue("ApiKey", out headerValues))
-                {
-                    _logger.LogInformation($"ApiKey header is not defined");
-                    return BadRequest("ApiKey header is not defined");
-                }
-                string apiKey = headerValues.First();
-                var host = _http.GetAsync<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/apikey/" + apiKey).Result;
-                if (host == null)
-                {
-                    _logger.LogInformation($"No host found with apiKey {apiKey}");
-                    return NotFound("No host found with this ApiKey");
-                }
+                var host = ApiKeyAuthentication();
                 var scriptInstance = new ScriptInstanceAddModel()
                 {
                     HostId = host.Id,

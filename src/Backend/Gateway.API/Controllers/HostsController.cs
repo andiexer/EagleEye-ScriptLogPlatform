@@ -39,6 +39,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
         {
             try
             {
+                ApiKeyAuthentication();
                 return BaseGet<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + id);
             }
             catch (Exception e)
