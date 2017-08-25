@@ -10,23 +10,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace EESLP.Frontend.Gateway.API.Controllers
 {
     [Route("api/[controller]")]
-    public class LogsController : Controller
+    public class LogsController : BaseController
     {
-        private readonly ILogger<LogsController> _logger;
-        private readonly IMapper _mapper;
-        private readonly IHttpApiClient _http;
-        private readonly ApiOptions _apiOptions;
-
-        public LogsController(ILogger<LogsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions)
+        public LogsController(ILogger<HostsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache) : base(logger, mapper, http, apiOptions, cache)
         {
-            _logger = logger;
-            _mapper = mapper;
-            _http = http;
-            _apiOptions = apiOptions.Value;
         }
 
         /// <summary>
@@ -44,7 +36,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                return Ok(_http.GetAsync<IEnumerable<LogViewModel>>(_apiOptions.LoggingApiUrl + "/api/Logs/latest/" + amount).Result);
+                return BaseGet<IEnumerable<LogViewModel>>(_apiOptions.LoggingApiUrl + "/api/Logs/latest/" + amount);
             }
             catch (Exception e)
             {

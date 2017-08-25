@@ -14,23 +14,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace EESLP.Frontend.Gateway.API.Controllers
 {
     [Route("api/[controller]")]
-    public class HostsController : Controller
+    public class HostsController : BaseController
     {
-        private readonly ILogger<HostsController> _logger;
-        private readonly IMapper _mapper;
-        private readonly IHttpApiClient _http;
-        private readonly ApiOptions _apiOptions;
-
-        public HostsController(ILogger<HostsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions)
+        public HostsController(ILogger<HostsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache) : base(logger, mapper, http, apiOptions, cache)
         {
-            _logger = logger;
-            _mapper = mapper;
-            _http = http;
-            _apiOptions = apiOptions.Value;
         }
 
         /// <summary>
@@ -47,14 +39,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                var result = _http.GetAsync(_apiOptions.ScriptsApiUrl + "/api/Hosts" + Request.QueryString.Value, Request.Headers["Pagination"], null, null).Result;
-                IEnumerable<string> headerValues;
-                if (result.Headers.TryGetValues("Pagination", out headerValues))
-                {
-                    Response.Headers.Add("Pagination", headerValues.First());
-                }
-                
-                return Ok(result.StatusCode != HttpStatusCode.OK ? default(IEnumerable<Host>) : JsonConvert.DeserializeObject<IEnumerable<Host>>(result.Content.ReadAsStringAsync().Result));
+                return BaseGetWithPaging<IEnumerable<Host>>(_apiOptions.ScriptsApiUrl + "/api/Hosts" + Request.QueryString.Value);
             }
             catch (Exception e)
             {
@@ -79,12 +64,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                var host = _http.GetAsync<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + id).Result;
-                if (host == null)
-                {
-                    return NotFound();
-                }
-                return Ok(host);
+                return BaseGet<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + id);
             }
             catch (Exception e)
             {
@@ -108,19 +88,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                var result = _http.PostAsync(_apiOptions.ScriptsApiUrl + "/api/Hosts", model).Result;
-                if (result.StatusCode == System.Net.HttpStatusCode.Created)
-                {
-                    return Created(result.Headers.Location, null);
-                }
-                else if (result.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-                {
-                    return BadRequest("Internal server error on service");
-                }
-                else
-                {
-                    return BadRequest(result.Content.ReadAsStringAsync().Result);
-                }
+                return BasePost(_apiOptions.ScriptsApiUrl + "/api/Hosts", model);
             }
             catch (Exception e)
             {
@@ -133,7 +101,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         /// updates a host
         /// </summary>
         /// <param name="id">id of the host</param>
-        /// <param name="host">host informations</param>
+        /// <param name="model">host informations</param>
         /// <returns>returns 200 ok</returns>
         /// <response code="200">if update was successfull</response>
         /// <response code="404">if host was not found</response>
@@ -146,23 +114,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                var result = _http.PutAsync<HostUpdateModel>(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + id, model).Result;
-                if (result.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    return Ok();
-                }
-                else if (result.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    return NotFound();
-                }
-                else if (result.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-                {
-                    return BadRequest("Internal server error on service");
-                }
-                else
-                {
-                    return BadRequest(result.Content.ReadAsStringAsync().Result);
-                }
+                return BasePut(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + id, model);
             }
             catch (Exception e)
             {
@@ -186,23 +138,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                var result = _http.DeleteAsync(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + id).Result;
-                if (result.StatusCode == System.Net.HttpStatusCode.NoContent)
-                {
-                    return NoContent();
-                }
-                else if (result.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    return NotFound();
-                }
-                else if (result.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-                {
-                    return BadRequest("Internal server error on service");
-                }
-                else
-                {
-                    return BadRequest(result.Content.ReadAsStringAsync().Result);
-                }
+                return BaseDelete(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + id);
             }
             catch (Exception e)
             {
