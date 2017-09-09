@@ -14,6 +14,8 @@ $SolutionFilePath = [IO.Path]::Combine($rootPath, $SolutionFile)
 
 Write-Host "Using Solution file '$SolutionFile' at Path $SolutionFilePath" -ForegroundColor Yellow
 
+dotnet clean $SolutionFile -c Release -o .\obj\Docker\publish
+
 # restore files
 dotnet restore $SolutionFilePath
 
