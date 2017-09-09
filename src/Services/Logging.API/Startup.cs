@@ -38,7 +38,7 @@ namespace Logging.API
             Configuration = configuration;
         }
 
-        public IConfigurationRoot Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -64,7 +64,7 @@ namespace Logging.API
             });
 
             // Add RawRabbit
-            ConfigureRabbitMQServices(services);
+            //ConfigureRabbitMQServices(services);
 
             // Add framework services.
             services.AddMvc();
@@ -72,10 +72,11 @@ namespace Logging.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        //public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            //loggerFactory.AddDebug();
 
             // Enable Swagger Middleware
             app.UseSwagger();
@@ -87,7 +88,7 @@ namespace Logging.API
             });
 
             // Configure RabbitMQ Subscriptions
-            ConfigureRabbitMqSubscriptions(app);
+            //ConfigureRabbitMqSubscriptions(app);
 
             app.UseMvc();
         }
