@@ -6,8 +6,8 @@
     <RootNamespace>EESLP.Services.Logging.API</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netcoreapp2.0\EESLP.Services.Logging.API.xml</DocumentationFile>
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\EESLP.Services.Logging.API.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,5 +33,6 @@
     <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\..\BuildingBlocks\Resilence.Http\Resilence.Http.csproj" />
   </ItemGroup>
+
 
 </Project>

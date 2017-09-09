@@ -6,8 +6,8 @@
     <RootNamespace>EESLP.Services.Scripts.API</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netcoreapp2.0\EESLP.Services.Scripts.API.xml</DocumentationFile>
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\EESLP.Services.Scripts.API.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
