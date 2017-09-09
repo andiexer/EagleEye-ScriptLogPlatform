@@ -37,11 +37,15 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-- .Net Core 1.1
+- .Net Core 2.0
 - Openshift (you can use minishift as a development platform on you computer)
 - Docker (incl. Docker Toolbox)
 
-### Build .net projects
+### Build project
+
+> Attention: In this build the frontend ui has an issue that the base uri won't be changed correctly.
+> Goto src/Frontend/UI/dist/assets/appconfig.json and change the ip to your dockerhost ip
+
 
 run the script build-bits.ps1
 
