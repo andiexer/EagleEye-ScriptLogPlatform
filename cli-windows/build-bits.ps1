@@ -23,10 +23,11 @@ dotnet publish $SolutionFilePath -c Release -o .\obj\Docker\publish
 if($RemoveDockerImages) {
 	./remove-dockerimages.ps1
 }
-
+<#
 # build angular frontend
 Write-Host "Build angular 2 frontend"
 $path = pwd
 cd ..\src\Frontend\UI
 ng build --prod --aot
 cd $path
+#>

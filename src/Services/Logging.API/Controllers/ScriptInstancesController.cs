@@ -93,7 +93,7 @@ namespace EESLP.Services.Logging.API.Controllers
                 scriptInstance.InstanceStatus = scriptInstance.InstanceStatus ?? ScriptInstanceStatus.Created;
                 ScriptInstance newScriptInstance = _mapper.Map<ScriptInstance>(scriptInstance);
                 var result = _scriptInstanceService.Add(newScriptInstance);
-                _busClient.PublishAsync(new ScriptInstanceCreated(result));
+                //_busClient.PublishAsync(new ScriptInstanceCreated(result));
                 return CreatedAtRoute(routeName: "GetSingleScriptInstance", routeValues: new { id = result }, value: null);
             }
             catch (MySqlException e)
@@ -292,7 +292,7 @@ namespace EESLP.Services.Logging.API.Controllers
                 {
                     if (scriptinstance.EndDateTime != null)
                     {
-                        _busClient.PublishAsync(new ScriptInstanceCompleted(id, scriptinstance.InstanceStatus.ToString()));
+                        //_busClient.PublishAsync(new ScriptInstanceCompleted(id, scriptinstance.InstanceStatus.ToString()));
                     }
                     return Ok();
                 }

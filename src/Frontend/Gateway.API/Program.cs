@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EESLP.Frontend.Gateway.API
 {
-     public class Program
+    public class Program
     {
         public static void Main(string[] args)
         {

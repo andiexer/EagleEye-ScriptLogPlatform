@@ -25,7 +25,7 @@
               <div [class.has-error]="!searchForm.get('dateTime').get('dateFrom').valid">
                 <md-input-container class="form-control" style="min-width:100px; width:100px">
                   <input mdInput [mdDatepicker]="pickerFrom" placeholder="Date from" id="dateFrom" formControlName="dateFrom">
-                  <button mdSuffix [mdDatepickerToggle]="pickerFrom"></button>
+                  <!--<button mdSuffix [mdDatepickerToggle]="pickerFrom"></button>-->
                 </md-input-container>
                 <md-datepicker #pickerFrom></md-datepicker>
               </div>
@@ -49,7 +49,7 @@
               <div [class.has-error]="!searchForm.get('dateTime').get('dateTo').valid">
                 <md-input-container class="form-control" style="min-width:100px; width:100px">
                   <input mdInput [mdDatepicker]="pickerTo" placeholder="Date to" id="dateTo" formControlName="dateTo">
-                  <button mdSuffix [mdDatepickerToggle]="pickerTo"></button>
+                  <!--<button mdSuffix [mdDatepickerToggle]="pickerTo"></button>-->
                 </md-input-container>
                 <md-datepicker #pickerTo [startAt]="searchForm.get('dateTime').get('dateFrom').value"></md-datepicker>
               </div>
