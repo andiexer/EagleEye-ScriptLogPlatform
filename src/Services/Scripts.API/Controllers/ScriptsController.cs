@@ -25,16 +25,14 @@ namespace EESLP.Services.Scripts.API.Controllers
 
         private readonly IScriptService _scriptService;
         private readonly ILogger<ScriptsController> _logger;
-        private readonly IBusClient _busClient;
         private readonly IMapper _mapper;
         int page = 1;
         int pageSize = 10;
 
-        public ScriptsController(ILogger<ScriptsController> logger, IScriptService scriptService, IBusClient busClient, IMapper mapper)
+        public ScriptsController(ILogger<ScriptsController> logger, IScriptService scriptService, IMapper mapper)
         {
             _logger = logger;
             _scriptService = scriptService;
-            _busClient = busClient;
             _mapper = mapper;
         }
 
@@ -210,7 +208,7 @@ namespace EESLP.Services.Scripts.API.Controllers
                 var script = EnsureRequestScriptAvailable(id);
                 if (_scriptService.Delete(script))
                 {
-                    _busClient.PublishAsync(new ScriptDeleted(id));
+                    //_busClient.PublishAsync(new ScriptDeleted(id));
                     return NoContent();
                 }
                 return BadRequest("Error while deleting script");
