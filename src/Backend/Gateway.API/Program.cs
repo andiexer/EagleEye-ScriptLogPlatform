@@ -7,6 +7,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace EESLP.Backend.Gateway.API
 {
@@ -19,6 +20,19 @@ namespace EESLP.Backend.Gateway.API
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureLogging((hostingContext, builder) =>
+                {
+                    Log.Logger = new LoggerConfiguration()
+                        .Enrich.WithMachineName()
+                        .Enrich.WithProperty("EESLPApiName", "EESLP.Backend.Gateway.Api")
+                        .WriteTo.Elasticsearch(new Serilog.Sinks.Elasticsearch.ElasticsearchSinkOptions(new Uri(hostingContext.Configuration["Services:elasticsearch"]))
+                        {
+
+                        })
+                        .CreateLogger();
+
+                    builder.AddSerilog();
+                })
                 .UseStartup<Startup>()
                 .Build();
     }

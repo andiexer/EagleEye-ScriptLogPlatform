@@ -22,10 +22,12 @@ namespace Logging.API
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureLogging((hostingContext, builder) => {
+                    builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+
                     Log.Logger = new LoggerConfiguration()
                         .Enrich.WithMachineName()
                         .Enrich.WithProperty("EESLPApiName","EESLP.Logging.Api")
-                        .WriteTo.Elasticsearch(new Serilog.Sinks.Elasticsearch.ElasticsearchSinkOptions(new Uri("http://192.168.112.100:9200")) 
+                        .WriteTo.Elasticsearch(new Serilog.Sinks.Elasticsearch.ElasticsearchSinkOptions(new Uri(hostingContext.Configuration["Services:elasticsearch"])) 
                         {
 
                         })

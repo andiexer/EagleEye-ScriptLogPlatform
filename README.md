@@ -73,6 +73,8 @@ docker-compose build
 
 and run it with following command (-d for)
 
+> In case you've got an error from elasticsearch: **vm.max_map_count [65530] likely too low, increase to at least [262144]**.<p>Use this command to to fix in the docker host: **sudo sysctl -w vm.max_map_count=262144**
+
 ```
 docker-compose up -d 
 ```

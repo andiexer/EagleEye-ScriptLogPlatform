@@ -15,7 +15,10 @@ services:
      - "Database:ConnectionString=Server=mysql.data;Port=3306;Database=EESLP;Uid=root;Pwd=supersecret"
      - "RabbitMq:Hostname=rabbit.eventbus"
      - "Services:redis.cache=redis.cache"
+     - "Services:elasticearch=http://elasticsearch:9200"
     entrypoint: dockerize -wait tcp://rabbit.eventbus:5672 -wait http://rabbit.eventbus:15672 -wait tcp://redis.cache:6379 -timeout 30s dotnet EESLP.Services.Scripts.API.dll
+
+
   logging.api:
     image: eeslp/logging.api
     build:
@@ -32,7 +35,10 @@ services:
      - "RabbitMq:Hostname=rabbit.eventbus"
      - "Services:redis.cache=redis.cache"
      - "Services:scripts.api=http://scripts.api"
+     - "Services:elasticearch=http://elasticsearch:9200"
     entrypoint: dockerize -wait tcp://rabbit.eventbus:5672 -wait http://rabbit.eventbus:15672 -wait tcp://redis.cache:6379 -timeout 30s dotnet EESLP.Services.Logging.API.dll
+
+
   frontend.gateway.api:
     image: eeslp/frontent.gateway.api
     build:
@@ -51,7 +57,10 @@ services:
      - "Services:redis.cache=redis.cache"
      - "Services:scripts.api=http://scripts.api"
      - "Services:logging.api=http://logging.api"
+     - "Services:elasticearch=http://elasticsearch:9200"
     entrypoint: dockerize -wait tcp://rabbit.eventbus:5672 -wait http://rabbit.eventbus:15672 -wait tcp://redis.cache:6379 -timeout 30s dotnet EESLP.Frontend.Gateway.API.dll
+
+
   frontend.ui:
     image: eeslp/frontend.ui
     build:
@@ -63,6 +72,8 @@ services:
       - "80:80"
     environment:
       - "ApiUrl=http://frontend.gateway.api/api/"
+
+
   mysql.data:
     image: eeslp/mysql.data
     environment: 
@@ -73,6 +84,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3306:3306"
+
+
   rabbit.eventbus:
     image: "rabbitmq:3-management"
     hostname: "rabbitmq"
@@ -84,7 +97,28 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
+
+
   redis.cache:
     image: redis
     ports:
       - "6379:6379"
+
+  elasticsearch:
+    image:  docker.elastic.co/elasticsearch/elasticsearch:5.5.2
+    container_name: elasticsearch
+    environment: 
+      - "xpack.security.enabled=false" 
+    ports:
+      - "9200:9200"
+
+  kibana:
+    image:  docker.elastic.co/kibana/kibana:5.5.2
+    container_name: kibana
+    environment: 
+      - "xpack.security.enabled=false"
+      - "ELASTICSEARCH_URL=http://elasticsearch:9200"
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
