@@ -47,10 +47,7 @@ namespace EESLP.Services.Logging.API
 
             // Configure Options
             services.Configure<DatabaseOptions>(Configuration.GetSection("Database"));
-            services.Configure<ApiOptions>(options => {
-                options.ScriptsApiUrl = Configuration.GetSection("Services:scripts.api").Value;
-            });
-
+            
             // Register Swagger
             services.AddSwaggerGen(c =>
             {
@@ -83,8 +80,6 @@ namespace EESLP.Services.Logging.API
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Logging.API v1");
             });
-
-            app.UseCorrelationId();
 
             // Configure RabbitMQ Subscriptions
             //ConfigureRabbitMqSubscriptions(app);
