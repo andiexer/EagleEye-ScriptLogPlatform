@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{65FD8157-4CFD-4630-A55A-CC7E0492BD6A}"
 EndProject
@@ -12,9 +12,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildingBlocks", "BuildingB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resilence.Http", "src\BuildingBlocks\Resilence.Http\Resilence.Http.csproj", "{AFEE4F8F-46BE-41B2-9181-13B3D576799F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus", "src\BuildingBlocks\EventBus\EventBus.csproj", "{A19217D5-C5FA-4EFA-87B3-AEF25802AF8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus", "src\BuildingBlocks\EventBus\EventBus.csproj", "{A19217D5-C5FA-4EFA-87B3-AEF25802AF8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging.API", "src\services\Logging.API\Logging.API.csproj", "{3FDDFEEB-7074-48F6-89B5-440C43A8B270}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logging.API", "src\services\Logging.API\Logging.API.csproj", "{3FDDFEEB-7074-48F6-89B5-440C43A8B270}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{72362A27-69EF-4235-A7D1-251151F9E3E3}"
 EndProject
@@ -121,5 +121,8 @@ Global
 		{D220C59C-17BC-493D-A19A-69EA5BE1B648} = {72362A27-69EF-4235-A7D1-251151F9E3E3}
 		{85FF3896-71AD-43C6-AA31-4F94E4E8825D} = {65FD8157-4CFD-4630-A55A-CC7E0492BD6A}
 		{31959A45-FED8-4DA9-A1F5-73A469DB9DF8} = {85FF3896-71AD-43C6-AA31-4F94E4E8825D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F811EDF2-CF5D-49A6-9C03-E2BFC2836452}
 	EndGlobalSection
 EndGlobal

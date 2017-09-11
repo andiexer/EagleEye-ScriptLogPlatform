@@ -16,8 +16,9 @@ using EESLP.Services.Logging.API.Infrastructure;
 using EESLP.BuildingBlocks.Resilence.Http;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
+using EESLP.Services.Logging.API.Infrastructure.Extensions;
 
-namespace Logging.API
+namespace EESLP.Services.Logging.API
 {
     public class Startup
     {
@@ -82,6 +83,8 @@ namespace Logging.API
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Logging.API v1");
             });
+
+            app.UseCorrelationId();
 
             // Configure RabbitMQ Subscriptions
             //ConfigureRabbitMqSubscriptions(app);

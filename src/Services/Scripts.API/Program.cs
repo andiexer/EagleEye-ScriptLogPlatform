@@ -27,7 +27,8 @@ namespace EESLP.Services.Scripts.API
                         .Enrich.WithProperty("EESLPApiName", "EESLP.Scripts.Api")
                         .WriteTo.Elasticsearch(new Serilog.Sinks.Elasticsearch.ElasticsearchSinkOptions(new Uri(hostingContext.Configuration["Services:elasticsearch"]))
                         {
-
+                            IndexFormat = "apilogs",
+                            TypeName = "apilogevent"
                         })
                         .CreateLogger();
 

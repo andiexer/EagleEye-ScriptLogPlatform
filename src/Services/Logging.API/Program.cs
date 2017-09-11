@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 
 
-namespace Logging.API
+namespace EESLP.Services.Logging.API
 {
     public class Program
     {
@@ -22,14 +22,14 @@ namespace Logging.API
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureLogging((hostingContext, builder) => {
-                    builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-
                     Log.Logger = new LoggerConfiguration()
+                        .Enrich.FromLogContext()
                         .Enrich.WithMachineName()
                         .Enrich.WithProperty("EESLPApiName","EESLP.Logging.Api")
                         .WriteTo.Elasticsearch(new Serilog.Sinks.Elasticsearch.ElasticsearchSinkOptions(new Uri(hostingContext.Configuration["Services:elasticsearch"])) 
                         {
-
+                            IndexFormat = "apilogs",
+                            TypeName = "apilogevent"
                         })
                         .CreateLogger();
 
