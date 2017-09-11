@@ -28,18 +28,16 @@ namespace EESLP.Services.Logging.API.Controllers
         private readonly ILogService _logService;
         private readonly ILogger<ScriptInstancesController> _logger;
         private readonly IMapper _mapper;
-        private readonly IBusClient _busClient;
         private readonly IHttpApiClient _http;
         int page = 1;
         int pageSize = 10;
 
-        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService, IMapper mapper, ILogService logService, IBusClient busClient, IHttpApiClient http)
+        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService, IMapper mapper, ILogService logService, IHttpApiClient http)
         {
             _logger = logger;
             _scriptInstanceService = scriptInstanceService;
             _mapper = mapper;
             _logService = logService;
-            _busClient = busClient;
             _http = http;
         }
 
@@ -95,7 +93,7 @@ namespace EESLP.Services.Logging.API.Controllers
                 scriptInstance.InstanceStatus = scriptInstance.InstanceStatus ?? ScriptInstanceStatus.Created;
                 ScriptInstance newScriptInstance = _mapper.Map<ScriptInstance>(scriptInstance);
                 var result = _scriptInstanceService.Add(newScriptInstance);
-                _busClient.PublishAsync(new ScriptInstanceCreated(result));
+                //_busClient.PublishAsync(new ScriptInstanceCreated(result));
                 return CreatedAtRoute(routeName: "GetSingleScriptInstance", routeValues: new { id = result }, value: null);
             }
             catch (MySqlException e)
@@ -294,7 +292,7 @@ namespace EESLP.Services.Logging.API.Controllers
                 {
                     if (scriptinstance.EndDateTime != null)
                     {
-                        _busClient.PublishAsync(new ScriptInstanceCompleted(id, scriptinstance.InstanceStatus.ToString()));
+                        //_busClient.PublishAsync(new ScriptInstanceCompleted(id, scriptinstance.InstanceStatus.ToString()));
                     }
                     return Ok();
                 }

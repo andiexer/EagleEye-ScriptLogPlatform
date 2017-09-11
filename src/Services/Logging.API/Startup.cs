@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,22 +16,26 @@ using EESLP.Services.Logging.API.Infrastructure;
 using EESLP.BuildingBlocks.Resilence.Http;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
+using EESLP.Services.Logging.API.Infrastructure.Extensions;
 
-namespace Logging.API
+namespace EESLP.Services.Logging.API
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        //public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
+            /*
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
-            Configuration = builder.Build();
+            Configuration = builder.Build(); */
+            Configuration = configuration;
         }
 
-        public IConfigurationRoot Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -61,7 +61,7 @@ namespace Logging.API
             });
 
             // Add RawRabbit
-            ConfigureRabbitMQServices(services);
+            //ConfigureRabbitMQServices(services);
 
             // Add framework services.
             services.AddMvc();
@@ -69,10 +69,11 @@ namespace Logging.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        //public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            //loggerFactory.AddDebug();
 
             // Enable Swagger Middleware
             app.UseSwagger();
@@ -83,8 +84,10 @@ namespace Logging.API
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Logging.API v1");
             });
 
+            app.UseCorrelationId();
+
             // Configure RabbitMQ Subscriptions
-            ConfigureRabbitMqSubscriptions(app);
+            //ConfigureRabbitMqSubscriptions(app);
 
             app.UseMvc();
         }

@@ -14,6 +14,8 @@ $SolutionFilePath = [IO.Path]::Combine($rootPath, $SolutionFile)
 
 Write-Host "Using Solution file '$SolutionFile' at Path $SolutionFilePath" -ForegroundColor Yellow
 
+dotnet clean $SolutionFile -c Release -o .\obj\Docker\publish
+
 # restore files
 dotnet restore $SolutionFilePath
 
@@ -27,6 +29,6 @@ if($RemoveDockerImages) {
 # build angular frontend
 Write-Host "Build angular 2 frontend"
 $path = pwd
-cd ..\src\Frontend\UI
+cd $rootPath\src\Frontend\UI
 ng build --prod --aot
 cd $path

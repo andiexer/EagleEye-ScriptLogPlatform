@@ -26,17 +26,15 @@ namespace EESLP.Services.Scripts.API.Controllers
 
         private readonly IHostService _hostService;
         private readonly ILogger<HostsController> _logger;
-        private readonly IBusClient _busClient;
         private readonly IMapper _mapper;
         private readonly IDistributedCache _cache;
         int page = 1;
         int pageSize = 10;
 
-        public HostsController(ILogger<HostsController> logger, IHostService hostService, IBusClient busClient, IMapper mapper, IDistributedCache cache)
+        public HostsController(ILogger<HostsController> logger, IHostService hostService, IMapper mapper, IDistributedCache cache)
         {
             _logger = logger;
             _hostService = hostService;
-            _busClient = busClient;
             _mapper = mapper;
             _cache = cache;
         }
@@ -242,7 +240,7 @@ namespace EESLP.Services.Scripts.API.Controllers
                 if (_hostService.Delete(host))
                 {
                     _cache.Remove(CacheUtil.BuildCacheKey(new[] {"host","apikey",host.ApiKey}));
-                    _busClient.PublishAsync(new HostDeleted(id));
+                    //_busClient.PublishAsync(new HostDeleted(id));
                     return NoContent();
                 }
                 return BadRequest("Error while deleting host");
