@@ -84,7 +84,7 @@ namespace EESLP.Services.Logging.API
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Logging.API v1");
             });
 
-            app.UseCorrelationId();
+            //app.UseCorrelationId();
 
             // Configure RabbitMQ Subscriptions
             //ConfigureRabbitMqSubscriptions(app);
