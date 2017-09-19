@@ -43,6 +43,8 @@ namespace EESLP.Services.Logging.API
             // Depencency Injection
             services.AddTransient<IScriptInstanceService, ScriptInstanceService>();
             services.AddTransient<ILogService, LogService>();
+            services.AddTransient<IScriptService, ScriptService>();
+            services.AddTransient<IHostService, HostService>();
             services.AddSingleton<IHttpApiClient, StandardHttpClient>();
 
             // Configure Options

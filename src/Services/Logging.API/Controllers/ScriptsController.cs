@@ -78,21 +78,21 @@ namespace EESLP.Services.Logging.API.Controllers
         /// <returns>list of all script IDs</returns>
         /// <response code="200">returns a list of all script IDs</response>
         /// <response code="400">if something went really wrong</response>
-        [HttpGet]
-        [Route("IDs")]
-        [ProducesResponseType(typeof(IEnumerable<int>), 200)]
-        [ProducesResponseType(typeof(object), 400)]
-        public IActionResult GetIds(string scriptname)
-        {
-            try
-            {
-                return Ok(_scriptService.GetAllScriptIds(scriptname));
-            }
-            catch (Exception e)
-            {
-                return BadRequest();
-            }
-        }
+        //[HttpGet]
+        //[Route("IDs")]
+        //[ProducesResponseType(typeof(IEnumerable<int>), 200)]
+        //[ProducesResponseType(typeof(object), 400)]
+        //public IActionResult GetIds(string scriptname)
+        //{
+        //    try
+        //    {
+        //        return Ok(_scriptService.GetAllScriptIds(scriptname));
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return BadRequest();
+        //    }
+        //}
 
         /// <summary>
         /// get a single script

@@ -70,7 +70,8 @@ namespace EESLP.Services.Logging.API.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest();
+                _logger.LogError(e.Message);
+                return BadRequest(e.Message);
             }
         }
 
@@ -80,21 +81,21 @@ namespace EESLP.Services.Logging.API.Controllers
         /// <returns>list of host ids</returns>
         /// <response code="200">if hosts are found</response>
         /// <response code="400">if something went really wrong</response>
-        [HttpGet]
-        [Route("IDs")]
-        [ProducesResponseType(typeof(IEnumerable<int>), 200)]
-        [ProducesResponseType(typeof(object), 400)]
-        public IActionResult GetIds(string hostname)
-        {
-            try
-            {
-                return Ok(_hostService.GetAllHostIDs(hostname));
-            }
-            catch (Exception e)
-            {
-                return BadRequest();
-            }
-        }
+        //[HttpGet]
+        //[Route("IDs")]
+        //[ProducesResponseType(typeof(IEnumerable<int>), 200)]
+        //[ProducesResponseType(typeof(object), 400)]
+        //public IActionResult GetIds(string hostname)
+        //{
+        //    try
+        //    {
+        //        return Ok(_hostService.GetAllHostIDs(hostname));
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return BadRequest();
+        //    }
+        //}
 
         /// <summary>
         /// returns a single host
