@@ -12,6 +12,9 @@ wwwroot/
 # ignore appsettings.development.json 
 appsettings.development.json
 
+# ignore docker-compose.override.yml
+docker-compose.override.yml
+
 Project_Readme.html
 
 ## Ignore Visual Studio temporary files, build results, and

@@ -45,8 +45,19 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Build project
 
-> Attention: In this build the frontend ui has an issue that the base uri won't be changed correctly.
-> Goto src/Frontend/UI/dist/assets/appconfig.json and change the ip to your dockerhost ip
+> Attention: To make the UI work, you need to tell the docker container, which dockerhost ip you have.
+
+1. Create a file named docker-compose.override.yml on the same location as docker-compose.yml
+1. Add the following content to this file (replace the placeholder with your dockerhost ip)
+
+```
+version: '2'
+
+services:
+  frontend.ui:
+    environment:
+      - "ApiUrl=http://<your dockerhost ip>:5003/api/"
+```
 
 run the script build-bits.ps1
 
