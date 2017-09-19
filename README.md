@@ -25,6 +25,7 @@ EagleEye ScriptLogPlatform, formerly known as PoshLogMonitor is Platform to hand
 The whole platform is build on docker microservices developed mostly with .net core/python. As a platform we have chosen [openshift](https://www.openshift.org/) (Basically Service Discovery has to be changed for other platforms). In the furture we will fork the project to support also other platforms natively.
 
 ## Main Features
+
 - Log running scripts into script instances for easy management and analyzing the logs
 - Set alerts per script (Email?, SMS?, Zabbix?, SCOM?, other Tools?)
 - Powershell Module for easy integration into existing powershell scripts
@@ -38,27 +39,30 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 - .Net Core 2.0
-- Openshift (you can use minishift as a development platform on you computer)
 - Docker (incl. Docker Toolbox)
+- NPM
+- Angular cli (install with 'npm install --global @angular/cli')
 
 ### Build project
 
 > Attention: In this build the frontend ui has an issue that the base uri won't be changed correctly.
 > Goto src/Frontend/UI/dist/assets/appconfig.json and change the ip to your dockerhost ip
 
-
 run the script build-bits.ps1
 
 available parameters:
+
 - SolutionFile (default is EESLP-DockerBITSONly.sln)
 - RemoveDockerImages (removes all running containers starting with eeslp* and all eeslp* iamges)
 
 example:
+
 ```powershell
 build-bits.ps1 -RemoveDockerImages
 ```
 
 if you wanna remove all docker containers and images only use this powershell script:
+
 ```powershell
 remove-dockerimages.ps1
 ```
@@ -85,10 +89,9 @@ and stop it
 docker-compose down
 ```
 
-
 ## Built With
 
-* [.Net Core](https://www.microsoft.com/net/download/core) - .Net Core 1.1
+* [.Net Core](https://www.microsoft.com/net/download/core) - .Net Core 2.0
 * [Docker](https://www.docker.com/) - Docker
 * [Openshift](https://openshift.org/) - Openshift
 

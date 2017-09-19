@@ -72,6 +72,8 @@ services:
       - "80:80"
     environment:
       - "ApiUrl=http://frontend.gateway.api/api/"
+    links:
+      - frontend.gateway.api
 
 
   mysql.data:
