@@ -42,30 +42,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                var scriptinstancesActionResult = BaseGetWithPaging<IEnumerable<ScriptInstance>>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances" + Request.QueryString.Value);
-                try
-                {
-                    var scriptinstances = (scriptinstancesActionResult as OkObjectResult).Value as IEnumerable<ScriptInstance>;
-                    var result = new List<ScriptInstanceViewModel>(scriptinstances.Count());
-                    foreach (var scriptinstance in scriptinstances)
-                    {
-                        ScriptInstanceViewModel resultitem = _mapper.Map<ScriptInstanceViewModel>(scriptinstance);
-                        var host = _cache.TryGetOrAdd(
-                            CacheUtil.BuildCacheKey(new[] { "host", "id", scriptinstance.HostId.ToString() }),
-                            () => _http.GetAsync<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + scriptinstance.HostId).Result);
-                        var script = _cache.TryGetOrAdd(
-                            CacheUtil.BuildCacheKey(new[] { "script", "id", scriptinstance.ScriptId.ToString() }),
-                            () => _http.GetAsync<Script>(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + scriptinstance.ScriptId).Result);
-                        resultitem.Host = host;
-                        resultitem.Script = script;
-                        result.Add(resultitem);
-                    }
-                    return Ok(result);
-                }
-                catch
-                {
-                    return scriptinstancesActionResult;
-                }
+                return BaseGetWithPaging<IEnumerable<ScriptInstance>>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances" + Request.QueryString.Value);
             }
             catch (Exception e)
             {
@@ -90,25 +67,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                var scriptinstanceActionResult = BaseGet<ScriptInstance>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id);
-                try
-                {
-                    var scriptinstance = (scriptinstanceActionResult as OkObjectResult).Value as ScriptInstance;
-                    var host = _cache.TryGetOrAdd(
-                        CacheUtil.BuildCacheKey(new[] { "host", "id", scriptinstance.HostId.ToString() }),
-                        () => _http.GetAsync<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + scriptinstance.HostId).Result);
-                    var script = _cache.TryGetOrAdd(
-                        CacheUtil.BuildCacheKey(new[] { "script", "id", scriptinstance.ScriptId.ToString() }),
-                        () => _http.GetAsync<Script>(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + scriptinstance.ScriptId).Result);
-                    ScriptInstanceViewModel result = _mapper.Map<ScriptInstanceViewModel>(scriptinstance);
-                    result.Host = host;
-                    result.Script = script;
-                    return Ok(result);
-                }
-                catch
-                {
-                    return scriptinstanceActionResult;
-                }
+                return BaseGet<ScriptInstance>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id);
             }
             catch (Exception e)
             {
@@ -156,30 +115,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                var scriptinstancesActionResult = BaseGetWithPaging<IEnumerable<ScriptInstance>>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances" + Request.QueryString.Value);
-                try
-                {
-                    var scriptinstances = (scriptinstancesActionResult as OkObjectResult).Value as IEnumerable<ScriptInstance>;
-                    var result = new List<ScriptInstanceViewModel>(scriptinstances.Count());
-                    foreach (var scriptinstance in scriptinstances)
-                    {
-                        ScriptInstanceViewModel resultitem = _mapper.Map<ScriptInstanceViewModel>(scriptinstance);
-                        var host = _cache.TryGetOrAdd(
-                            CacheUtil.BuildCacheKey(new[] { "host", "id", scriptinstance.HostId.ToString() }),
-                            () => _http.GetAsync<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + scriptinstance.HostId).Result);
-                        var script = _cache.TryGetOrAdd(
-                            CacheUtil.BuildCacheKey(new[] { "script", "id", scriptinstance.ScriptId.ToString() }),
-                            () => _http.GetAsync<Script>(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + scriptinstance.ScriptId).Result);
-                        resultitem.Host = host;
-                        resultitem.Script = script;
-                        result.Add(resultitem);
-                    }
-                    return Ok(result);
-                }
-                catch
-                {
-                    return scriptinstancesActionResult;
-                }
+                return BaseGetWithPaging<IEnumerable<ScriptInstance>>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances" + Request.QueryString.Value);
             }
             catch (Exception e)
             {

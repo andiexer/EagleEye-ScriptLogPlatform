@@ -31,14 +31,27 @@ namespace EESLP.Services.Logging.API.Services
             transactionId = transactionId ?? "";
             hostname = hostname ?? "";
             scriptname = scriptname?? "";
-            string query = $"SELECT * FROM EESLP.ScriptInstance ";
+            string query = $"SELECT si.Id, si.TransactionId, si.InstanceStatus, si.CreatedDateTime, si.LastModDateTime, si.EndDateTime, h.Id AS HostId, s.Id AS ScriptId, " +
+                $"h.Id AS HostId, h.Hostname, h.FQDN, h.ApiKey, h.CreatedDateTime, h.LastModDateTime, " +
+                $"s.Id AS ScriptId, s.Scriptname, s.Description, s.CreatedDateTime, s.LastModDateTime " +
+                $"FROM EESLP.ScriptInstance AS si ";
             query += GetScriptInstanceWhereQuery(status, from, to);
-            query += $"ORDER BY Id DESC ";
+            query += $"ORDER BY si.Id DESC ";
             query += $"LIMIT {skipNumber},{takeNumber} ";
             using (var db = Connection)
             {
                 db.Open();
-                return db.Query<ScriptInstance>(query, new { transactionId = transactionId, hostname = hostname, scriptname = scriptname});
+                return db.Query<ScriptInstance, Host, Script, ScriptInstance>(query, 
+                    (scriptinstance, host, script) =>
+                    {
+                        scriptinstance.Host = host;
+                        scriptinstance.Script = script;
+                        scriptinstance.Host.Id = scriptinstance.HostId;
+                        scriptinstance.Script.Id = scriptinstance.ScriptId;
+                        return scriptinstance;
+                    },
+                    new { transactionId = transactionId, hostname = hostname, scriptname = scriptname},
+                    splitOn: "HostId,ScriptId");
             }
         }
 
@@ -47,12 +60,12 @@ namespace EESLP.Services.Logging.API.Services
             transactionId = transactionId ?? "";
             hostname = hostname ?? "";
             scriptname = scriptname ?? "";
-            string query = $"SELECT COUNT(*) FROM EESLP.ScriptInstance ";
+            string query = $"SELECT COUNT(*) FROM EESLP.ScriptInstance AS si ";
             query += GetScriptInstanceWhereQuery(status, from, to);
             using (var db = Connection)
             {
                 db.Open();
-                return db.Query<int>(query, new { transactionId = transactionId }).ToArray()[0];
+                return db.Query<int>(query, new { transactionId = transactionId, hostname = hostname, scriptname = scriptname }).ToArray()[0];
             }
         }
 
@@ -67,10 +80,26 @@ namespace EESLP.Services.Logging.API.Services
 
         public ScriptInstance GetScriptInstanceById(int id)
         {
+            string query = $"SELECT si.Id, si.TransactionId, si.InstanceStatus, si.CreatedDateTime, si.LastModDateTime, si.EndDateTime, h.Id AS HostId, s.Id AS ScriptId, " +
+                $"h.Id AS HostId, h.Hostname, h.FQDN, h.ApiKey, h.CreatedDateTime, h.LastModDateTime, " +
+                $"s.Id AS ScriptId, s.Scriptname, s.Description, s.CreatedDateTime, s.LastModDateTime " +
+                $"FROM EESLP.ScriptInstance AS si " +
+                $"INNER JOIN EESLP.Script AS s " +
+                $"INNER JOIN EESLP.Host AS h " +
+                $"WHERE si.Id = {id}";
             using (var db = Connection)
             {
                 db.Open();
-                return db.Get<ScriptInstance>(id);
+                return db.Query<ScriptInstance, Host, Script, ScriptInstance>(query,
+                    (scriptinstance, host, script) =>
+                    {
+                        scriptinstance.Host = host;
+                        scriptinstance.Script = script;
+                        scriptinstance.Host.Id = scriptinstance.HostId;
+                        scriptinstance.Script.Id = scriptinstance.ScriptId;
+                        return scriptinstance;
+                    },
+                    splitOn: "HostId,ScriptId").FirstOrDefault();
             }
         }
 
@@ -101,7 +130,8 @@ namespace EESLP.Services.Logging.API.Services
         {
             using (var db = Connection)
             {
-                if (!CheckIfScriptExists(scriptInstance.ScriptId) || !CheckIfHostExists(scriptInstance.HostId)) {
+                if (!CheckIfScriptExists(scriptInstance.ScriptId) || !CheckIfHostExists(scriptInstance.HostId))
+                {
                     throw new EntityNotFoundException();
                 }
                 db.Open();
@@ -145,21 +175,21 @@ namespace EESLP.Services.Logging.API.Services
         #region private help functions
         private bool CheckIfScriptExists(int scriptid)
         {
-            var script = _scriptService.GetScriptById(scriptid);
-            return script != null;
-        }
+            return _scriptService.GetScriptById(scriptid) != null;
+        } 
         private bool CheckIfHostExists(int hostid)
         {
-            var host = _hostService.GetHostById(hostid);
-            return host != null;
+            return _hostService.GetHostById(hostid) != null;
         }
 
         private string GetScriptInstanceWhereQuery(ScriptInstanceStatus[] status, DateTime? from, DateTime? to)
         {
-            string query = $"WHERE ";
-            query += "TransactionId LIKE CONCAT(\"%\",@transactionId,\"%\") ";
-            query += "AND EESLP.Host.hostname LIKE CONCAT(\"%\",@hostname,\"%\") ";
-            query += "AND EESLP.Script.Scriptname LIKE CONCAT(\"%\",@scriptname,\"%\") ";
+
+            string query = $"INNER JOIN EESLP.Host AS h ON h.Id = si.HostId " +
+                $"INNER JOIN EESLP.Script AS s ON s.Id = si.ScriptId WHERE ";
+            query += "si.TransactionId LIKE CONCAT(\"%\",@transactionId,\"%\") ";
+            query += "AND h.Hostname LIKE CONCAT(\"%\",@hostname,\"%\") ";
+            query += "AND s.Scriptname LIKE CONCAT(\"%\",@scriptname,\"%\") ";
             if (status.Count() > 0 || from != null || to != null)
             {
                 if (status.Count() > 0)
