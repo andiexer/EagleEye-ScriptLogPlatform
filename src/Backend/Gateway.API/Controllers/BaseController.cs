@@ -179,7 +179,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
             string apiKey = headerValues.First();
             var host = _cache.TryGetOrAdd(
                         CacheUtil.BuildCacheKey(new[] { "host", "apiKey", apiKey }),
-                        () => _http.GetAsync<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/apikey/" + apiKey).Result);
+                        () => _http.GetAsync<Host>(_apiOptions.LoggingApiUrl + "/api/Hosts/apikey/" + apiKey).Result);
             if (host == null)
             {
                 _logger.LogInformation($"No host found with apiKey {apiKey}");

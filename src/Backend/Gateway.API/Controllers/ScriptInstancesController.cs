@@ -42,25 +42,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
             try
             {
                 ApiKeyAuthentication();
-                var scriptinstanceActionResult = BaseGet<ScriptInstance>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id);
-                try
-                {
-                    var scriptinstance = (scriptinstanceActionResult as OkObjectResult).Value as ScriptInstance;
-                    var host = _cache.TryGetOrAdd(
-                        CacheUtil.BuildCacheKey(new[] { "host", "id", scriptinstance.HostId.ToString() }),
-                        () => _http.GetAsync<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + scriptinstance.HostId).Result);
-                    var script = _cache.TryGetOrAdd(
-                        CacheUtil.BuildCacheKey(new[] { "script", "id", scriptinstance.ScriptId.ToString() }),
-                        () => _http.GetAsync<Script>(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + scriptinstance.ScriptId).Result);
-                    ScriptInstanceViewModel result = _mapper.Map<ScriptInstanceViewModel>(scriptinstance);
-                    result.Host = host;
-                    result.Script = script;
-                    return Ok(result);
-                }
-                catch
-                {
-                    return scriptinstanceActionResult;
-                }
+                return BaseGet<ScriptInstance>(_apiOptions.LoggingApiUrl + "/api/ScriptInstances/" + id);
             }
             catch (Exception e)
             {

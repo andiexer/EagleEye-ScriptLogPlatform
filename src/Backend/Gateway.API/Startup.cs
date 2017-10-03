@@ -31,7 +31,6 @@ namespace EESLP.Backend.Gateway.API
 
             // Configure Options
             services.Configure<ApiOptions>(options => {
-                options.ScriptsApiUrl = Configuration.GetSection("Services:scripts.api").Value;
                 options.LoggingApiUrl = Configuration.GetSection("Services:logging.api").Value;
             });
 

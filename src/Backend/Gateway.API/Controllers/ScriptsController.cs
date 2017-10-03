@@ -41,7 +41,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
             try
             {
                 ApiKeyAuthentication();
-                return BaseGetWithPaging<IEnumerable<Script>>(_apiOptions.ScriptsApiUrl + "/api/Scripts" + Request.QueryString.Value);
+                return BaseGetWithPaging<IEnumerable<Script>>(_apiOptions.LoggingApiUrl + "/api/Scripts" + Request.QueryString.Value);
             }
             catch (Exception e)
             {
@@ -67,7 +67,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
             try
             {
                 ApiKeyAuthentication();
-                return BaseGet<Script>(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + id);
+                return BaseGet<Script>(_apiOptions.LoggingApiUrl + "/api/Scripts/" + id);
             }
             catch (Exception e)
             {
@@ -91,7 +91,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
             try
             {
                 ApiKeyAuthentication();
-                return BasePost(_apiOptions.ScriptsApiUrl + "/api/Scripts", model);
+                return BasePost(_apiOptions.LoggingApiUrl + "/api/Scripts", model);
             }
             catch (Exception e)
             {

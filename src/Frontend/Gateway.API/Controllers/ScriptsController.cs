@@ -37,7 +37,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                return BaseGetWithPaging<IEnumerable<Script>>(_apiOptions.ScriptsApiUrl + "/api/Scripts" + Request.QueryString.Value);
+                return BaseGetWithPaging<IEnumerable<Script>>(_apiOptions.LoggingApiUrl + "/api/Scripts" + Request.QueryString.Value);
             }
             catch (Exception e)
             {
@@ -62,7 +62,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                return BaseGet<Script>(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + id);
+                return BaseGet<Script>(_apiOptions.LoggingApiUrl + "/api/Scripts/" + id);
             }
             catch (Exception e)
             {
@@ -85,7 +85,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                return BasePost(_apiOptions.ScriptsApiUrl + "/api/Scripts", model);
+                return BasePost(_apiOptions.LoggingApiUrl + "/api/Scripts", model);
             }
             catch (Exception e)
             {
@@ -110,7 +110,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                return BasePut(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + id, model);
+                return BasePut(_apiOptions.LoggingApiUrl + "/api/Scripts/" + id, model);
             }
             catch (Exception e)
             {
@@ -136,7 +136,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         {
             try
             {
-                return BaseDelete(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + id);
+                return BaseDelete(_apiOptions.LoggingApiUrl + "/api/Scripts/" + id);
             }
             catch (Exception e)
             {
