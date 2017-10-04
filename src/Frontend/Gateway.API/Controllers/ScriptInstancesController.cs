@@ -35,7 +35,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         /// <response code="400">if something went really wrong</response>
         [HttpGet]
         [Route("")]
-        [ProducesResponseType(typeof(IEnumerable<ScriptInstanceViewModel>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<ScriptInstance>), 200)]
         [ProducesResponseType(typeof(object), 404)]
         [ProducesResponseType(typeof(object), 400)]
         public IActionResult Get(string hostname, string scriptname, string transactionId, ScriptInstanceStatus[] status, DateTime? from, DateTime? to)
@@ -60,7 +60,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         /// <response code="400">if something went really wrong</response>
         [HttpGet]
         [Route("{id}", Name = "GetSingleScriptInstance")]
-        [ProducesResponseType(typeof(ScriptInstanceViewModel), 200)]
+        [ProducesResponseType(typeof(ScriptInstance), 200)]
         [ProducesResponseType(typeof(object), 404)]
         [ProducesResponseType(typeof(object), 400)]
         public IActionResult GetSingle(int id)
@@ -109,7 +109,7 @@ namespace EESLP.Frontend.Gateway.API.Controllers
         /// <response code="400">if something went really wrong</response>
         [HttpGet]
         [Route("latest/{amount}")]
-        [ProducesResponseType(typeof(ScriptInstanceViewModel), 200)]
+        [ProducesResponseType(typeof(ScriptInstance), 200)]
         [ProducesResponseType(typeof(object), 400)]
         public IActionResult GetLatestScriptInstances(int amount)
         {
