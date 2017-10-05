@@ -1,12 +1,13 @@
 ﻿Param(
     [string]$rootPath,
     [string]$SolutionFile = 'EESLP-DockerBITSOnly.sln',
-	[switch]$RemoveDockerImages
+    [switch]$RemoveDockerImages,
+    [switch]$WithoutFrontend
 )
 
 $scriptPath = Split-Path $script:MyInvocation.MyCommand.Path
 
-if([string]::IsNullOrEmpty($rootPath)) {
+if ([string]::IsNullOrEmpty($rootPath)) {
     $rootPath = "$scriptPath\.."
 }
 
@@ -22,14 +23,16 @@ dotnet restore $SolutionFilePath
 # publish files to specific docker obj output
 dotnet publish $SolutionFilePath -c Release -o .\obj\Docker\publish
 
-if($RemoveDockerImages) {
-	./remove-dockerimages.ps1
+if ($RemoveDockerImages) {
+    ./remove-dockerimages.ps1
 }
 
 # build angular frontend
-Write-Host "Build angular 2 frontend"
-$path = pwd
-cd $rootPath\src\Frontend\UI
-npm install
-ng build --prod --aot
-cd $path
+if (!($WithoutFrontend)) {
+    Write-Host "Build angular 2 frontend"
+    $path = pwd
+    cd $rootPath\src\Frontend\UI
+    npm install
+    ng build --prod --aot
+    cd $path
+}
