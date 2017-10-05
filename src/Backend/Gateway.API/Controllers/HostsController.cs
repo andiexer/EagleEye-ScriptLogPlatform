@@ -16,9 +16,9 @@ using System.Threading.Tasks;
 namespace EESLP.Backend.Gateway.API.Controllers
 {
     [Route("api/[controller]")]
-    public class LogsController : BaseController
+    public class HostsController : BaseController
     {
-        public LogsController(ILogger<LogsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache) : base(logger, mapper, http, apiOptions, cache)
+        public HostsController(ILogger<HostsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache) : base(logger, mapper, http, apiOptions, cache)
         {
         }
 
