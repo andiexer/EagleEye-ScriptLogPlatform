@@ -11,7 +11,7 @@ namespace EESLP.Frontend.Gateway.API.Entities
     public class ScriptInstance : Entity, IAuditableEntity
     {
         public int Id { get; set; }
-        public ScriptInstanceStatus InstanceStatus { get; set; }
+        public string InstanceStatus { get; set; }
         public Host Host { get; set; }
         public Script Script { get; set; }
         public string TransactionId { get; set; }
