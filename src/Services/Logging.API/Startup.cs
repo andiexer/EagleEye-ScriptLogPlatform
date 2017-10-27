@@ -43,14 +43,13 @@ namespace EESLP.Services.Logging.API
             // Depencency Injection
             services.AddTransient<IScriptInstanceService, ScriptInstanceService>();
             services.AddTransient<ILogService, LogService>();
+            services.AddTransient<IScriptService, ScriptService>();
+            services.AddTransient<IHostService, HostService>();
             services.AddSingleton<IHttpApiClient, StandardHttpClient>();
 
             // Configure Options
             services.Configure<DatabaseOptions>(Configuration.GetSection("Database"));
-            services.Configure<ApiOptions>(options => {
-                options.ScriptsApiUrl = Configuration.GetSection("Services:scripts.api").Value;
-            });
-
+            
             // Register Swagger
             services.AddSwaggerGen(c =>
             {
@@ -83,7 +82,7 @@ namespace EESLP.Services.Logging.API
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Logging.API v1");
             });
-
+            
             //app.UseCorrelationId();
 
             // Configure RabbitMQ Subscriptions

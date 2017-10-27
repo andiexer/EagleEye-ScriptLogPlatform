@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace EESLP.Services.Scripts.API.ViewModels
+namespace EESLP.Services.Logging.API.ViewModels
 {
     public class ScriptAddModel
     {

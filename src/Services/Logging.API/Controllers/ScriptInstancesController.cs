@@ -28,17 +28,15 @@ namespace EESLP.Services.Logging.API.Controllers
         private readonly ILogService _logService;
         private readonly ILogger<ScriptInstancesController> _logger;
         private readonly IMapper _mapper;
-        private readonly IHttpApiClient _http;
         int page = 1;
         int pageSize = 10;
 
-        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService, IMapper mapper, ILogService logService, IHttpApiClient http)
+        public ScriptInstancesController(ILogger<ScriptInstancesController> logger, IScriptInstanceService scriptInstanceService, IMapper mapper, ILogService logService)
         {
             _logger = logger;
             _scriptInstanceService = scriptInstanceService;
             _mapper = mapper;
             _logService = logService;
-            _http = http;
         }
 
         /// <summary>

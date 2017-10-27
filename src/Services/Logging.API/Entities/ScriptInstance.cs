@@ -13,7 +13,9 @@ namespace EESLP.Services.Logging.API.Entities
         public int Id { get; set; }
         public ScriptInstanceStatus InstanceStatus { get; set; }
         public int HostId { get; set; }
+        public Host Host { get; set; }
         public int ScriptId { get; set; }
+        public Script Script { get; set; }
         public string TransactionId { get; set; }
         public DateTime? EndDateTime { get; set; }
         public DateTime CreatedDateTime { get; set; }

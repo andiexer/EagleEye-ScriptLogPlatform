@@ -17,37 +17,55 @@ namespace EESLP.Services.Logging.API.Services
 {
     public class ScriptInstanceService : BaseService, IScriptInstanceService
     {
-        private readonly IHttpApiClient _http;
-        private readonly ApiOptions _apiOptions;
-        public ScriptInstanceService(IOptions<DatabaseOptions> databaseOptions, IHttpApiClient http, IOptions<ApiOptions> apiOptions) : base(databaseOptions)
+        IScriptService _scriptService;
+        IHostService _hostService;
+
+        public ScriptInstanceService(IOptions<DatabaseOptions> databaseOptions, IScriptService scriptService, IHostService hostService) : base(databaseOptions)
         {
-            _http = http;
-            _apiOptions = apiOptions.Value;
+            _scriptService = scriptService;
+            _hostService = hostService;
         }
 
         public IEnumerable<ScriptInstance> GetAllScriptInstances(ScriptInstanceStatus[] status, string hostname, string scriptname, string transactionId, DateTime? from, DateTime? to, int skipNumber, int takeNumber)
         {
-            transactionId = transactionId == null ? "" : transactionId;
-            string query = $"SELECT * FROM EESLP.ScriptInstance ";
-            query += getScriptInstanceWhereQuery(status, hostname, scriptname, from, to);
-            query += $"ORDER BY Id DESC ";
+            transactionId = transactionId ?? "";
+            hostname = hostname ?? "";
+            scriptname = scriptname?? "";
+            string query = $"SELECT si.Id, si.TransactionId, si.InstanceStatus, si.CreatedDateTime, si.LastModDateTime, si.EndDateTime, h.Id AS HostId, s.Id AS ScriptId, " +
+                $"h.Id AS HostId, h.Hostname, h.FQDN, h.ApiKey, h.CreatedDateTime, h.LastModDateTime, " +
+                $"s.Id AS ScriptId, s.Scriptname, s.Description, s.CreatedDateTime, s.LastModDateTime " +
+                $"FROM EESLP.ScriptInstance AS si ";
+            query += GetScriptInstanceWhereQuery(status, from, to);
+            query += $"ORDER BY si.Id DESC ";
             query += $"LIMIT {skipNumber},{takeNumber} ";
             using (var db = Connection)
             {
                 db.Open();
-                return db.Query<ScriptInstance>(query, new { transactionId = transactionId });
+                return db.Query<ScriptInstance, Host, Script, ScriptInstance>(query, 
+                    (scriptinstance, host, script) =>
+                    {
+                        scriptinstance.Host = host;
+                        scriptinstance.Script = script;
+                        scriptinstance.Host.Id = scriptinstance.HostId;
+                        scriptinstance.Script.Id = scriptinstance.ScriptId;
+                        return scriptinstance;
+                    },
+                    new { transactionId = transactionId, hostname = hostname, scriptname = scriptname},
+                    splitOn: "HostId,ScriptId");
             }
         }
 
         public int GetNumberOfScriptInstances(ScriptInstanceStatus[] status, string hostname, string scriptname, string transactionId, DateTime? from, DateTime? to)
         {
-            transactionId = transactionId == null ? "" : transactionId;
-            string query = $"SELECT COUNT(*) FROM EESLP.ScriptInstance ";
-            query += getScriptInstanceWhereQuery(status, hostname, scriptname, from, to);
+            transactionId = transactionId ?? "";
+            hostname = hostname ?? "";
+            scriptname = scriptname ?? "";
+            string query = $"SELECT COUNT(*) FROM EESLP.ScriptInstance AS si ";
+            query += GetScriptInstanceWhereQuery(status, from, to);
             using (var db = Connection)
             {
                 db.Open();
-                return db.Query<int>(query, new { transactionId = transactionId }).ToArray()[0];
+                return db.Query<int>(query, new { transactionId = transactionId, hostname = hostname, scriptname = scriptname }).ToArray()[0];
             }
         }
 
@@ -62,10 +80,26 @@ namespace EESLP.Services.Logging.API.Services
 
         public ScriptInstance GetScriptInstanceById(int id)
         {
+            string query = $"SELECT si.Id, si.TransactionId, si.InstanceStatus, si.CreatedDateTime, si.LastModDateTime, si.EndDateTime, h.Id AS HostId, s.Id AS ScriptId, " +
+                $"h.Id AS HostId, h.Hostname, h.FQDN, h.ApiKey, h.CreatedDateTime, h.LastModDateTime, " +
+                $"s.Id AS ScriptId, s.Scriptname, s.Description, s.CreatedDateTime, s.LastModDateTime " +
+                $"FROM EESLP.ScriptInstance AS si " +
+                $"INNER JOIN EESLP.Script AS s " +
+                $"INNER JOIN EESLP.Host AS h " +
+                $"WHERE si.Id = {id}";
             using (var db = Connection)
             {
                 db.Open();
-                return db.Get<ScriptInstance>(id);
+                return db.Query<ScriptInstance, Host, Script, ScriptInstance>(query,
+                    (scriptinstance, host, script) =>
+                    {
+                        scriptinstance.Host = host;
+                        scriptinstance.Script = script;
+                        scriptinstance.Host.Id = scriptinstance.HostId;
+                        scriptinstance.Script.Id = scriptinstance.ScriptId;
+                        return scriptinstance;
+                    },
+                    splitOn: "HostId,ScriptId").FirstOrDefault();
             }
         }
 
@@ -73,7 +107,7 @@ namespace EESLP.Services.Logging.API.Services
         {
             using (var db = Connection)
             {
-                if (!checkIfScriptExists(scriptInstance.ScriptId) || !checkIfHostExists(scriptInstance.HostId))
+                if (!CheckIfScriptExists(scriptInstance.ScriptId) || !CheckIfHostExists(scriptInstance.HostId))
                 {
                     throw new EntityNotFoundException();
                 }
@@ -96,7 +130,8 @@ namespace EESLP.Services.Logging.API.Services
         {
             using (var db = Connection)
             {
-                if (!checkIfScriptExists(scriptInstance.ScriptId) || !checkIfHostExists(scriptInstance.HostId)) {
+                if (!CheckIfScriptExists(scriptInstance.ScriptId) || !CheckIfHostExists(scriptInstance.HostId))
+                {
                     throw new EntityNotFoundException();
                 }
                 db.Open();
@@ -109,7 +144,7 @@ namespace EESLP.Services.Logging.API.Services
         {
             using (var db = Connection)
             {
-                if (!checkIfScriptExists(scriptid))
+                if (!CheckIfScriptExists(scriptid))
                 {
                     throw new EntityNotFoundException();
                 }
@@ -125,7 +160,7 @@ namespace EESLP.Services.Logging.API.Services
         {
             using (var db = Connection)
             {
-                if (!checkIfHostExists(hostid))
+                if (!CheckIfHostExists(hostid))
                 {
                     throw new EntityNotFoundException();
                 }
@@ -137,23 +172,25 @@ namespace EESLP.Services.Logging.API.Services
             }
         }
 
-        // Help functions
-        private bool checkIfScriptExists(int scriptid)
+        #region private help functions
+        private bool CheckIfScriptExists(int scriptid)
         {
-            var script = _http.GetStringAsync(_apiOptions.ScriptsApiUrl + "/api/Scripts/" + scriptid).Result;
-            return script != null && script != "";
-        }
-        private bool checkIfHostExists(int hostid)
+            return _scriptService.GetScriptById(scriptid) != null;
+        } 
+        private bool CheckIfHostExists(int hostid)
         {
-            var script = _http.GetStringAsync(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + hostid).Result;
-            return script != null && script != "";
+            return _hostService.GetHostById(hostid) != null;
         }
 
-        private string getScriptInstanceWhereQuery(ScriptInstanceStatus[] status, string hostname, string scriptname, DateTime? from, DateTime? to)
+        private string GetScriptInstanceWhereQuery(ScriptInstanceStatus[] status, DateTime? from, DateTime? to)
         {
-            string query = $"WHERE ";
-            query += "TransactionId LIKE CONCAT(\"%\",@transactionId,\"%\") ";
-            if (status.Count() > 0 || hostname != null || scriptname != null || from != null || to != null)
+
+            string query = $"INNER JOIN EESLP.Host AS h ON h.Id = si.HostId " +
+                $"INNER JOIN EESLP.Script AS s ON s.Id = si.ScriptId WHERE ";
+            query += "si.TransactionId LIKE CONCAT(\"%\",@transactionId,\"%\") ";
+            query += "AND h.Hostname LIKE CONCAT(\"%\",@hostname,\"%\") ";
+            query += "AND s.Scriptname LIKE CONCAT(\"%\",@scriptname,\"%\") ";
+            if (status.Count() > 0 || from != null || to != null)
             {
                 if (status.Count() > 0)
                 {
@@ -165,44 +202,10 @@ namespace EESLP.Services.Logging.API.Services
                 query += from != null && to != null ? $"AND CreatedDateTime BETWEEN '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", from)}' AND '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", to)}' " : "";
                 query += from != null && to == null ? $"AND CreatedDateTime BETWEEN '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", from)}' AND '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.MaxValue)}' " : "";
                 query += from == null && to != null ? $"AND CreatedDateTime BETWEEN '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.MinValue)}' AND '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", to)}' " : "";
-                if (scriptname != null)
-                {
-                    var scripts = _http.GetAsync<IEnumerable<int>>(_apiOptions.ScriptsApiUrl + "/api/Scripts/IDs?scriptname=" + scriptname).Result;
-
-                    if (scripts.Count() > 0)
-                    {
-                        string sqlScripts = "(";
-                        scripts.ToList().ForEach((int id) => { sqlScripts += $"{id},"; });
-                        sqlScripts = sqlScripts.Remove(sqlScripts.Length - 1, 1);
-                        sqlScripts += ")";
-                        query += $"AND ScriptId IN {sqlScripts} ";
-                    }
-                    else
-                    {
-                        query += $"AND ScriptId IS NULL ";
-                    }
-                }
-                if (hostname != null)
-                {
-                    var hosts = _http.GetAsync<IEnumerable<int>>(_apiOptions.ScriptsApiUrl + "/api/Hosts/IDs?hostname=" + hostname).Result;
-
-                    if (hosts.Count() > 0)
-                    {
-                        string sqlHosts = "(";
-                        hosts.ToList().ForEach((int id) => { sqlHosts += $"{id},"; });
-                        sqlHosts = sqlHosts.Remove(sqlHosts.Length - 1, 1);
-                        sqlHosts += ")";
-                        query += $"AND HostId IN {sqlHosts} ";
-                    }
-                    else
-                    {
-                        query += $"AND HostId IS NULL ";
-                    }
-                }
                 query = query.Replace("WHERE AND", "WHERE");
             }
             return query;
         }
-
+        #endregion
     }
 }

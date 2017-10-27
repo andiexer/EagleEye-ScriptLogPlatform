@@ -6,13 +6,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Dapper.Contrib.Extensions;
-using EESLP.Services.Scripts.API.Entities;
-using EESLP.Services.Scripts.API.Infrastructure.Options;
+using EESLP.Services.Logging.API.Entities;
+using EESLP.Services.Logging.API.Infrastructure.Options;
 using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 
-namespace EESLP.Services.Scripts.API.Services
+namespace EESLP.Services.Logging.API.Services
 {
     public class HostService : BaseService, IHostService
     {

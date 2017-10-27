@@ -7,7 +7,6 @@ namespace EESLP.Backend.Gateway.API.Infrastructure.Options
 {
     public class ApiOptions
     {
-        public string ScriptsApiUrl { get; set; }
         public string LoggingApiUrl { get; set; }
     }
 }

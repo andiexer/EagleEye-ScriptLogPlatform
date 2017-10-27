@@ -16,9 +16,9 @@ using System.Threading.Tasks;
 namespace EESLP.Backend.Gateway.API.Controllers
 {
     [Route("api/[controller]")]
-    public class LogsController : BaseController
+    public class HostsController : BaseController
     {
-        public LogsController(ILogger<LogsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache) : base(logger, mapper, http, apiOptions, cache)
+        public HostsController(ILogger<HostsController> logger, IMapper mapper, IHttpApiClient http, IOptions<ApiOptions> apiOptions, IDistributedCache cache) : base(logger, mapper, http, apiOptions, cache)
         {
         }
 
@@ -40,7 +40,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
             try
             {
                 ApiKeyAuthentication();
-                return BaseGet<Host>(_apiOptions.ScriptsApiUrl + "/api/Hosts/" + id);
+                return BaseGet<Host>(_apiOptions.LoggingApiUrl + "/api/Hosts/" + id);
             }
             catch (Exception e)
             {
@@ -64,7 +64,7 @@ namespace EESLP.Backend.Gateway.API.Controllers
         {
             try
             {
-                return BasePost(_apiOptions.ScriptsApiUrl + "/api/Hosts", model);
+                return BasePost(_apiOptions.LoggingApiUrl + "/api/Hosts", model);
             }
             catch (Exception e)
             {

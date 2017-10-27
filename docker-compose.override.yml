@@ -1,0 +1,6 @@
+version: '2'
+
+services:
+  frontend.ui:
+    environment:
+      - "ApiUrl=http://192.168.209.128:5003/api/"

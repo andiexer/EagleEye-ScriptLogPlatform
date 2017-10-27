@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace EESLP.Services.Scripts.API.Infrastructure.Filters
+namespace EESLP.Services.Logging.API.Infrastructure.Filters
 {
     public class ValidateModelFilter : ActionFilterAttribute
     {

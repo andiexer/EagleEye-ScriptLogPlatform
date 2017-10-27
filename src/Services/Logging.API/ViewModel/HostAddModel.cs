@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EESLP.Services.Scripts.API.ViewModels
+namespace EESLP.Services.Logging.API.ViewModels
 {
     public class HostAddModel
     {

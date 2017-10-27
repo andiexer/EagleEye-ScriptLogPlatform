@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 
-namespace EESLP.Services.Scripts.API.Infrastructure.Extensions
+namespace EESLP.Services.Logging.API.Infrastructure.Extensions
 {
     public static class DistributedCacheExtensions
     {

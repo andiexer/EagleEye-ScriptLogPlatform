@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper.Contrib.Extensions;
-using EESLP.Services.Scripts.API.Entities;
-using EESLP.Services.Scripts.API.Infrastructure.Options;
+using EESLP.Services.Logging.API.Entities;
+using EESLP.Services.Logging.API.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 using Dapper;
 
-namespace EESLP.Services.Scripts.API.Services
+namespace EESLP.Services.Logging.API.Services
 {
     public class ScriptService : BaseService, IScriptService
     {

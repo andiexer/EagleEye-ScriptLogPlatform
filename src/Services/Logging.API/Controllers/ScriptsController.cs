@@ -4,20 +4,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using EESLP.BuilidingBlocks.EventBus.Events;
-using EESLP.Services.Scripts.API.Entities;
-using EESLP.Services.Scripts.API.Infrastructure.Exceptions;
-using EESLP.Services.Scripts.API.Infrastructure.Filters;
-using EESLP.Services.Scripts.API.Services;
-using EESLP.Services.Scripts.API.ViewModels;
+using EESLP.Services.Logging.API.Entities;
+using EESLP.Services.Logging.API.Infrastructure.Exceptions;
+using EESLP.Services.Logging.API.Infrastructure.Filters;
+using EESLP.Services.Logging.API.Services;
+using EESLP.Services.Logging.API.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using RawRabbit;
-using EESLP.Services.Scripts.API.Infrastructure.Extensions;
+using EESLP.Services.Logging.API.Infrastructure.Extensions;
 using Microsoft.Extensions.Primitives;
 
-namespace EESLP.Services.Scripts.API.Controllers
+namespace EESLP.Services.Logging.API.Controllers
 {
     [Route("api/[controller]")]
     public class ScriptsController : Controller
@@ -78,21 +78,21 @@ namespace EESLP.Services.Scripts.API.Controllers
         /// <returns>list of all script IDs</returns>
         /// <response code="200">returns a list of all script IDs</response>
         /// <response code="400">if something went really wrong</response>
-        [HttpGet]
-        [Route("IDs")]
-        [ProducesResponseType(typeof(IEnumerable<int>), 200)]
-        [ProducesResponseType(typeof(object), 400)]
-        public IActionResult GetIds(string scriptname)
-        {
-            try
-            {
-                return Ok(_scriptService.GetAllScriptIds(scriptname));
-            }
-            catch (Exception e)
-            {
-                return BadRequest();
-            }
-        }
+        //[HttpGet]
+        //[Route("IDs")]
+        //[ProducesResponseType(typeof(IEnumerable<int>), 200)]
+        //[ProducesResponseType(typeof(object), 400)]
+        //public IActionResult GetIds(string scriptname)
+        //{
+        //    try
+        //    {
+        //        return Ok(_scriptService.GetAllScriptIds(scriptname));
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return BadRequest();
+        //    }
+        //}
 
         /// <summary>
         /// get a single script

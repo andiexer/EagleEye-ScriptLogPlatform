@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EESLP.Services.Scripts.API.Entities;
+using EESLP.Services.Logging.API.Entities;
 
-namespace EESLP.Services.Scripts.API.Services
+namespace EESLP.Services.Logging.API.Services
 {
     public interface IHostService
     {

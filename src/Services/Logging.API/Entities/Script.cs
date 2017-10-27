@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper.Contrib.Extensions;
 
-namespace EESLP.Services.Scripts.API.Entities
+namespace EESLP.Services.Logging.API.Entities
 {
     [Table("Script")]
     public class Script : Entity, IAuditableEntity
