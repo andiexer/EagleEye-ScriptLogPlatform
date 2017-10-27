@@ -1,38 +1,38 @@
-<md-card>
-  <md-card-header>
-    <md-card-title>Host {{formFunction}}</md-card-title>
-  </md-card-header>
+<mat-card>
+  <mat-card-header>
+    <mat-card-header><mat-card-title>Host {{formFunction}}</mat-card-title></mat-card-header>
+  </mat-card-header>
   <form [formGroup]="hostForm" (ngSubmit)="onSave()">
-    <md-card-content>
+    <mat-card-content>
       <div [class.has-error]="!hostForm.controls['hostname'].valid && !hostForm.controls['hostname'].pending">
-        <md-input-container class="full-width form-control" dividerColor="primary">
-          <input mdInput id="hostname" type="text" placeholder="Hostname" formControlName="hostname">
-          <md-hint *ngIf="hostForm.controls['hostname'].touched && !hostForm.controls['hostname'].valid && !hostForm.controls['hostname'].pending">
+        <mat-form-field class="full-width form-control" dividerColor="primary">
+          <input matInput id="hostname" type="text" placeholder="Hostname" formControlName="hostname">
+          <mat-hint *ngIf="hostForm.controls['hostname'].touched && !hostForm.controls['hostname'].valid && !hostForm.controls['hostname'].pending">
             <span class="help-block" *ngIf="hostForm.controls['hostname'].errors.required">Hostname is required</span>
-          </md-hint>
-        </md-input-container>
+          </mat-hint>
+        </mat-form-field>
       </div>
       <div [class.has-error]="!hostForm.controls['fqdn'].valid && !hostForm.controls['fqdn'].pending">
-        <md-input-container class="full-width form-control">
-          <input mdInput id="fqdn" type="text" placeholder="FQDN" formControlName="fqdn">
-          <md-hint *ngIf="hostForm.controls['fqdn'].touched && !hostForm.controls['fqdn'].valid && !hostForm.controls['fqdn'].pending">
+        <mat-form-field class="full-width form-control">
+          <input matInput id="fqdn" type="text" placeholder="FQDN" formControlName="fqdn">
+          <mat-hint *ngIf="hostForm.controls['fqdn'].touched && !hostForm.controls['fqdn'].valid && !hostForm.controls['fqdn'].pending">
             <span class="help-block" *ngIf="hostForm.controls['fqdn'].errors.required">FQDN is required</span>
-          </md-hint>
-        </md-input-container>
+          </mat-hint>
+        </mat-form-field>
       </div>
       <div [class.has-error]="hostForm.controls['apiKey'].touched && !hostForm.controls['apiKey'].valid && !hostForm.controls['apiKey'].pending">
-        <md-input-container class="full-width form-control">
-          <input mdInput id="apiKey" type="text" placeholder="API Key" formControlName="apiKey">
-          <md-hint *ngIf="hostForm.controls['apiKey'].touched && !hostForm.controls['apiKey'].valid && !hostForm.controls['apiKey'].pending">
+        <mat-form-field class="full-width form-control">
+          <input matInput id="apiKey" type="text" placeholder="API Key" formControlName="apiKey">
+          <mat-hint *ngIf="hostForm.controls['apiKey'].touched && !hostForm.controls['apiKey'].valid && !hostForm.controls['apiKey'].pending">
             <span class="help-block" *ngIf="hostForm.controls['apiKey'].errors.required">API Key is required</span>
-          </md-hint>
-        </md-input-container>
+          </mat-hint>
+        </mat-form-field>
       </div>
-    </md-card-content>
-    <md-card-actions>
-      <button md-button type="submit" *ngIf="formFunction == 'edit'" [disabled]="!hostForm.valid && !hostForm.pending"><md-icon>save</md-icon>Save</button>
-      <button md-button type="submit" *ngIf="formFunction == 'new'" [disabled]="!hostForm.valid && !hostForm.pending"><md-icon>save</md-icon>Create</button>
-      <button md-button type="button" (click)="goBack()" color="warn"><md-icon>cancel</md-icon>Cancel</button>
-    </md-card-actions>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button type="submit" *ngIf="formFunction == 'edit'" [disabled]="!hostForm.valid && !hostForm.pending"><mat-icon>save</mat-icon>Save</button>
+      <button mat-button type="submit" *ngIf="formFunction == 'new'" [disabled]="!hostForm.valid && !hostForm.pending"><mat-icon>save</mat-icon>Create</button>
+      <button mat-button type="button" (click)="goBack()" color="warn"><mat-icon>cancel</mat-icon>Cancel</button>
+    </mat-card-actions>
   </form>
-</md-card>
+</mat-card>

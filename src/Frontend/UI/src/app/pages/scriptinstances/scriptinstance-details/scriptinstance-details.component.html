@@ -1,51 +1,51 @@
-<button md-button (click)="goBack()" style="margin-bottom:5px;"><md-icon>arrow_back</md-icon>Go Back</button>
+<button mat-button (click)="goBack()" style="margin-bottom:5px;"><mat-icon>arrow_back</mat-icon>Go Back</button>
 <div fxLayout="row" fxLayoutWrap fxLayoutAlign="space-around start" style="margin-bottom: 15px;">
   <div fxFlex="32%">
-    <md-card>
-      <md-card-header>
-        <md-card-title>Script Instance Informations</md-card-title>
-      </md-card-header>
-      <md-card-content>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Script Instance Informations</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
         <dl class="dl-horizontal" *ngIf="!loadingScriptInstance">
           <dt>Status</dt>
           <dd>{{scriptInstance?.instanceStatus}}</dd>
           <dt>Start Time</dt>
-          <dd>{{scriptInstance?.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</dd>
+          <dd>{{scriptInstance?.createdDateTime | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</dd>
           <dt>End Time</dt>
-          <dd *ngIf="scriptInstance?.endDateTime != null">{{scriptInstance?.endDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</dd>
+          <dd *ngIf="scriptInstance?.endDateTime != null">{{scriptInstance?.endDateTime | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</dd>
           <dd *ngIf="scriptInstance?.endDateTime == null">Scriptinstance is not finished</dd>
           <dt>Transaction ID </dt>
           <dd>{{scriptInstance?.transactionId}}</dd>
         </dl>
         <div fxLayoutAlign="center" *ngIf="loadingScriptInstance">
-          <md-spinner></md-spinner>
+          <mat-spinner></mat-spinner>
         </div>
-      </md-card-content>
-    </md-card>
+      </mat-card-content>
+    </mat-card>
   </div>
   <div fxFlex="30%">
-    <md-card>
-      <md-card-header>
-        <md-card-title>Host Informations</md-card-title>
-      </md-card-header>
-      <md-card-content>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Host Informations</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
         <dl class="dl-horizontal" *ngIf="scriptInstance?.host != null && !loadingScriptInstance">
           <dt>Hostname</dt>
           <dd>{{scriptInstance?.host.fqdn}}</dd>
         </dl>
         <div fxLayoutAlign="center" *ngIf="loadingScriptInstance">
-          <md-spinner></md-spinner>
+          <mat-spinner></mat-spinner>
         </div>
         <span *ngIf="scriptInstance?.host == null">Host doesn't exist anymore.</span>
-      </md-card-content>
-    </md-card>
+      </mat-card-content>
+    </mat-card>
   </div>
   <div fxFlex="30%">
-    <md-card>
-      <md-card-header>
-        <md-card-title>Script Informations</md-card-title>
-      </md-card-header>
-      <md-card-content>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Script Informations</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
         <dl class="dl-horizontal" *ngIf="scriptInstance?.script != null && !loadingScriptInstance">
           <dt>Script Name</dt>
           <dd>{{scriptInstance?.script.scriptname}}</dd>
@@ -53,38 +53,40 @@
           <dd>{{scriptInstance?.script.description}}</dd>
         </dl>
         <div fxLayoutAlign="center" *ngIf="loadingScriptInstance">
-          <md-spinner></md-spinner>
+          <mat-spinner></mat-spinner>
         </div>
         <span *ngIf="scriptInstance?.script == null">Script doesn't exist anymore.</span>
-      </md-card-content>
-    </md-card>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>
-<md-card>
-  <md-card-header fxLayout="row" fxLayoutAlign="space-between stretch" fxLayoutWrap>
-    <md-card-title fxFlexAlign="left">Logs</md-card-title>
+<mat-card>
+  <mat-card-header fxLayout="row" fxLayoutAlign="space-between stretch" fxLayoutWrap>
+    <mat-card-title fxFlexAlign="left">Logs</mat-card-title>
     <div fxFlexAlign="right">
       <form fxLayout="row" [formGroup]="searchForm" (ngSubmit)="onSearch()">
         <div fxFlex="230px">
-          <md-select class="form-control" placeholder="Log Level" name="logLevel" formControlName="logLevel" multiple>
-            <md-option *ngFor="let option of logLevelOptions" [value]="option.value">
-              {{option.label}}
-            </md-option>
-          </md-select>
+          <mat-form-field class="form-control">
+            <mat-select placeholder="Log Level" name="logLevel" formControlName="logLevel" multiple>
+              <mat-option *ngFor="let option of logLevelOptions" [value]="option.value">
+                {{option.label}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
         <div fxFlex="230px">
-          <md-input-container class="form-control" >
-            <input mdInput id="text"type="text" placeholder="Text" formControlName="text">
-          </md-input-container>
+          <mat-form-field class="form-control">
+            <input matInput id="text" type="text" placeholder="Text" formControlName="text">
+          </mat-form-field>
         </div>
-        <button md-button type="submit" [disabled]="!searchForm.valid"><md-icon>search</md-icon>Search</button>
-        <button md-button color="warn" (click)="onSearchClear()"><md-icon>clear</md-icon>Clear</button>
+        <button mat-button type="submit" [disabled]="!searchForm.valid"><mat-icon>search</mat-icon>Search</button>
+        <button mat-button color="warn" (click)="onSearchClear()"><mat-icon>clear</mat-icon>Clear</button>
       </form>
     </div>
-  </md-card-header>
-  <md-card-content>
-    <md-paginator [pageIndex]="currentPage" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
-    </md-paginator>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-paginator [pageIndex]="currentPage" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+    </mat-paginator>
     <table class="mdl-data-table mdl-js-data-table table-shadow">
       <thead>
         <tr>
@@ -95,14 +97,14 @@
       </thead>
       <tbody *ngIf="!loadingScriptInstanceLogs">
         <tr *ngFor="let log of scriptInstanceLogs ">
-          <td width="200px">{{log.logDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
-          <td width="150px"><span [class]="'logLevel ' + (log.logLevel | logLevelIcon)"><md-icon>{{log.logLevel | logLevelIcon}}</md-icon></span>            {{log.logLevel}}</td>
+          <td width="200px">{{log.logDateTime | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
+          <td width="150px"><span [class]="'logLevel ' + (log.logLevel | logLevelIcon)"><mat-icon>{{log.logLevel | logLevelIcon}}</mat-icon></span>            {{log.logLevel}}</td>
           <td>{{log.logText}}</td>
         </tr>
       </tbody>
     </table>
     <div fxLayoutAlign="center" *ngIf="loadingScriptInstanceLogs">
-      <md-spinner></md-spinner>
+      <mat-spinner></mat-spinner>
     </div>
-  </md-card-content>
-</md-card>
+  </mat-card-content>
+</mat-card>

@@ -1,38 +1,40 @@
-<md-card>
+<mat-card>
   <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
-    <md-card-content>
+    <mat-card-content>
       <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap>
         <div fxFlex="230px">
-          <md-select class="form-control" placeholder="Status" name="status" formControlName="status" multiple>
-            <md-option *ngFor="let option of statusOptions" [value]="option.value">
-              {{option.label}}
-            </md-option>
-          </md-select>
+          <mat-form-field class="form-control">
+            <mat-select placeholder="Status" name="status" formControlName="status" multiple>
+              <mat-option *ngFor="let option of statusOptions" [value]="option.value">
+                {{option.label}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
         <div fxFlex="230px">
-          <md-input-container class="form-control">
-            <input mdInput id="hostname" type="text" placeholder="Hostname" formControlName="hostname">
-          </md-input-container>
+          <mat-form-field class="form-control">
+            <input matInput id="hostname" type="text" placeholder="Hostname" formControlName="hostname">
+          </mat-form-field>
         </div>
         <div fxFlex="230px">
-          <md-input-container class="form-control">
-            <input mdInput id="scriptname" type="text" placeholder="Scriptname" formControlName="scriptname">
-          </md-input-container>
+          <mat-form-field class="form-control">
+            <input matInput id="scriptname" type="text" placeholder="Scriptname" formControlName="scriptname">
+          </mat-form-field>
         </div>
         <div formGroupName="dateTime" fxLayout="row" fxLayout.xs="column" fxLayoutWrap>
           <div fxFlex="230px">
             <div fxLayout="row">
               <div [class.has-error]="!searchForm.get('dateTime').get('dateFrom').valid">
-                <md-form-field class="form-control" style="min-width:100px; width:100px">
-                  <input mdInput [mdDatepicker]="pickerFrom" placeholder="Date from" id="dateFrom" formControlName="dateFrom">
-                  <md-datepicker-toggle mdSuffix [for]="pickerFrom"></md-datepicker-toggle>
-                  <md-datepicker #pickerFrom></md-datepicker>
-                </md-form-field>
+                <mat-form-field class="form-control" style="min-width:100px; width:100px">
+                  <input matInput [matDatepicker]="pickerFrom" placeholder="Date from" id="dateFrom" formControlName="dateFrom">
+                  <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+                  <mat-datepicker #pickerFrom></mat-datepicker>
+                </mat-form-field>
               </div>
               <div [class.has-error]="!searchForm.get('dateTime').get('hourFrom').valid">
-                <md-input-container class="form-control" style="min-width:100px; width:100px">
-                  <input mdInput id="hourFrom" placeholder="Time from" formControlName="hourFrom">
-                </md-input-container>
+                <mat-form-field class="form-control" style="min-width:100px; width:100px">
+                  <input matInput id="hourFrom" placeholder="Time from" formControlName="hourFrom">
+                </mat-form-field>
               </div>
             </div>
             <div fxLayout="column">
@@ -47,16 +49,16 @@
           <div fxFlex="230px">
             <div fxLayout="row">
               <div [class.has-error]="!searchForm.get('dateTime').get('dateTo').valid">
-                <md-form-field class="form-control" style="min-width:100px; width:100px">
-                  <input mdInput [mdDatepicker]="pickerTo" placeholder="Date to" id="dateTo" formControlName="dateTo">
-                  <md-datepicker-toggle mdSuffix [for]="pickerTo"></md-datepicker-toggle>
-                  <md-datepicker #pickerTo [startAt]="searchForm.get('dateTime').get('dateFrom').value"></md-datepicker>
-                </md-form-field>
+                <mat-form-field class="form-control" style="min-width:100px; width:100px">
+                  <input matInput [matDatepicker]="pickerTo" placeholder="Date to" id="dateTo" formControlName="dateTo">
+                  <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+                  <mat-datepicker #pickerTo [startAt]="searchForm.get('dateTime').get('dateFrom').value"></mat-datepicker>
+                </mat-form-field>
               </div>
               <div [class.has-error]="!searchForm.get('dateTime').get('hourTo').valid">
-                <md-input-container class="form-control" style="min-width:100px; width:100px">
-                  <input mdInput id="hourTo" placeholder="Enter the time" formControlName="hourTo">
-                </md-input-container>
+                <mat-form-field class="form-control" style="min-width:100px; width:100px">
+                  <input matInput id="hourTo" placeholder="Enter the time" formControlName="hourTo">
+                </mat-form-field>
               </div>
             </div>
             <div fxLayout="column">
@@ -70,25 +72,25 @@
           </div>
         </div>
         <div fxFlex="230px">
-          <md-input-container class="form-control">
-            <input mdInput id="transactionId" type="text" placeholder="Transaction ID" formControlName="transactionId">
-          </md-input-container>
+          <mat-form-field class="form-control">
+            <input matInput id="transactionId" type="text" placeholder="Transaction ID" formControlName="transactionId">
+          </mat-form-field>
         </div>
       </div>
       <div *ngIf="searchForm.get('dateTime').dirty && !searchForm.get('dateTime').valid" [class.has-error]="!searchForm.get('dateTime').valid">
         <span class="help-block">The second date time cannot be lower than the first</span>
       </div>
-    </md-card-content>
-    <md-card-actions>
-      <button md-button type="submit" [disabled]="!searchForm.valid"><md-icon>search</md-icon>Search</button>
-      <button md-button color="warn" (click)="onSearchClear()"><md-icon>clear</md-icon>Clear</button>
-    </md-card-actions>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button type="submit" [disabled]="!searchForm.valid"><mat-icon>search</mat-icon>Search</button>
+      <button mat-button color="warn" (click)="onSearchClear()"><mat-icon>clear</mat-icon>Clear</button>
+    </mat-card-actions>
   </form>
-</md-card>
-<md-card>
-  <md-card-content>
-    <md-paginator [pageIndex]="currentPage" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
-    </md-paginator>
+</mat-card>
+<mat-card>
+  <mat-card-content>
+    <mat-paginator [pageIndex]="currentPage" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+    </mat-paginator>
     <table class="mdl-data-table mdl-js-data-table table-shadow">
       <thead>
         <tr>
@@ -104,12 +106,12 @@
       <tbody *ngIf="!loadingScriptInstances">
         <tr *ngFor="let scriptInstance of scriptInstances">
           <td>
-            <button md-button (click)="onDetails(scriptInstance.id)"><md-icon>more_horiz</md-icon> Details</button>
-            <button md-button (click)="openDialog(scriptInstance.id)"><md-icon>delete</md-icon>Delete</button>
+            <button mat-button (click)="onDetails(scriptInstance.id)"><mat-icon>more_horiz</mat-icon> Details</button>
+            <button mat-button (click)="openDialog(scriptInstance.id)"><mat-icon>delete</mat-icon>Delete</button>
           </td>
           <td>{{scriptInstance.instanceStatus}}</td>
-          <td>{{scriptInstance.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
-          <td *ngIf="scriptInstance.endDateTime != null">{{scriptInstance.endDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
+          <td>{{scriptInstance.createdDateTime | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
+          <td *ngIf="scriptInstance.endDateTime != null">{{scriptInstance.endDateTime | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
           <td *ngIf="scriptInstance.endDateTime == null">Scriptinstance is not finished</td>
           <td>{{scriptInstance.host?.hostname}}</td>
           <td>{{scriptInstance.script?.scriptname}}</td>
@@ -123,11 +125,11 @@
         <tr>
           <td colspan="100">
             <div fxLayoutAlign="center">
-              <md-spinner></md-spinner>
+              <mat-spinner></mat-spinner>
             </div>
           </td>
         </tr>
       </tbody>
     </table>
-  </md-card-content>
-</md-card>
+  </mat-card-content>
+</mat-card>

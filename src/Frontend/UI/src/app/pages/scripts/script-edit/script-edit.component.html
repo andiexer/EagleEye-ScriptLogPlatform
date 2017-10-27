@@ -1,27 +1,27 @@
-<md-card>
-  <md-card-header>
-    <md-card-title>Script {{formFunction}}</md-card-title>
-  </md-card-header>
+<mat-card>
+  <mat-card-header>
+    <mat-card-header><mat-card-title>Script {{formFunction}}</mat-card-title></mat-card-header>
+  </mat-card-header>
   <form [formGroup]="scriptForm" (ngSubmit)="onSave()">
-    <md-card-content>
+    <mat-card-content>
       <div [class.has-error]="!scriptForm.controls['scriptName'].valid && !scriptForm.controls['scriptName'].pending">
-        <md-input-container class="full-width form-control">
-          <input mdInput id="scriptName" class="form-control" type="text" placeholder="Scriptname" formControlName="scriptName">
-          <md-hint *ngIf="scriptForm.controls['scriptName'].touched && !scriptForm.controls['scriptName'].valid && !scriptForm.controls['scriptName'].pending">
+        <mat-form-field class="full-width form-control">
+          <input matInput id="scriptName" class="form-control" type="text" placeholder="Scriptname" formControlName="scriptName">
+          <mat-hint *ngIf="scriptForm.controls['scriptName'].touched && !scriptForm.controls['scriptName'].valid && !scriptForm.controls['scriptName'].pending">
             <span class="help-block" *ngIf="scriptForm.controls['scriptName'].errors.required">Scriptname is required</span>
-          </md-hint>
-        </md-input-container>
+          </mat-hint>
+        </mat-form-field>
       </div>
       <div>
-        <md-input-container class="full-width form-control">
-          <input mdInput id="description" class="form-control" type="text" placeholder="Description" formControlName="description">
-        </md-input-container>
+        <mat-form-field class="full-width form-control">
+          <input matInput id="description" class="form-control" type="text" placeholder="Description" formControlName="description">
+        </mat-form-field>
       </div>
-    </md-card-content>
-    <md-card-actions>
-      <button md-button type="submit" *ngIf="formFunction == 'edit'" [disabled]="!scriptForm.valid && !scriptForm.pending"><md-icon>save</md-icon>Save</button>
-      <button md-button type="submit" *ngIf="formFunction == 'new'" [disabled]="!scriptForm.valid && !scriptForm.pending"><md-icon>save</md-icon>Create</button>
-      <button md-button color="warn" type="button" (click)="goBack()"><md-icon>cancel</md-icon>Cancel</button>
-    </md-card-actions>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button type="submit" *ngIf="formFunction == 'edit'" [disabled]="!scriptForm.valid && !scriptForm.pending"><mat-icon>save</mat-icon>Save</button>
+      <button mat-button type="submit" *ngIf="formFunction == 'new'" [disabled]="!scriptForm.valid && !scriptForm.pending"><mat-icon>save</mat-icon>Create</button>
+      <button mat-button color="warn" type="button" (click)="goBack()"><mat-icon>cancel</mat-icon>Cancel</button>
+    </mat-card-actions>
   </form>
-</md-card>
+</mat-card>

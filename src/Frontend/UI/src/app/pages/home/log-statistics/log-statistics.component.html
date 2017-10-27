@@ -1,25 +1,25 @@
-<md-card>
-	<md-card-title>Log Statistics</md-card-title>
-	<md-card-content>
+<mat-card>
+	<mat-card-header><mat-card-title>Log Statistics</mat-card-title></mat-card-header>
+	<mat-card-content>
 		<div fxLayout="row" fxLayoutAlign="space-around start">
-			<md-card class="log-card" style="background-color: #EEEEEE">
-				<md-card-header>
-					<md-card-title>Total amount of logs stored</md-card-title>
-					<md-card-subtitle>{{totalLogs}} Logs</md-card-subtitle>
-				</md-card-header>
-			</md-card>
-			<md-card class="log-card" style="background-color: #FFCC80">
-				<md-card-header>
-					<md-card-title>Total amount of warning logs</md-card-title>
-					<md-card-subtitle>{{totalByLogLevel[2]}} Logs</md-card-subtitle>
-				</md-card-header>
-			</md-card>
-			<md-card class="log-card" style="background-color: #EF9A9A">
-				<md-card-header>
-					<md-card-title>Total amount of error logs</md-card-title>
-					<md-card-subtitle>{{totalByLogLevel[1]}} Logs</md-card-subtitle>
-				</md-card-header>
-			</md-card>
+			<mat-card class="log-card" style="background-color: #EEEEEE">
+				<mat-card-header>
+					<mat-card-header><mat-card-title>Total amount of logs stored</mat-card-title></mat-card-header>
+					<mat-card-subtitle>{{totalLogs}} Logs</mat-card-subtitle>
+				</mat-card-header>
+			</mat-card>
+			<mat-card class="log-card" style="background-color: #FFCC80">
+				<mat-card-header>
+					<mat-card-header><mat-card-title>Total amount of warning logs</mat-card-title></mat-card-header>
+					<mat-card-subtitle>{{totalByLogLevel[2]}} Logs</mat-card-subtitle>
+				</mat-card-header>
+			</mat-card>
+			<mat-card class="log-card" style="background-color: #EF9A9A">
+				<mat-card-header>
+					<mat-card-header><mat-card-title>Total amount of error logs</mat-card-title></mat-card-header>
+					<mat-card-subtitle>{{totalByLogLevel[1]}} Logs</mat-card-subtitle>
+				</mat-card-header>
+			</mat-card>
 		</div>
-	</md-card-content>
-</md-card>
+	</mat-card-content>
+</mat-card>

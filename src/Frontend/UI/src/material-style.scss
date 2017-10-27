@@ -17,7 +17,7 @@ $poshlog-warn:    mat-palette($mat-deep-orange);
 // Create the theme object (a Sass map containing all of the palettes).
 $poshlog-theme: mat-light-theme($poshlog-primary, $poshlog-accent, $poshlog-warn);
 
-.mat-input-container.ng-invalid.ng-touched .mat-input {
+.mat-form-field.ng-invalid.ng-touched .mat-input {
     color: mat-color($poshlog-warn);
 }
 .mat-input.ng-invalid.ng-touched:not(.mat-select-disabled) .mat-input-underline {

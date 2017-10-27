@@ -8,11 +8,19 @@ import { HostEditResolver } from './host-edit/host-edit.resolver';
 import { HostEditGuard } from './host-edit/host-edit.guard';
 import { hostRouting } from './hosts.routing';
 import { SharedModule } from '../../shared/shared.module';
+import { MatIconModule, MatCardModule, MatButtonModule, MatPaginatorModule, MatInputModule } from '@angular/material';
+import { MomentModule } from 'angular2-moment';
 
 @NgModule({
   imports: [
     SharedModule,
-    hostRouting
+    hostRouting,
+    MatIconModule,
+    MatCardModule,
+    MatButtonModule,
+    MatPaginatorModule,
+    MatInputModule,
+    MomentModule
   ],
   declarations: [
     HostsComponent,

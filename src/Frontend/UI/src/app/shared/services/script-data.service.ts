@@ -3,7 +3,7 @@ import { Observable, Subject } from 'rxjs/Rx';
 import { Injectable } from '@angular/core';
 import { Headers, Http, Response, RequestOptions } from '@angular/http';
 
-import { ConfigService } from '../';
+import { ConfigService } from './config.service';
 import { IScript } from '../interfaces/iscript';
 import { IScriptEdit } from '../interfaces/iscript-edit';
 import { IScripts } from '../interfaces/iscripts';

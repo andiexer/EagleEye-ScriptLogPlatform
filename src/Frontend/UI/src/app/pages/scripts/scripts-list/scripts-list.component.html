@@ -1,26 +1,26 @@
-<md-card>
+<mat-card>
   <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
-    <md-card-content>
+    <mat-card-content>
       <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap>
         <div fxFlex="230px">
-          <md-input-container class="form-control">
-            <input mdInput id="scriptname" type="text" placeholder="Scriptname" formControlName="scriptname">
-          </md-input-container>
+          <mat-form-field class="form-control">
+            <input matInput id="scriptname" type="text" placeholder="Scriptname" formControlName="scriptname">
+          </mat-form-field>
         </div>
       </div>
-    </md-card-content>
-    <md-card-actions>
-      <button md-button type="submit"><md-icon>search</md-icon>Search</button>
-      <button md-button color="warn" (click)="onSearchClear()"><md-icon>clear</md-icon>Clear</button>
-    </md-card-actions>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button type="submit"><mat-icon>search</mat-icon>Search</button>
+      <button mat-button color="warn" (click)="onSearchClear()"><mat-icon>clear</mat-icon>Clear</button>
+    </mat-card-actions>
   </form>
-</md-card>
-<md-card>
-  <md-card-content>
+</mat-card>
+<mat-card>
+  <mat-card-content>
     <div fxLayout="row" fxLayoutAlign="space-between">
-      <button md-button type="button" (click)="onNew()"><md-icon>add</md-icon>New script</button>
-      <md-paginator [pageIndex]="currentPage" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
-      </md-paginator>
+      <button mat-button type="button" (click)="onNew()"><mat-icon>add</mat-icon>New script</button>
+      <mat-paginator [pageIndex]="currentPage" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+      </mat-paginator>
     </div>
     <table class="mdl-data-table mdl-js-data-table table-shadow">
       <thead>
@@ -37,15 +37,15 @@
       <tbody *ngIf="!loadingScripts">
         <tr *ngFor="let script of scripts">
           <td width="350px">
-            <button md-button (click)="onDetails(script.id)"><md-icon>more_horiz</md-icon>Details</button>
-            <button md-button (click)="onEdit(script.id)"><md-icon>edit</md-icon>Edit</button>
-            <button md-button (click)="openDialog(script.id)"><md-icon>delete</md-icon>Delete</button>
+            <button mat-button (click)="onDetails(script.id)"><mat-icon>more_horiz</mat-icon>Details</button>
+            <button mat-button (click)="onEdit(script.id)"><mat-icon>edit</mat-icon>Edit</button>
+            <button mat-button (click)="openDialog(script.id)"><mat-icon>delete</mat-icon>Delete</button>
           </td>
           <td>{{script.id}}</td>
           <td>{{script.scriptname}}</td>
           <td>{{script.description}}</td>
-          <td>{{script.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
-          <td>{{script.lastModDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
+          <td>{{script.createdDateTime | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
+          <td>{{script.lastModDateTime | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
         </tr>
         <tr *ngIf="scripts.length == 0" >
           <td colspan="100" style="text-align: center !important">There are no items!</td>
@@ -53,9 +53,9 @@
       </tbody>
       <tbody *ngIf="loadingScripts">
         <tr>
-          <td colspan="100"><div fxLayoutAlign="center"><md-spinner></md-spinner></div></td>
+          <td colspan="100"><div fxLayoutAlign="center"><mat-spinner></mat-spinner></div></td>
         </tr>
       </tbody>
     </table>
-  </md-card-content>
-</md-card>
+  </mat-card-content>
+</mat-card>
