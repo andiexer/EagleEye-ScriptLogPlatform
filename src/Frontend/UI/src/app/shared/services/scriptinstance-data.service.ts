@@ -34,7 +34,7 @@ export class ScriptinstanceDataService {
     if (currentPage && itemsPerPage) {
       headers.append('Pagination', currentPage + ',' + itemsPerPage);
     }
-    let queryParams: URLSearchParams = new URLSearchParams();
+    const queryParams: URLSearchParams = new URLSearchParams();
     queryParams.set('hostname', hostname);
     queryParams.set('scriptname', scriptname);
     queryParams.set('transactionId', transactionId);
@@ -42,17 +42,17 @@ export class ScriptinstanceDataService {
       queryParams.append('status', status[i]);
     }
     if (from) {
-      queryParams.set('from', from.toDateString());
+      queryParams.set('from', from.toISOString());
     }
     if (to) {
-      queryParams.set('to', to.toDateString());
+      queryParams.set('to', to.toISOString());
     }
     const options = new RequestOptions({ headers: headers, params: queryParams.toString() });
     return Observable.timer(0, 5000)
       .flatMap(() => {
         return this.http.get(this._baseUrl + 'ScriptInstances', options)
           .map((res: Response) => {
-            let result: IScriptInstances = { pagination: null, scriptInstances: null };
+            const result: IScriptInstances = { pagination: null, scriptInstances: null };
             result.pagination = JSON.parse(res.headers.get('Pagination'));
             result.scriptInstances = res.json();
             return result;

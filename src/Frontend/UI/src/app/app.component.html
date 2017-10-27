@@ -1,18 +1,18 @@
-<md-toolbar color="primary">
+<mat-toolbar color="primary">
   <span class="appTitle">EagleEye-ScriptLogMonitor</span>
   <div *ngFor="let navItem of navItems">
-    <button md-button routerLink="{{navItem.route}}" routerLinkActive="" [routerLinkActiveOptions]="{exact: navItem.exact}">{{navItem.name}}</button>
+    <button mat-button routerLink="{{navItem.route}}" routerLinkActive="" [routerLinkActiveOptions]="{exact: navItem.exact}">{{navItem.name}}</button>
   </div>
-</md-toolbar>
+</mat-toolbar>
 
 <div *ngIf="!loading">
   <router-outlet></router-outlet>
 </div>
 <div fxLayoutAlign="center" *ngIf="loading">
-      <md-spinner></md-spinner>
+      <mat-spinner></mat-spinner>
     </div>
-<md-toolbar color="primary" class="footer">
+<mat-toolbar color="primary" class="footer">
   <span>
     EagleEye-ScriptLogMonitor {{configService.getVersion()}} | Copyright &copy; 2017 <a href="https://www.inventx.ch">www.inventx.ch</a> - All rights reserved.
   </span>
-</md-toolbar>
+</mat-toolbar>

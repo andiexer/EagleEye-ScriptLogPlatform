@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { MaterialModule, MdNativeDateModule, MdDatepickerModule } from '@angular/material';
+import { MatNativeDateModule, MatDatepickerModule, MatCardModule, MatIconModule, MatToolbarModule, MatButtonModule } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { routing } from './app.routing';
@@ -20,6 +20,8 @@ import {
   DialogsService,
   ScriptDataService
 } from './shared';
+import { SharedModule } from 'app/shared/shared.module';
+import { MomentModule } from 'angular2-moment';
 
 let modules = [
   BrowserModule,
@@ -29,9 +31,11 @@ let modules = [
   CoreModule,
   FlexLayoutModule,
   BrowserAnimationsModule,
-  MaterialModule,
-  MdDatepickerModule,
-  MdNativeDateModule
+  MatIconModule,
+  MatCardModule,
+  MatToolbarModule,
+  MatButtonModule,
+  MomentModule
 ];
 
 let services = [

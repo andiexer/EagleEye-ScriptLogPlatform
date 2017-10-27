@@ -1,26 +1,26 @@
-<md-card>
+<mat-card>
   <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
-    <md-card-content>
+    <mat-card-content>
       <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap>
         <div fxFlex="230px">
-          <md-input-container class="form-control">
-            <input mdInput id="hostname" type="text" placeholder="Hostname" formControlName="hostname">
-          </md-input-container>
+          <mat-form-field class="form-control">
+            <input matInput id="hostname" type="text" placeholder="Hostname" formControlName="hostname">
+          </mat-form-field>
         </div>
       </div>
-    </md-card-content>
-    <md-card-actions>
-      <button md-button type="submit"><md-icon>search</md-icon>Search</button>
-      <button md-button (click)="onSearchClear()" color="warn"><md-icon>clear</md-icon>Clear</button>
-    </md-card-actions>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button type="submit"><mat-icon>search</mat-icon>Search</button>
+      <button mat-button (click)="onSearchClear()" color="warn"><mat-icon>clear</mat-icon>Clear</button>
+    </mat-card-actions>
   </form>
-</md-card>
-<md-card>
-  <md-card-content>
+</mat-card>
+<mat-card>
+  <mat-card-content>
     <div fxLayout="row" fxLayoutAlign="space-between">
-      <button md-button type="button" (click)="onNew()"><md-icon>add</md-icon>New host</button>
-      <md-paginator [pageIndex]="currentPage" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
-      </md-paginator>
+      <button mat-button type="button" (click)="onNew()"><mat-icon>add</mat-icon>New host</button>
+      <mat-paginator [pageIndex]="currentPage" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+      </mat-paginator>
     </div>
     <table class="mdl-data-table mdl-js-data-table table-shadow">
       <thead>
@@ -35,14 +35,14 @@
       <tbody *ngIf="!loadingHosts">
         <tr *ngFor="let host of hosts">
           <td width="350px">
-            <button md-button (click)="onDetails(host.id)"><md-icon>more_horiz</md-icon>Details</button>
-            <button md-button (click)="onEdit(host.id)"><md-icon>edit</md-icon>Edit</button>
-            <button md-button (click)="openDialog(host.id)"><md-icon>delete</md-icon>Delete</button>
+            <button mat-button (click)="onDetails(host.id)"><mat-icon>more_horiz</mat-icon>Details</button>
+            <button mat-button (click)="onEdit(host.id)"><mat-icon>edit</mat-icon>Edit</button>
+            <button mat-button (click)="openDialog(host.id)"><mat-icon>delete</mat-icon>Delete</button>
           </td>
           <td>{{host.hostname}}</td>
           <td>{{host.fqdn}}</td>
-          <td>{{host.createdDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
-          <td>{{host.lastModDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
+          <td>{{host.createdDateTime | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
+          <td>{{host.lastModDateTime | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
         </tr>
         <tr *ngIf="hosts.length == 0" >
           <td colspan="100" style="text-align: center !important">There are no items!</td>
@@ -50,9 +50,9 @@
       </tbody>
       <tbody *ngIf="loadingHosts">
         <tr>
-          <td colspan="100"><div fxLayoutAlign="center"><md-spinner></md-spinner></div></td>
+          <td colspan="100"><div fxLayoutAlign="center"><mat-spinner></mat-spinner></div></td>
         </tr>
       </tbody>
     </table>
-  </md-card-content>
-</md-card>
+  </mat-card-content>
+</mat-card>

@@ -199,9 +199,9 @@ namespace EESLP.Services.Logging.API.Services
                     query += $"AND InstanceStatus IN ({queryStatus.Remove(queryStatus.Length - 1, 1)}) ";
                 }
 
-                query += from != null && to != null ? $"AND CreatedDateTime BETWEEN '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", from)}' AND '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", to)}' " : "";
-                query += from != null && to == null ? $"AND CreatedDateTime BETWEEN '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", from)}' AND '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.MaxValue)}' " : "";
-                query += from == null && to != null ? $"AND CreatedDateTime BETWEEN '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.MinValue)}' AND '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", to)}' " : "";
+                query += from != null && to != null ? $"AND si.CreatedDateTime BETWEEN '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", from)}' AND '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", to)}' " : "";
+                query += from != null && to == null ? $"AND si.CreatedDateTime BETWEEN '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", from)}' AND '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.MaxValue)}' " : "";
+                query += from == null && to != null ? $"AND si.CreatedDateTime BETWEEN '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.MinValue)}' AND '{String.Format("{0:yyyy-MM-dd HH:mm:ss}", to)}' " : "";
                 query = query.Replace("WHERE AND", "WHERE");
             }
             return query;

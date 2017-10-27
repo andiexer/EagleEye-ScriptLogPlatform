@@ -1,6 +1,8 @@
-<md-card>
-  <md-card-title>Latest 10 Log Entries</md-card-title>
-  <md-card-content>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Latest 10 Log Entries</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
     <table class="mdl-data-table mdl-js-data-table table-shadow">
       <thead>
         <tr>
@@ -12,15 +14,15 @@
       </thead>
       <tbody>
         <tr *ngFor="let latestLog of latestLogs">
-          <td>{{latestLog.logDateTime | amLocal | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
-          <td><span [class]="'logLevel ' + (latestLog.logLevel | logLevelIcon)"><md-icon>{{latestLog.logLevel | logLevelIcon}}</md-icon></span>            {{latestLog.logLevel}}</td>
+          <td>{{latestLog.logDateTime | amDateFormat: 'DD.MM.YYYY HH:mm:ss'}}</td>
+          <td><span [class]="'logLevel ' + (latestLog.logLevel | logLevelIcon)"><mat-icon>{{latestLog.logLevel | logLevelIcon}}</mat-icon></span>{{latestLog.logLevel}}</td>
           <td>{{latestLog.logText}}</td>
           <td><a [routerLink]="['scriptinstances', latestLog.scriptInstanceId]" [queryParams]="{returnUrl: '/'}">{{latestLog.scriptInstanceId}}</a></td>
         </tr>
       </tbody>
     </table>
     <div fxLayoutAlign="center" *ngIf="loadingLogs">
-      <md-spinner></md-spinner>
+      <mat-spinner></mat-spinner>
     </div>
-  </md-card-content>
-</md-card>
+  </mat-card-content>
+</mat-card>

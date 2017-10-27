@@ -8,11 +8,19 @@ import { ScriptEditGuard } from './script-edit/script-edit.guard';
 import { ScriptEditComponent } from './script-edit/script-edit.component';
 import { scriptRouting } from './scripts.routing';
 import { SharedModule } from '../../shared/shared.module';
+import { MatIconModule, MatCardModule, MatButtonModule, MatPaginatorModule, MatInputModule } from '@angular/material';
+import { MomentModule } from 'angular2-moment';
 
 @NgModule({
   imports: [
     scriptRouting,
-    SharedModule
+    SharedModule,
+    MatIconModule,
+    MatCardModule,
+    MatButtonModule,
+    MatPaginatorModule,
+    MatInputModule,
+    MomentModule
   ],
   declarations: [
     ScriptsComponent,

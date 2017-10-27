@@ -1,8 +1,8 @@
-<md-card>
-  <md-card-title>Oops... there was an error</md-card-title>
-  <md-card-content>
-    <button md-button (click)="showMore = true" *ngIf="!showMore">Show more</button>
-    <button md-button (click)="showMore = false" *ngIf="showMore">Show less</button>
+<mat-card>
+  <mat-card-header><mat-card-title>Oops... there was an error</mat-card-title></mat-card-header>
+  <mat-card-content>
+    <button mat-button (click)="showMore = true" *ngIf="!showMore">Show more</button>
+    <button mat-button (click)="showMore = false" *ngIf="showMore">Show less</button>
     <div *ngIf="showMore">
       <p>
         <dt>Affected component</dt>
@@ -17,5 +17,5 @@
 
       <p>Please send this information to the developers.</p>
     </div>
-  </md-card-content>
-</md-card>
+  </mat-card-content>
+</mat-card>
