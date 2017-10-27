@@ -30,5 +30,6 @@ if($RemoveDockerImages) {
 Write-Host "Build angular 2 frontend"
 $path = pwd
 cd $rootPath\src\Frontend\UI
+npm install
 ng build --prod --aot
 cd $path

@@ -71,8 +71,7 @@ services:
     ports:
       - "80:80"
     environment:
-      - "ApiUrl=http://frontend.gateway.api/api/"
-
+      - "ApiUrl=http://localhost:5003/api/"
 
   mysql.data:
     image: eeslp/mysql.data

@@ -23,11 +23,11 @@
           <div fxFlex="230px">
             <div fxLayout="row">
               <div [class.has-error]="!searchForm.get('dateTime').get('dateFrom').valid">
-                <md-input-container class="form-control" style="min-width:100px; width:100px">
+                <md-form-field class="form-control" style="min-width:100px; width:100px">
                   <input mdInput [mdDatepicker]="pickerFrom" placeholder="Date from" id="dateFrom" formControlName="dateFrom">
-                  <!--<button mdSuffix [mdDatepickerToggle]="pickerFrom"></button>-->
-                </md-input-container>
-                <md-datepicker #pickerFrom></md-datepicker>
+                  <md-datepicker-toggle mdSuffix [for]="pickerFrom"></md-datepicker-toggle>
+                  <md-datepicker #pickerFrom></md-datepicker>
+                </md-form-field>
               </div>
               <div [class.has-error]="!searchForm.get('dateTime').get('hourFrom').valid">
                 <md-input-container class="form-control" style="min-width:100px; width:100px">
@@ -47,11 +47,11 @@
           <div fxFlex="230px">
             <div fxLayout="row">
               <div [class.has-error]="!searchForm.get('dateTime').get('dateTo').valid">
-                <md-input-container class="form-control" style="min-width:100px; width:100px">
+                <md-form-field class="form-control" style="min-width:100px; width:100px">
                   <input mdInput [mdDatepicker]="pickerTo" placeholder="Date to" id="dateTo" formControlName="dateTo">
-                  <!--<button mdSuffix [mdDatepickerToggle]="pickerTo"></button>-->
-                </md-input-container>
-                <md-datepicker #pickerTo [startAt]="searchForm.get('dateTime').get('dateFrom').value"></md-datepicker>
+                  <md-datepicker-toggle mdSuffix [for]="pickerTo"></md-datepicker-toggle>
+                  <md-datepicker #pickerTo [startAt]="searchForm.get('dateTime').get('dateFrom').value"></md-datepicker>
+                </md-form-field>
               </div>
               <div [class.has-error]="!searchForm.get('dateTime').get('hourTo').valid">
                 <md-input-container class="form-control" style="min-width:100px; width:100px">
